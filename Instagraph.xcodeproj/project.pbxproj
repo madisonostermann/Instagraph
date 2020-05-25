@@ -3,18 +3,21 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		19560E462476A5B6A1BB56A1 /* Pods_Instagraph.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28C8CF2A7865A1A0703FFB82 /* Pods_Instagraph.framework */; };
+		3C711589247C62BA001CBF4E /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 3C711588247C62BA001CBF4E /* tessdata */; };
 		3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */; };
 		3CCAB4FA247C0C4900E89AE8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */; };
 		3CCAB4FC247C0C4900E89AE8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4FB247C0C4900E89AE8 /* ContentView.swift */; };
 		3CCAB4FE247C0C4A00E89AE8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CCAB4FD247C0C4A00E89AE8 /* Assets.xcassets */; };
 		3CCAB501247C0C4A00E89AE8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CCAB500247C0C4A00E89AE8 /* Preview Assets.xcassets */; };
 		3CCAB504247C0C4A00E89AE8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CCAB502247C0C4A00E89AE8 /* LaunchScreen.storyboard */; };
-		3CCAB50F247C0C4B00E89AE8 /* InstagraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB50E247C0C4B00E89AE8 /* InstagraphTests.swift */; };
-		3CCAB51A247C0C4B00E89AE8 /* InstagraphUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB519247C0C4B00E89AE8 /* InstagraphUITests.swift */; };
+		3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */; };
+		3CCAB530247C121900E89AE8 /* GetImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB52F247C121900E89AE8 /* GetImage.swift */; };
+		3CCAB534247C198500E89AE8 /* DocumentFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB533247C198500E89AE8 /* DocumentFinder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		28C8CF2A7865A1A0703FFB82 /* Pods_Instagraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Instagraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C711588247C62BA001CBF4E /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tessdata; path = TessDataResources/tessdata; sourceTree = SOURCE_ROOT; };
 		3CCAB4F4247C0C4900E89AE8 /* Instagraph.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instagraph.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -44,11 +49,12 @@
 		3CCAB503247C0C4A00E89AE8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3CCAB505247C0C4A00E89AE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CCAB50A247C0C4A00E89AE8 /* InstagraphTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InstagraphTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CCAB50E247C0C4B00E89AE8 /* InstagraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagraphTests.swift; sourceTree = "<group>"; };
-		3CCAB510247C0C4B00E89AE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CCAB515247C0C4B00E89AE8 /* InstagraphUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InstagraphUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CCAB519247C0C4B00E89AE8 /* InstagraphUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagraphUITests.swift; sourceTree = "<group>"; };
-		3CCAB51B247C0C4B00E89AE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		3CCAB52F247C121900E89AE8 /* GetImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetImage.swift; sourceTree = "<group>"; };
+		3CCAB533247C198500E89AE8 /* DocumentFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentFinder.swift; sourceTree = "<group>"; };
+		6A5E2E99F66DE016905670AE /* Pods-Instagraph.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.debug.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.debug.xcconfig"; sourceTree = "<group>"; };
+		83BEDB1D5ABD5413B1C5F7E6 /* Pods-Instagraph.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.release.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19560E462476A5B6A1BB56A1 /* Pods_Instagraph.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,13 +83,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		18172B988EAD1572EBB6BA0F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6A5E2E99F66DE016905670AE /* Pods-Instagraph.debug.xcconfig */,
+				83BEDB1D5ABD5413B1C5F7E6 /* Pods-Instagraph.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		2CBFC2B57480244E8A998354 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				28C8CF2A7865A1A0703FFB82 /* Pods_Instagraph.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		3CCAB4EB247C0C4900E89AE8 = {
 			isa = PBXGroup;
 			children = (
 				3CCAB4F6247C0C4900E89AE8 /* Instagraph */,
-				3CCAB50D247C0C4B00E89AE8 /* InstagraphTests */,
-				3CCAB518247C0C4B00E89AE8 /* InstagraphUITests */,
 				3CCAB4F5247C0C4900E89AE8 /* Products */,
+				18172B988EAD1572EBB6BA0F /* Pods */,
+				2CBFC2B57480244E8A998354 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -102,6 +126,10 @@
 				3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */,
 				3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */,
 				3CCAB4FB247C0C4900E89AE8 /* ContentView.swift */,
+				3CCAB52F247C121900E89AE8 /* GetImage.swift */,
+				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
+				3CCAB533247C198500E89AE8 /* DocumentFinder.swift */,
+				3C711588247C62BA001CBF4E /* tessdata */,
 				3CCAB4FD247C0C4A00E89AE8 /* Assets.xcassets */,
 				3CCAB502247C0C4A00E89AE8 /* LaunchScreen.storyboard */,
 				3CCAB505247C0C4A00E89AE8 /* Info.plist */,
@@ -118,24 +146,6 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		3CCAB50D247C0C4B00E89AE8 /* InstagraphTests */ = {
-			isa = PBXGroup;
-			children = (
-				3CCAB50E247C0C4B00E89AE8 /* InstagraphTests.swift */,
-				3CCAB510247C0C4B00E89AE8 /* Info.plist */,
-			);
-			path = InstagraphTests;
-			sourceTree = "<group>";
-		};
-		3CCAB518247C0C4B00E89AE8 /* InstagraphUITests */ = {
-			isa = PBXGroup;
-			children = (
-				3CCAB519247C0C4B00E89AE8 /* InstagraphUITests.swift */,
-				3CCAB51B247C0C4B00E89AE8 /* Info.plist */,
-			);
-			path = InstagraphUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -143,9 +153,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CCAB51E247C0C4B00E89AE8 /* Build configuration list for PBXNativeTarget "Instagraph" */;
 			buildPhases = (
+				387A36490BA8BEFC77DB4565 /* [CP] Check Pods Manifest.lock */,
 				3CCAB4F0247C0C4900E89AE8 /* Sources */,
 				3CCAB4F1247C0C4900E89AE8 /* Frameworks */,
 				3CCAB4F2247C0C4900E89AE8 /* Resources */,
+				C34C2F10F35BC873BEA2505B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -241,6 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CCAB504247C0C4A00E89AE8 /* LaunchScreen.storyboard in Resources */,
+				3C711589247C62BA001CBF4E /* tessdata in Resources */,
 				3CCAB501247C0C4A00E89AE8 /* Preview Assets.xcassets in Resources */,
 				3CCAB4FE247C0C4A00E89AE8 /* Assets.xcassets in Resources */,
 			);
@@ -262,6 +275,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		387A36490BA8BEFC77DB4565 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Instagraph-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C34C2F10F35BC873BEA2505B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3CCAB4F0247C0C4900E89AE8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -269,6 +324,9 @@
 			files = (
 				3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */,
 				3CCAB4FA247C0C4900E89AE8 /* SceneDelegate.swift in Sources */,
+				3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */,
+				3CCAB530247C121900E89AE8 /* GetImage.swift in Sources */,
+				3CCAB534247C198500E89AE8 /* DocumentFinder.swift in Sources */,
 				3CCAB4FC247C0C4900E89AE8 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -277,7 +335,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CCAB50F247C0C4B00E89AE8 /* InstagraphTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +342,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CCAB51A247C0C4B00E89AE8 /* InstagraphUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,6 +488,7 @@
 		};
 		3CCAB51F247C0C4B00E89AE8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6A5E2E99F66DE016905670AE /* Pods-Instagraph.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -452,6 +509,7 @@
 		};
 		3CCAB520247C0C4B00E89AE8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83BEDB1D5ABD5413B1C5F7E6 /* Pods-Instagraph.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

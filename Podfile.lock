@@ -1,0 +1,20 @@
+PODS:
+  - GPUImage (0.1.7)
+  - TesseractOCRiOS (5.0.1)
+
+DEPENDENCIES:
+  - GPUImage
+  - TesseractOCRiOS
+
+SPEC REPOS:
+  trunk:
+    - GPUImage
+    - TesseractOCRiOS
+
+SPEC CHECKSUMS:
+  GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
+  TesseractOCRiOS: 2c189465f86abb030d0c5141c90da9705b647854
+
+PODFILE CHECKSUM: d9af462a24a094276bc69971e392f972f7196b2a
+
+COCOAPODS: 1.9.1
