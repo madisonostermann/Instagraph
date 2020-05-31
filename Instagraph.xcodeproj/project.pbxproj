@@ -21,6 +21,7 @@
 		48C4235E247F57A4004A322A /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C4235D247F57A4004A322A /* Cell.swift */; };
 		48C42360247F57CC004A322A /* GraphEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C4235F247F57CC004A322A /* GraphEngine.swift */; };
 		48C42362247F5802004A322A /* GraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C42361247F5802004A322A /* GraphModel.swift */; };
+		48EC28142481C9980008AACA /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EC28132481C9980008AACA /* GraphView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		48C4235D247F57A4004A322A /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		48C4235F247F57CC004A322A /* GraphEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphEngine.swift; sourceTree = "<group>"; };
 		48C42361247F5802004A322A /* GraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphModel.swift; sourceTree = "<group>"; };
+		48EC28132481C9980008AACA /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		6A5E2E99F66DE016905670AE /* Pods-Instagraph.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.debug.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.debug.xcconfig"; sourceTree = "<group>"; };
 		83BEDB1D5ABD5413B1C5F7E6 /* Pods-Instagraph.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.release.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -129,6 +131,7 @@
 		3CCAB4F6247C0C4900E89AE8 /* Instagraph */ = {
 			isa = PBXGroup;
 			children = (
+				48EC28122481C9800008AACA /* GraphViz */,
 				48C4235C247F5709004A322A /* GraphEngine */,
 				3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */,
 				3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */,
@@ -161,6 +164,15 @@
 				48C42361247F5802004A322A /* GraphModel.swift */,
 			);
 			path = GraphEngine;
+			sourceTree = "<group>";
+		};
+		48EC28122481C9800008AACA /* GraphViz */ = {
+			isa = PBXGroup;
+			children = (
+				48EC28132481C9980008AACA /* GraphView.swift */,
+			);
+			name = GraphViz;
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -344,6 +356,7 @@
 				48C4235E247F57A4004A322A /* Cell.swift in Sources */,
 				3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */,
 				48C42360247F57CC004A322A /* GraphEngine.swift in Sources */,
+				48EC28142481C9980008AACA /* GraphView.swift in Sources */,
 				3CCAB530247C121900E89AE8 /* GetImage.swift in Sources */,
 				3CCAB534247C198500E89AE8 /* DocumentFinder.swift in Sources */,
 				3CCAB4FC247C0C4900E89AE8 /* ContentView.swift in Sources */,
@@ -516,6 +529,7 @@
 				DEVELOPMENT_TEAM = UVSFW3HDBB;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Instagraph/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -537,6 +551,7 @@
 				DEVELOPMENT_TEAM = UVSFW3HDBB;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Instagraph/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

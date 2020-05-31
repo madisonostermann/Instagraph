@@ -36,14 +36,6 @@ func twoDIterator<T>(_ arr: inout [[T]], _ colOrRow: TablePart, _ pos: Int = 0, 
     }
 }
 
-///Detects a geometric sequence
-//func detectGeometricSequence<T: FloatingPoint>(a: T, b: T, c: T) -> Bool {
-//    if c / b == b / a {
-//        return true
-//    }
-//    return false
-//}
-
 ///Detects an arithmetic sequence
 func detectArithmeticSequence<T: Numeric>(numbers: [T]) -> Bool {
     for i in 1 ..< numbers.count-1 {
@@ -106,10 +98,10 @@ class GraphEngine {
         return .none
     }
     
-    func generateGraphs() -> [Graph] {
-        let graphs:[Graph] = []
-        return graphs
-    }
+//    func generateGraphs() -> [Graph] {
+//        let graphs:[Graph] = []
+//        return graphs
+//    }
 }
 
 /*

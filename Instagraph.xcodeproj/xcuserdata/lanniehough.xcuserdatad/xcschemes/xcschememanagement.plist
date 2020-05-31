@@ -6,8 +6,28 @@
 	<dict>
 		<key>Instagraph.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>isShown</key>
+			<true/>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>3CCAB4F3247C0C4900E89AE8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3CCAB509247C0C4A00E89AE8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3CCAB514247C0C4B00E89AE8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

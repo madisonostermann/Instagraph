@@ -8,26 +8,38 @@
 
 import Foundation
 
-class Graph {
-    
-}
-
-class BarGraph: Graph {
-    
-}
-
-class Histogram: Graph {
-    
-}
-
-class LineGraph: Graph {
-    
-}
-
-class ScatterPlot: Graph {
-    
-}
-
-class PieChart {
-    
-}
+//class Graph {
+//    let title:String
+//    let xLabel:String
+//    let yLabel:String
+//}
+//
+//class BarGraph: Graph {
+//    let barCount:Int
+//    var barValues:[Double]
+//}
+//
+//class Histogram: Graph {
+//    let barGroupCount:Int
+//    let categoryCount:Int
+//    var barValues:Dictionary<String, [Double]>
+//    var categoryKeys:[String]
+//}
+//
+//class LineGraph: Graph {
+//    let valueCount:Int //how many measurements
+//    let lineCount:Int
+//    var lineKeys:[String]
+//    var lineValues:Dictionary<String, [Double]>
+//}
+//
+//class ScatterPlot: Graph {
+//    var values:[Double]
+//}
+//
+//class PieChart {
+//    let title:String
+//    let categoryCount:Int
+//    var categoryKeys:[String]
+//    var categoryValues:[Dictionary<String, Double>]
+//}
