@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/lanniehough/Desktop/Instagraph_Project/Instagraph/Instagraph/GraphEngine/Constants.swift">
-   </FileRef>
-   <FileRef
       location = "group:Instagraph.xcodeproj">
    </FileRef>
    <FileRef

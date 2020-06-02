@@ -18,7 +18,7 @@
 		3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */; };
 		3CCAB530247C121900E89AE8 /* GetImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB52F247C121900E89AE8 /* GetImage.swift */; };
 		3CCAB534247C198500E89AE8 /* DocumentFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB533247C198500E89AE8 /* DocumentFinder.swift */; };
-		489F0A642485C1640081CA79 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489F0A632485C1640081CA79 /* Constants.swift */; };
+		48C2600F2485D61A0042C3ED /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C2600E2485D61A0042C3ED /* Constants.swift */; };
 		48C4235E247F57A4004A322A /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C4235D247F57A4004A322A /* Cell.swift */; };
 		48C42360247F57CC004A322A /* GraphEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C4235F247F57CC004A322A /* GraphEngine.swift */; };
 		48C42362247F5802004A322A /* GraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C42361247F5802004A322A /* GraphModel.swift */; };
@@ -44,7 +44,7 @@
 
 /* Begin PBXFileReference section */
 		28C8CF2A7865A1A0703FFB82 /* Pods_Instagraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Instagraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C711588247C62BA001CBF4E /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tessdata; path = TessDataResources/tessdata; sourceTree = SOURCE_ROOT; };
+		3C711588247C62BA001CBF4E /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tessdata; sourceTree = "<group>"; };
 		3CCAB4F4247C0C4900E89AE8 /* Instagraph.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instagraph.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -58,7 +58,7 @@
 		3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		3CCAB52F247C121900E89AE8 /* GetImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetImage.swift; sourceTree = "<group>"; };
 		3CCAB533247C198500E89AE8 /* DocumentFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentFinder.swift; sourceTree = "<group>"; };
-		489F0A632485C1640081CA79 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = /Users/lanniehough/Desktop/Instagraph_Project/Instagraph/Instagraph/GraphEngine/Constants.swift; sourceTree = "<absolute>"; };
+		48C2600E2485D61A0042C3ED /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		48C4235D247F57A4004A322A /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		48C4235F247F57CC004A322A /* GraphEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphEngine.swift; sourceTree = "<group>"; };
 		48C42361247F5802004A322A /* GraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphModel.swift; sourceTree = "<group>"; };
@@ -114,9 +114,9 @@
 			isa = PBXGroup;
 			children = (
 				3CCAB4F6247C0C4900E89AE8 /* Instagraph */,
-				3CCAB4F5247C0C4900E89AE8 /* Products */,
-				18172B988EAD1572EBB6BA0F /* Pods */,
 				2CBFC2B57480244E8A998354 /* Frameworks */,
+				18172B988EAD1572EBB6BA0F /* Pods */,
+				3CCAB4F5247C0C4900E89AE8 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -133,20 +133,20 @@
 		3CCAB4F6247C0C4900E89AE8 /* Instagraph */ = {
 			isa = PBXGroup;
 			children = (
-				489F0A632485C1640081CA79 /* Constants.swift */,
-				48EC28122481C9800008AACA /* GraphViz */,
-				48C4235C247F5709004A322A /* GraphEngine */,
+				3CCAB4FD247C0C4A00E89AE8 /* Assets.xcassets */,
+				3CCAB505247C0C4A00E89AE8 /* Info.plist */,
 				3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */,
 				3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */,
+				48C2600E2485D61A0042C3ED /* Constants.swift */,
 				3CCAB4FB247C0C4900E89AE8 /* ContentView.swift */,
+				3CCAB533247C198500E89AE8 /* DocumentFinder.swift */,
 				3CCAB52F247C121900E89AE8 /* GetImage.swift */,
 				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
-				3CCAB533247C198500E89AE8 /* DocumentFinder.swift */,
-				3C711588247C62BA001CBF4E /* tessdata */,
-				3CCAB4FD247C0C4A00E89AE8 /* Assets.xcassets */,
-				3CCAB502247C0C4A00E89AE8 /* LaunchScreen.storyboard */,
-				3CCAB505247C0C4A00E89AE8 /* Info.plist */,
+				48C4235C247F5709004A322A /* GraphEngine */,
+				48EC28122481C9800008AACA /* GraphViz */,
 				3CCAB4FF247C0C4A00E89AE8 /* Preview Content */,
+				3CCAB502247C0C4A00E89AE8 /* LaunchScreen.storyboard */,
+				3C711588247C62BA001CBF4E /* tessdata */,
 			);
 			path = Instagraph;
 			sourceTree = "<group>";
@@ -174,8 +174,7 @@
 			children = (
 				48EC28132481C9980008AACA /* GraphView.swift */,
 			);
-			name = GraphViz;
-			path = ..;
+			path = GraphViz;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -355,7 +354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */,
-				489F0A642485C1640081CA79 /* Constants.swift in Sources */,
+				48C2600F2485D61A0042C3ED /* Constants.swift in Sources */,
 				3CCAB4FA247C0C4900E89AE8 /* SceneDelegate.swift in Sources */,
 				48C4235E247F57A4004A322A /* Cell.swift in Sources */,
 				3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */,
@@ -404,6 +403,7 @@
 				3CCAB503247C0C4A00E89AE8 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
