@@ -29,12 +29,6 @@ enum NumberDataType {
     case NaN
 }
 
-struct Constants {
-    static let NON_NUMBER_INFORMATION:[Character] = ["$", "£", "€", "%", " "]
-    static let SCREEN_WIDTH = UIScreen.main.bounds.width
-    static let SCREEN_HEIGHT = UIScreen.main.bounds.height
-}
-
 ///Class represents and contains information about individual "cells" in a table, where a table is a 2d array
 class Cell {
     let row:Int

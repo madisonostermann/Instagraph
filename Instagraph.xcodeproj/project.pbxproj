@@ -18,6 +18,7 @@
 		3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */; };
 		3CCAB530247C121900E89AE8 /* GetImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB52F247C121900E89AE8 /* GetImage.swift */; };
 		3CCAB534247C198500E89AE8 /* DocumentFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB533247C198500E89AE8 /* DocumentFinder.swift */; };
+		489F0A642485C1640081CA79 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489F0A632485C1640081CA79 /* Constants.swift */; };
 		48C4235E247F57A4004A322A /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C4235D247F57A4004A322A /* Cell.swift */; };
 		48C42360247F57CC004A322A /* GraphEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C4235F247F57CC004A322A /* GraphEngine.swift */; };
 		48C42362247F5802004A322A /* GraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C42361247F5802004A322A /* GraphModel.swift */; };
@@ -57,6 +58,7 @@
 		3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		3CCAB52F247C121900E89AE8 /* GetImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetImage.swift; sourceTree = "<group>"; };
 		3CCAB533247C198500E89AE8 /* DocumentFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentFinder.swift; sourceTree = "<group>"; };
+		489F0A632485C1640081CA79 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = /Users/lanniehough/Desktop/Instagraph_Project/Instagraph/Instagraph/GraphEngine/Constants.swift; sourceTree = "<absolute>"; };
 		48C4235D247F57A4004A322A /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		48C4235F247F57CC004A322A /* GraphEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphEngine.swift; sourceTree = "<group>"; };
 		48C42361247F5802004A322A /* GraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphModel.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 		3CCAB4F6247C0C4900E89AE8 /* Instagraph */ = {
 			isa = PBXGroup;
 			children = (
+				489F0A632485C1640081CA79 /* Constants.swift */,
 				48EC28122481C9800008AACA /* GraphViz */,
 				48C4235C247F5709004A322A /* GraphEngine */,
 				3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */,
@@ -352,6 +355,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */,
+				489F0A642485C1640081CA79 /* Constants.swift in Sources */,
 				3CCAB4FA247C0C4900E89AE8 /* SceneDelegate.swift in Sources */,
 				48C4235E247F57A4004A322A /* Cell.swift in Sources */,
 				3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */,
