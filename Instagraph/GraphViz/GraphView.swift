@@ -17,7 +17,6 @@ struct GraphView: View {
     //let frameWidth:CGFloat
     
     init() { //Adjust for variable input later - REVIEW
-        print("presenting graph")
         self.frameHeight = Constants.SCREEN_WIDTH*0.75
         self.start = (Constants.SCREEN_WIDTH-self.frameHeight)/2
     }
@@ -30,11 +29,6 @@ struct GraphView: View {
     func scale() -> CGFloat {
         let scaleFactor:CGFloat = self.frameHeight/CGFloat(self.bars.max()!)
         return scaleFactor
-    }
-    
-    func makeValueLabels() -> Double {
-        
-        return 0
     }
     
     func width() -> CGFloat { // Determines width of bars
@@ -73,6 +67,50 @@ struct GraphView: View {
         }
     }
     
+    func makeValueLabels() -> some View {
+        Text("hi")
+    }
+    
+    func makeValueLabelValues(largest: Double, smallest: Double) -> [Double] { // Give numbers that represent labels on the y-axis
+        let range = largest - smallest
+        var labels:[Double] = []
+        let magnitude:Int = Int(log10(range).rounded(.down))
+        let originalIncrement:Double = pow(10, Double(magnitude-1)) // For magnitude 0, increment is 1 - for magnitude 1, increment is 10
+        var actualIncrement:Double = 0
+        checkLoop: for i in 1 ... 10 {
+            let testIncrement = originalIncrement*Double(i)
+            if 10*testIncrement >= range { // Changed largest to range
+                actualIncrement = testIncrement
+                break checkLoop
+            }
+        }
+        buildLabels: for i in 0 ... 10 {
+            if smallest >= 0 { // Start at 0
+                labels.append(Double(i)*actualIncrement)
+            } else { // Find where to start - negative number < smallest that falls on an increment
+                var lastInc:Double = 0
+                while lastInc > smallest {
+                    lastInc -= actualIncrement
+                }
+                for _ in 0 ... 10 {
+                    labels.append(lastInc)
+                    lastInc += actualIncrement
+                }
+                break buildLabels
+            }
+        }
+        var i = labels.count-1
+        while i >= 0 {
+            if labels[i] > largest+actualIncrement {
+                labels.remove(at: i)
+            } else {
+                break
+            }
+            i -= 1
+        }
+        return labels
+    }
+    
     var body: some View {
         ZStack {
             self.makeEnclosure()
@@ -81,3 +119,4 @@ struct GraphView: View {
         }
     }
 }
+
