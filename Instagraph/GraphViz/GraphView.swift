@@ -17,6 +17,7 @@ struct GraphView: View {
     //let frameWidth:CGFloat
     
     init() { //Adjust for variable input later - REVIEW
+        print("presenting graph")
         self.frameHeight = Constants.SCREEN_WIDTH*0.75
         self.start = (Constants.SCREEN_WIDTH-self.frameHeight)/2
     }

@@ -15,32 +15,37 @@ import MobileCoreServices
 
 class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
-    @Binding var isShown: Bool
+    /*@Binding var isShown: Bool
     @Binding var image: Image?
     @Binding var finalImage: Image?
-    @Binding var text: String
+    @Binding var text: String*/
+    @ObservedObject var ocrProperties: OCRProperties
     
     let activityIndictor: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
     
-    init(isShown: Binding<Bool>, image: Binding<Image?>, finalImage: Binding<Image?>, text: Binding<String>) {
+    /*init(isShown: Binding<Bool>, image: Binding<Image?>, finalImage: Binding<Image?>, text: Binding<String>) {
         _isShown = isShown
         _image = image
         _finalImage = finalImage
         _text = text
+    }*/
+    init(ocrProperties: OCRProperties) {
+        self.ocrProperties = ocrProperties
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         self.activityIndictor.startAnimating()
         let uiImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
-        image = Image(uiImage: uiImage)
-        isShown = false
+        ocrProperties.image = Image(uiImage: uiImage)
+        //image = Image(uiImage: uiImage)
+        //isShown = false
         picker.dismiss(animated: true, completion: nil)
         self.activityIndictor.stopAnimating()
         self.performImageRecognition(image: uiImage)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        isShown = false
+        //isShown = false
         self.activityIndictor.stopAnimating()
         picker.dismiss(animated: true, completion: nil)
     }
@@ -49,7 +54,8 @@ class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UIImageP
         self.activityIndictor.startAnimating()
         let scaledImage = image.scaledImage(1000) ?? image
         let preprocessedImage = scaledImage.preprocessedImage() ?? scaledImage
-        finalImage = Image(uiImage: preprocessedImage)
+        ocrProperties.finalImage = Image(uiImage: preprocessedImage)
+        //finalImage = Image(uiImage: preprocessedImage)
         if let tesseract = G8Tesseract(language: "eng") {
           tesseract.engineMode = .tesseractCubeCombined
             //.tesseractOnly = fastest but least accurate method
@@ -58,8 +64,10 @@ class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UIImageP
           tesseract.pageSegmentationMode = .auto //lets it know how the text is divided- paragraph breaks
           tesseract.image = preprocessedImage
           tesseract.recognize()
-            text = (tesseract.recognizedText != nil ? tesseract.recognizedText : "No text recognized.")!
-            print("Recognized text: ", text)
+            //text = (tesseract.recognizedText != nil ? tesseract.recognizedText : "No text recognized.")!
+            ocrProperties.text = (tesseract.recognizedText != nil ? tesseract.recognizedText : "No text recognized.")!
+            //print("Recognized text: ", text)
+            print("Recognized text: ", ocrProperties.text)
           //textView.text = tesseract.recognizedText
         }
         self.activityIndictor.stopAnimating()
@@ -69,11 +77,12 @@ class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UIImageP
 
 struct ImagePicker: UIViewControllerRepresentable {
     
-    @Binding var isShown: Bool
-    var source: String
+    /*@Binding var isShown: Bool?
+    var source: String?
     @Binding var image: Image?
     @Binding var finalImage: Image?
-    @Binding var text: String
+    @Binding var text: String?*/
+    @ObservedObject var ocrProperties: OCRProperties
     
     let activityIndictor: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
     
@@ -82,7 +91,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     }
     
     func makeCoordinator() -> ImagePickerCoordinator {
-        return ImagePickerCoordinator(isShown: $isShown, image: $image, finalImage: $finalImage, text: $text)
+        return ImagePickerCoordinator(ocrProperties: self.ocrProperties/*isShown: $isShown, image: $image, finalImage: $finalImage, text: $text*/)
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
@@ -91,10 +100,10 @@ struct ImagePicker: UIViewControllerRepresentable {
         picker.delegate = context.coordinator
         //picker.allowsEditing = true
         picker.mediaTypes = [kUTTypeImage as String] //only still images
-        if source == "Photo" {
+        if ocrProperties.source == "Photo" {
             picker.sourceType = .photoLibrary
-        } else if source == "Camera" {
-            picker.sourceType = .camera
+       // } else if source == "Camera" {
+            //picker.sourceType = .camera
         //} else if source == "Document" {
             //picker.sourceType = //document finder
         }

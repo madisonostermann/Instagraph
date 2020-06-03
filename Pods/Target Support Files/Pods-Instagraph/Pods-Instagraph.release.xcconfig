@@ -1,11 +1,13 @@
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 CLANG_CXX_LIBRARY = compiler-default
 CLANG_MODULES_AUTOLINK = YES
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/GPUImage" "${PODS_CONFIGURATION_BUILD_DIR}/TesseractOCRiOS"
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/ARCL" "${PODS_CONFIGURATION_BUILD_DIR}/GPUImage" "${PODS_CONFIGURATION_BUILD_DIR}/TesseractOCRiOS"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/GPUImage/GPUImage.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/TesseractOCRiOS/TesseractOCR.framework/Headers"
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/ARCL/ARCL.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/GPUImage/GPUImage.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/TesseractOCRiOS/TesseractOCR.framework/Headers"
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
 LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/TesseractOCRiOS/TesseractOCR/lib"
-OTHER_LDFLAGS = $(inherited) -ObjC -l"z" -framework "AVFoundation" -framework "CoreMedia" -framework "Foundation" -framework "GPUImage" -framework "OpenGLES" -framework "QuartzCore" -framework "TesseractOCR" -framework "UIKit"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"z" -framework "ARCL" -framework "AVFoundation" -framework "CoreLocation" -framework "CoreMedia" -framework "Foundation" -framework "GPUImage" -framework "MapKit" -framework "OpenGLES" -framework "QuartzCore" -framework "SceneKit" -framework "TesseractOCR" -framework "UIKit" -weak_framework "ARKit"
+OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 PODS_PODFILE_DIR_PATH = ${SRCROOT}/.

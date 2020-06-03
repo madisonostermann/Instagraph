@@ -10,9 +10,7 @@ import Foundation
 import SwiftUI
 
 struct DocumentFinder: View {
-    
-    @Binding var isShown: Bool
-    @Binding var image: Image?
+    @ObservedObject var ocrProperties: OCRProperties
     
     var body: some View {
         Text("Document Finder not built yet")

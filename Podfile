@@ -7,5 +7,5 @@ target 'Instagraph' do
 
   pod 'TesseractOCRiOS'
   pod 'GPUImage'
-
+  pod 'ARCL'
 end
