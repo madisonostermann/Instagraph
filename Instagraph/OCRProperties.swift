@@ -11,8 +11,9 @@ import SwiftUI
 import UIKit
 
 class OCRProperties: ObservableObject {
+    @Published var page: String = "Home"
     @Published var source = ""
-    @Published var image: Image? = nil
+    @Published var image: UIImage? = nil
     @Published var finalImage: Image? = nil
     @Published var text: String = ""
 }

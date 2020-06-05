@@ -12,6 +12,8 @@ import SwiftUI
 struct DocumentFinder: View {
     @ObservedObject var ocrProperties: OCRProperties
     
+    //ImageProcessingEngine(ocrProperties: ocrProperties).performImageRecognition()
+    
     var body: some View {
         Text("Document Finder not built yet")
     }

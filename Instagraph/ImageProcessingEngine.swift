@@ -22,11 +22,10 @@ class ImageProcessingEngine: NSObject {
         fatalError("init(coder:) has not been implemented")
     }
     
-    /*func performImageRecognition(image: UIImage) {
-        let scaledImage = image.scaledImage(1000) ?? image
+    func performImageRecognition() {
+        let scaledImage = ocrProperties.image!.scaledImage(1000) ?? ocrProperties.image!
         let preprocessedImage = scaledImage.preprocessedImage() ?? scaledImage
         ocrProperties.finalImage = Image(uiImage: preprocessedImage)
-        //finalImage = Image(uiImage: preprocessedImage)
         if let tesseract = G8Tesseract(language: "eng") {
           tesseract.engineMode = .tesseractCubeCombined
             //.tesseractOnly = fastest but least accurate method
@@ -35,18 +34,15 @@ class ImageProcessingEngine: NSObject {
           tesseract.pageSegmentationMode = .auto //lets it know how the text is divided- paragraph breaks
           tesseract.image = preprocessedImage
           tesseract.recognize()
-            //text = (tesseract.recognizedText != nil ? tesseract.recognizedText : "No text recognized.")!
             ocrProperties.text = (tesseract.recognizedText != nil ? tesseract.recognizedText : "No text recognized.")!
-            //print("Recognized text: ", text)
-            print("Recognized text: ", ocrProperties.text)
-          //textView.text = tesseract.recognizedText
         }
-    }*/
+        self.ocrProperties.page = "Results"
+    }
 }
 
 //To scale image for Tesseract
 //UIImage Extension allows access to any of its methods directly through a UIImage object
-/*extension UIImage {
+extension UIImage {
   func scaledImage(_ maxDimension: CGFloat) -> UIImage? {
     var scaledSize = CGSize(width: maxDimension, height: maxDimension)
     //Calculate the smaller dimension of the image such that scaledSize retains the image's aspect ratio
@@ -62,7 +58,6 @@ class ImageProcessingEngine: NSObject {
     return scaledImage
   }
 
-    //TODO: really messed up a screenshot in dark mode
   func preprocessedImage() -> UIImage? {
     let stillImageFilter = GPUImageAdaptiveThresholdFilter()
     // GPU Threshold Filter “determines the local luminance around a pixel, then turns the pixel black if it is below that local luminance, and white if above. This can be useful for picking out text under varying lighting conditions.”
@@ -71,4 +66,4 @@ class ImageProcessingEngine: NSObject {
     return filteredImage
   }
     
-}*/
+}

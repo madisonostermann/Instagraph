@@ -59,9 +59,10 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
             //let location: CGPoint = rec.location(in: sceneView)
             //guard let hits = self.sceneView.hitTest(location, options: nil).first?.node else { return }
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            ocrProperties.image = Image(uiImage: self.arView.snapshot())
-            print(ocrProperties.image!)
-            present(UIHostingController(rootView: ContentView(ocrProperties: ocrProperties)), animated: true)
+            ocrProperties.image = self.arView.snapshot()
+            ImageProcessingEngine(ocrProperties: ocrProperties).performImageRecognition()
+            
+            //present(UIHostingController(rootView: ContentView(ocrProperties: ocrProperties)), animated: true)
         }
     }
     
