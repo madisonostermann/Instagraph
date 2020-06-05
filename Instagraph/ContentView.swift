@@ -28,12 +28,13 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            if ocrProperties.image != nil && ocrProperties.text != "" {
+            if ocrProperties.image != nil || ocrProperties.text != "" { //this logic might need to be fixed (ocrProperties.finalImage != nil)
                 VStack {
                     if showText {
                         ScrollView {Text(ocrProperties.text)}
                     } else {
-                        ocrProperties.finalImage?.resizable().padding([.vertical, .horizontal])
+                        //ocrProperties.finalImage?.resizable().padding([.vertical, .horizontal])
+                        ocrProperties.image?.resizable().padding([.vertical, .horizontal])
                     }
                     Spacer()
                     HStack {
@@ -44,6 +45,7 @@ struct ContentView: View {
                             self.present = false
                             self.ocrProperties.source = ""
                             self.ocrProperties.image = nil
+                            self.ocrProperties.finalImage = nil
                         }.padding().background(Color.gray).foregroundColor(Color.white).cornerRadius(10)
                     }
                 }.padding([.vertical, .horizontal])

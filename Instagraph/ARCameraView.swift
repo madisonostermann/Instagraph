@@ -10,7 +10,7 @@ import UIKit
 import SwiftUI
 import ARKit
 import SceneKit
-import ARCL
+//import ARCL
 
 struct ARViewIndicator: UIViewControllerRepresentable {
     @ObservedObject var ocrProperties: OCRProperties
@@ -23,7 +23,7 @@ struct ARViewIndicator: UIViewControllerRepresentable {
 }
 
 class ARCameraView: UIViewController, ARSCNViewDelegate {
-    var sceneView = SceneLocationView()
+    var sceneView = ARView()
     @ObservedObject var ocrProperties: OCRProperties
     init(ocrProperties: OCRProperties) {
         self.ocrProperties = ocrProperties
@@ -77,7 +77,11 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             //let image = self.sceneView.snapshot()
             //present(UIHostingController(rootView: ContentView()), animated: true)
-            ImageProcessingEngine(ocrProperties: ocrProperties)
+            //UIImageWriteToSavedPhotosAlbum(self.sceneView.snapshot(), nil, nil, nil)
+            ocrProperties.image = Image(uiImage: self.sceneView.snapshot())
+            //ImageProcessingEngine(ocrProperties: ocrProperties)
+            print(ocrProperties.image!)
+            present(UIHostingController(rootView: ContentView(ocrProperties: ocrProperties)), animated: true)
         }
     }
     

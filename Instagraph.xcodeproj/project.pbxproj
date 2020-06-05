@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2373307845531C929EB599F2 /* Pods_Instagraph.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABE7C931C452CE80A93D47FB /* Pods_Instagraph.framework */; };
 		3C25A3ED24870E5100100ABA /* ARCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C25A3EC24870E5100100ABA /* ARCameraView.swift */; };
 		3C711589247C62BA001CBF4E /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 3C711588247C62BA001CBF4E /* tessdata */; };
+		3CC4B6AF248A908E009F7E6F /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC4B6AE248A908E009F7E6F /* ARView.swift */; };
+		3CC4B6D1248A951D009F7E6F /* ARDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC4B6D0248A951D009F7E6F /* ARDelegate.swift */; };
 		3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */; };
 		3CCAB4FA247C0C4900E89AE8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */; };
 		3CCAB4FC247C0C4900E89AE8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4FB247C0C4900E89AE8 /* ContentView.swift */; };
@@ -25,6 +26,7 @@
 		48C42360247F57CC004A322A /* GraphEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C4235F247F57CC004A322A /* GraphEngine.swift */; };
 		48C42362247F5802004A322A /* GraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C42361247F5802004A322A /* GraphModel.swift */; };
 		48EC28142481C9980008AACA /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EC28132481C9980008AACA /* GraphView.swift */; };
+		D64B1490AFCB8DB10C926998 /* Pods_Instagraph.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9244DB133CD09D2C4F943909 /* Pods_Instagraph.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,8 +47,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2924B7127169B699A0ADD38C /* Pods-Instagraph.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.release.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.release.xcconfig"; sourceTree = "<group>"; };
 		3C25A3EC24870E5100100ABA /* ARCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraView.swift; sourceTree = "<group>"; };
 		3C711588247C62BA001CBF4E /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tessdata; sourceTree = "<group>"; };
+		3CC4B6AE248A908E009F7E6F /* ARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
+		3CC4B6D0248A951D009F7E6F /* ARDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARDelegate.swift; sourceTree = "<group>"; };
 		3CCAB4F4247C0C4900E89AE8 /* Instagraph.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instagraph.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,14 +66,13 @@
 		3CCAB533247C198500E89AE8 /* DocumentFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentFinder.swift; sourceTree = "<group>"; };
 		3CD479102487410A008E67CD /* ImageProcessingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessingEngine.swift; sourceTree = "<group>"; };
 		3CD4791224874330008E67CD /* OCRProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRProperties.swift; sourceTree = "<group>"; };
+		46736D02CC050263F2EB6BD6 /* Pods-Instagraph.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.debug.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.debug.xcconfig"; sourceTree = "<group>"; };
 		48C2600E2485D61A0042C3ED /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		48C4235D247F57A4004A322A /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		48C4235F247F57CC004A322A /* GraphEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphEngine.swift; sourceTree = "<group>"; };
 		48C42361247F5802004A322A /* GraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphModel.swift; sourceTree = "<group>"; };
 		48EC28132481C9980008AACA /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
-		8738969D22294C25E62F2F9D /* Pods-Instagraph.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.debug.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.debug.xcconfig"; sourceTree = "<group>"; };
-		ABE7C931C452CE80A93D47FB /* Pods_Instagraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Instagraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD838A489EDC48B745C51DD3 /* Pods-Instagraph.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.release.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.release.xcconfig"; sourceTree = "<group>"; };
+		9244DB133CD09D2C4F943909 /* Pods_Instagraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Instagraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,7 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2373307845531C929EB599F2 /* Pods_Instagraph.framework in Frameworks */,
+				D64B1490AFCB8DB10C926998 /* Pods_Instagraph.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,21 +101,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0BB174F818AA826CD2D92066 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				ABE7C931C452CE80A93D47FB /* Pods_Instagraph.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		18172B988EAD1572EBB6BA0F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8738969D22294C25E62F2F9D /* Pods-Instagraph.debug.xcconfig */,
-				BD838A489EDC48B745C51DD3 /* Pods-Instagraph.release.xcconfig */,
+				46736D02CC050263F2EB6BD6 /* Pods-Instagraph.debug.xcconfig */,
+				2924B7127169B699A0ADD38C /* Pods-Instagraph.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		3CC4B6A9248A8FD7009F7E6F /* ARCamera */ = {
+			isa = PBXGroup;
+			children = (
+				3CC4B6AE248A908E009F7E6F /* ARView.swift */,
+				3CC4B6D0248A951D009F7E6F /* ARDelegate.swift */,
+			);
+			path = ARCamera;
 			sourceTree = "<group>";
 		};
 		3CCAB4EB247C0C4900E89AE8 = {
@@ -120,7 +125,7 @@
 				3CCAB4F6247C0C4900E89AE8 /* Instagraph */,
 				18172B988EAD1572EBB6BA0F /* Pods */,
 				3CCAB4F5247C0C4900E89AE8 /* Products */,
-				0BB174F818AA826CD2D92066 /* Frameworks */,
+				4358D73A7B6F8A8F3570A05D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -148,6 +153,7 @@
 				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
 				3CD4791224874330008E67CD /* OCRProperties.swift */,
 				3CD479102487410A008E67CD /* ImageProcessingEngine.swift */,
+				3CC4B6A9248A8FD7009F7E6F /* ARCamera */,
 				48C4235C247F5709004A322A /* GraphEngine */,
 				48EC28122481C9800008AACA /* GraphViz */,
 				3CCAB4FF247C0C4A00E89AE8 /* Preview Content */,
@@ -163,6 +169,14 @@
 				3CCAB500247C0C4A00E89AE8 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4358D73A7B6F8A8F3570A05D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9244DB133CD09D2C4F943909 /* Pods_Instagraph.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		48C4235C247F5709004A322A /* GraphEngine */ = {
@@ -190,11 +204,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CCAB51E247C0C4B00E89AE8 /* Build configuration list for PBXNativeTarget "Instagraph" */;
 			buildPhases = (
-				DC3BD5BE5129B7D804A35C19 /* [CP] Check Pods Manifest.lock */,
+				155DF70C5AAAD95A7848BF5C /* [CP] Check Pods Manifest.lock */,
 				3CCAB4F0247C0C4900E89AE8 /* Sources */,
 				3CCAB4F1247C0C4900E89AE8 /* Frameworks */,
 				3CCAB4F2247C0C4900E89AE8 /* Resources */,
-				85C5BF0B7DF272F848C5214A /* [CP] Embed Pods Frameworks */,
+				77BDC204C4FD1115E2971537 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -313,24 +327,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		85C5BF0B7DF272F848C5214A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DC3BD5BE5129B7D804A35C19 /* [CP] Check Pods Manifest.lock */ = {
+		155DF70C5AAAD95A7848BF5C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -352,6 +349,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		77BDC204C4FD1115E2971537 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -361,6 +375,7 @@
 			files = (
 				3CD4791324874330008E67CD /* OCRProperties.swift in Sources */,
 				3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */,
+				3CC4B6AF248A908E009F7E6F /* ARView.swift in Sources */,
 				48C2600F2485D61A0042C3ED /* Constants.swift in Sources */,
 				3CCAB4FA247C0C4900E89AE8 /* SceneDelegate.swift in Sources */,
 				48C4235E247F57A4004A322A /* Cell.swift in Sources */,
@@ -372,6 +387,7 @@
 				3CCAB534247C198500E89AE8 /* DocumentFinder.swift in Sources */,
 				3CCAB4FC247C0C4900E89AE8 /* ContentView.swift in Sources */,
 				48C42362247F5802004A322A /* GraphModel.swift in Sources */,
+				3CC4B6D1248A951D009F7E6F /* ARDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,7 +549,7 @@
 		};
 		3CCAB51F247C0C4B00E89AE8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8738969D22294C25E62F2F9D /* Pods-Instagraph.debug.xcconfig */;
+			baseConfigurationReference = 46736D02CC050263F2EB6BD6 /* Pods-Instagraph.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -555,7 +571,7 @@
 		};
 		3CCAB520247C0C4B00E89AE8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BD838A489EDC48B745C51DD3 /* Pods-Instagraph.release.xcconfig */;
+			baseConfigurationReference = 2924B7127169B699A0ADD38C /* Pods-Instagraph.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
