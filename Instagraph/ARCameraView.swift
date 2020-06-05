@@ -10,7 +10,6 @@ import UIKit
 import SwiftUI
 import ARKit
 import SceneKit
-//import ARCL
 
 struct ARViewIndicator: UIViewControllerRepresentable {
     @ObservedObject var ocrProperties: OCRProperties
@@ -23,8 +22,10 @@ struct ARViewIndicator: UIViewControllerRepresentable {
 }
 
 class ARCameraView: UIViewController, ARSCNViewDelegate {
-    var sceneView = ARView()
+    
     @ObservedObject var ocrProperties: OCRProperties
+    
+    //Initialization
     init(ocrProperties: OCRProperties) {
         self.ocrProperties = ocrProperties
         super.init(nibName: nil, bundle: nil)
@@ -32,59 +33,39 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    /*@Binding var isShown: Bool?
-    var source: String?
-    @Binding var image: Image?
-    @Binding var finalImage: Image?
-    @Binding var text: String?
-    init(isShown: Bool?, source: String?, image: Image?, finalImage: Image?, text: String?) {
-        self.isShown = isShown
-        self.source = source
-        self.image = image
-        self.finalImage = finalImage
-        self.text = text
-        super.init(nibName: nil, bundle: nil)
-    }
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }*/
     
-    /*@IBAction func tookSnapshot(_ sender: UIButton) {
-        //shutterView.alpha = 1.0
-        //shutterView.isHidden = false
-        
-        UIView.animate(withDuration: 1.0, animations: {
-            //self.shutterView.alpha = 0.0
-        }) { (finished) in
-            //self.shutterView.isHidden = true
-            UIImageWriteToSavedPhotosAlbum(self.sceneView.snapshot(), nil, nil, nil)
-        }
-    }*/
+    //create ARSCNView & load it, set up some config variables
+    var arView: ARSCNView {
+        return self.view as! ARSCNView
+    }
+    
+    override func loadView() {
+        self.view = ARSCNView(frame: .zero)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.isUserInteractionEnabled = true
-        let tap = UITapGestureRecognizer(target: self, action: /*mode == "navigation" ? nil : */#selector(handleTap(rec:)))
-        sceneView.addGestureRecognizer(tap)
-        sceneView.run()
-        view.addSubview(sceneView)
+        arView.isUserInteractionEnabled = true
+        arView.delegate = self
+        arView.scene = SCNScene()
+        arView.showsStatistics = false
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(rec:)))
+        arView.addGestureRecognizer(tap)
     }
     
+    //gesture recognizer that takes snapshot of arview when you tap anywhere
     @objc func handleTap(rec: UITapGestureRecognizer){
         if rec.state == .ended {
             //let location: CGPoint = rec.location(in: sceneView)
             //guard let hits = self.sceneView.hitTest(location, options: nil).first?.node else { return }
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            //let image = self.sceneView.snapshot()
-            //present(UIHostingController(rootView: ContentView()), animated: true)
-            //UIImageWriteToSavedPhotosAlbum(self.sceneView.snapshot(), nil, nil, nil)
-            ocrProperties.image = Image(uiImage: self.sceneView.snapshot())
-            //ImageProcessingEngine(ocrProperties: ocrProperties)
+            ocrProperties.image = Image(uiImage: self.arView.snapshot())
             print(ocrProperties.image!)
             present(UIHostingController(rootView: ContentView(ocrProperties: ocrProperties)), animated: true)
         }
     }
     
+    //functions for standard ar handling
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         UIApplication.shared.isIdleTimerDisabled = true
@@ -92,33 +73,30 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
     
     override func viewDidLayoutSubviews() {
       super.viewDidLayoutSubviews()
-      sceneView.frame = view.bounds
+      arView.frame = view.bounds
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // Run the view's session
-        sceneView.run()
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = .horizontal
+        configuration.worldAlignment = .gravityAndHeading
+        arView.session.run(configuration)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        // Pause the view's session
-        sceneView.pause()
+        arView.session.pause()
     }
-
+    
     // MARK: - ARSCNViewDelegate
     
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-    }
-    
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-    }
+    func sessionWasInterrupted(_ session: ARSession) {} // Inform the user that the session has been interrupted, for example, by presenting an overlay
+
+    func sessionInterruptionEnded(_ session: ARSession) {} // Reset tracking and/or remove existing anchors if consistent tracking is required
+
+    func session(_ session: ARSession, didFailWithError error: Error) {} // Present an error message to the user
+
+    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {}
 }
 

@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		3C25A3ED24870E5100100ABA /* ARCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C25A3EC24870E5100100ABA /* ARCameraView.swift */; };
 		3C711589247C62BA001CBF4E /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 3C711588247C62BA001CBF4E /* tessdata */; };
-		3CC4B6AF248A908E009F7E6F /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC4B6AE248A908E009F7E6F /* ARView.swift */; };
-		3CC4B6D1248A951D009F7E6F /* ARDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC4B6D0248A951D009F7E6F /* ARDelegate.swift */; };
 		3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */; };
 		3CCAB4FA247C0C4900E89AE8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */; };
 		3CCAB4FC247C0C4900E89AE8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4FB247C0C4900E89AE8 /* ContentView.swift */; };
@@ -50,8 +48,6 @@
 		2924B7127169B699A0ADD38C /* Pods-Instagraph.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.release.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.release.xcconfig"; sourceTree = "<group>"; };
 		3C25A3EC24870E5100100ABA /* ARCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraView.swift; sourceTree = "<group>"; };
 		3C711588247C62BA001CBF4E /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tessdata; sourceTree = "<group>"; };
-		3CC4B6AE248A908E009F7E6F /* ARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
-		3CC4B6D0248A951D009F7E6F /* ARDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARDelegate.swift; sourceTree = "<group>"; };
 		3CCAB4F4247C0C4900E89AE8 /* Instagraph.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instagraph.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -110,15 +106,6 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		3CC4B6A9248A8FD7009F7E6F /* ARCamera */ = {
-			isa = PBXGroup;
-			children = (
-				3CC4B6AE248A908E009F7E6F /* ARView.swift */,
-				3CC4B6D0248A951D009F7E6F /* ARDelegate.swift */,
-			);
-			path = ARCamera;
-			sourceTree = "<group>";
-		};
 		3CCAB4EB247C0C4900E89AE8 = {
 			isa = PBXGroup;
 			children = (
@@ -153,7 +140,6 @@
 				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
 				3CD4791224874330008E67CD /* OCRProperties.swift */,
 				3CD479102487410A008E67CD /* ImageProcessingEngine.swift */,
-				3CC4B6A9248A8FD7009F7E6F /* ARCamera */,
 				48C4235C247F5709004A322A /* GraphEngine */,
 				48EC28122481C9800008AACA /* GraphViz */,
 				3CCAB4FF247C0C4A00E89AE8 /* Preview Content */,
@@ -375,7 +361,6 @@
 			files = (
 				3CD4791324874330008E67CD /* OCRProperties.swift in Sources */,
 				3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */,
-				3CC4B6AF248A908E009F7E6F /* ARView.swift in Sources */,
 				48C2600F2485D61A0042C3ED /* Constants.swift in Sources */,
 				3CCAB4FA247C0C4900E89AE8 /* SceneDelegate.swift in Sources */,
 				48C4235E247F57A4004A322A /* Cell.swift in Sources */,
@@ -387,7 +372,6 @@
 				3CCAB534247C198500E89AE8 /* DocumentFinder.swift in Sources */,
 				3CCAB4FC247C0C4900E89AE8 /* ContentView.swift in Sources */,
 				48C42362247F5802004A322A /* GraphModel.swift in Sources */,
-				3CC4B6D1248A951D009F7E6F /* ARDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
