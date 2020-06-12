@@ -108,6 +108,18 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		3C18F8B9249401B400ADB315 /* OCR */ = {
+			isa = PBXGroup;
+			children = (
+				3C25A3EC24870E5100100ABA /* ARCameraView.swift */,
+				3CCAB533247C198500E89AE8 /* DocumentPicker.swift */,
+				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
+				3C18F8B52493C90A00ADB315 /* Crop.swift */,
+				3CD479102487410A008E67CD /* ImageProcessingEngine.swift */,
+			);
+			path = OCR;
+			sourceTree = "<group>";
+		};
 		3CCAB4EB247C0C4900E89AE8 = {
 			isa = PBXGroup;
 			children = (
@@ -138,11 +150,7 @@
 				3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */,
 				3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */,
 				3CCAB4FB247C0C4900E89AE8 /* ContentView.swift */,
-				3C25A3EC24870E5100100ABA /* ARCameraView.swift */,
-				3CCAB533247C198500E89AE8 /* DocumentPicker.swift */,
-				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
-				3C18F8B52493C90A00ADB315 /* Crop.swift */,
-				3CD479102487410A008E67CD /* ImageProcessingEngine.swift */,
+				3C18F8B9249401B400ADB315 /* OCR */,
 				48C4235C247F5709004A322A /* GraphEngine */,
 				48EC28122481C9800008AACA /* GraphViz */,
 				3CCAB4FF247C0C4A00E89AE8 /* Preview Content */,
