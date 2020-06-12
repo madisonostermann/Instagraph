@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3C0672912493056200F9E495 /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0672902493056200F9E495 /* Point.swift */; };
-		3C06729524931CE100F9E495 /* CustomPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C06729424931CE100F9E495 /* CustomPoint.swift */; };
+		3C18F8B62493C90A00ADB315 /* Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C18F8B52493C90A00ADB315 /* Crop.swift */; };
 		3C25A3ED24870E5100100ABA /* ARCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C25A3EC24870E5100100ABA /* ARCameraView.swift */; };
 		3C711589247C62BA001CBF4E /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 3C711588247C62BA001CBF4E /* tessdata */; };
 		3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */; };
@@ -48,8 +47,7 @@
 
 /* Begin PBXFileReference section */
 		2924B7127169B699A0ADD38C /* Pods-Instagraph.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagraph.release.xcconfig"; path = "Target Support Files/Pods-Instagraph/Pods-Instagraph.release.xcconfig"; sourceTree = "<group>"; };
-		3C0672902493056200F9E495 /* Point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
-		3C06729424931CE100F9E495 /* CustomPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPoint.swift; sourceTree = "<group>"; };
+		3C18F8B52493C90A00ADB315 /* Crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crop.swift; sourceTree = "<group>"; };
 		3C25A3EC24870E5100100ABA /* ARCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraView.swift; sourceTree = "<group>"; };
 		3C711588247C62BA001CBF4E /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tessdata; sourceTree = "<group>"; };
 		3CCAB4F4247C0C4900E89AE8 /* Instagraph.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instagraph.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,16 +133,15 @@
 			children = (
 				3CCAB4FD247C0C4A00E89AE8 /* Assets.xcassets */,
 				3CCAB505247C0C4A00E89AE8 /* Info.plist */,
+				3CD4791224874330008E67CD /* OCRProperties.swift */,
+				48C2600E2485D61A0042C3ED /* Constants.swift */,
 				3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */,
 				3CCAB4F9247C0C4900E89AE8 /* SceneDelegate.swift */,
-				48C2600E2485D61A0042C3ED /* Constants.swift */,
 				3CCAB4FB247C0C4900E89AE8 /* ContentView.swift */,
 				3C25A3EC24870E5100100ABA /* ARCameraView.swift */,
-				3C06729424931CE100F9E495 /* CustomPoint.swift */,
-				3C0672902493056200F9E495 /* Point.swift */,
 				3CCAB533247C198500E89AE8 /* DocumentPicker.swift */,
 				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
-				3CD4791224874330008E67CD /* OCRProperties.swift */,
+				3C18F8B52493C90A00ADB315 /* Crop.swift */,
 				3CD479102487410A008E67CD /* ImageProcessingEngine.swift */,
 				48C4235C247F5709004A322A /* GraphEngine */,
 				48EC28122481C9800008AACA /* GraphViz */,
@@ -365,8 +362,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C0672912493056200F9E495 /* Point.swift in Sources */,
-				3C06729524931CE100F9E495 /* CustomPoint.swift in Sources */,
 				3CD4791324874330008E67CD /* OCRProperties.swift in Sources */,
 				3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */,
 				48C2600F2485D61A0042C3ED /* Constants.swift in Sources */,
@@ -374,6 +369,7 @@
 				48C4235E247F57A4004A322A /* Cell.swift in Sources */,
 				3CD479112487410A008E67CD /* ImageProcessingEngine.swift in Sources */,
 				3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */,
+				3C18F8B62493C90A00ADB315 /* Crop.swift in Sources */,
 				48C42360247F57CC004A322A /* GraphEngine.swift in Sources */,
 				48EC28142481C9980008AACA /* GraphView.swift in Sources */,
 				3C25A3ED24870E5100100ABA /* ARCameraView.swift in Sources */,

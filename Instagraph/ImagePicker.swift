@@ -28,7 +28,8 @@ class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UIImageP
         ocrProperties.image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         picker.dismiss(animated: true, completion: nil)
         self.activityIndictor.stopAnimating()
-        ImageProcessingEngine(ocrProperties: ocrProperties).performImageRecognition()
+        Crop(ocrProperties: ocrProperties).setup()
+        //ImageProcessingEngine(ocrProperties: ocrProperties).performImageRecognition()
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

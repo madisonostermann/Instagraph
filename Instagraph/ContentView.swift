@@ -58,14 +58,17 @@ struct ContentView: View {
                 NavigationIndicator(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Graph" {
                 GraphView()
+            //page for cropping
+            } else if self.ocrProperties.page == "Crop" {
+                Crop(ocrProperties: self.ocrProperties)
             //page for showing transformed photo + extracted text
             } else if self.ocrProperties.page == "Results" {
                 VStack {
                     if showText {
                         ScrollView {Text(ocrProperties.text)}
                     } else {
-                        //ocrProperties.finalImage?.resizable().padding([.vertical, .horizontal])
-                        Image(uiImage: (ocrProperties.image!))
+                        ocrProperties.finalImage?.resizable().padding([.vertical, .horizontal])
+                        //Image(uiImage: (ocrProperties.image!)).resizable().padding([.vertical, .horizontal])
                     }
                     Spacer()
                     HStack {
