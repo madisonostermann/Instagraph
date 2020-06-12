@@ -30,6 +30,7 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
     
     @ObservedObject var ocrProperties: OCRProperties
     let coachingOverlay = ARCoachingOverlayView()
+    let arscnView = ARSCNView(frame: .zero)
     
     //Initialization
     init(ocrProperties: OCRProperties) {
@@ -59,10 +60,12 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
         //arView.showsStatistics = false
         //setupCoachingOverlay()
         
-        //let snap = UITapGestureRecognizer(target: self, action: #selector(takeSnapshot(rec:)))
-        //arView.addGestureRecognizer(snap)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(addPoint))
-        arView.addGestureRecognizer(tap)
+        arView.addSubview(arscnView)
+        
+        let snap = UITapGestureRecognizer(target: self, action: #selector(takeSnapshot(rec:)))
+        arView.addGestureRecognizer(snap)
+        //let tap = UITapGestureRecognizer(target: self, action: #selector(addPoint))
+        //arView.addGestureRecognizer(tap)
         //let pan = UIPanGestureRecognizer(target: self, action: #selector(movePoint(recognizer:)))
         //arView.addGestureRecognizer(pan)
     }
@@ -75,6 +78,10 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
             //let point: Point = Point(position: SCNVector3(hitResult.worldTransform.columns.3.x,hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z))
             //arView.scene.rootNode.addChildNode(point)
             let customPoint = CustomPoint(position: SIMD3<Float>(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z))
+            
+            arView.installGestures(.all, for: customPoint)
+            //customPoint.generateCollisionShapes(recursive: true)
+            
             arView.scene.anchors.append(customPoint)
         }
     }
@@ -122,7 +129,12 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
     @objc func takeSnapshot(rec: UITapGestureRecognizer){
         if rec.state == .ended {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            //ocrProperties.image = self.arView.snapshot()
+            ocrProperties.image = self.arscnView.snapshot()
+            
+            /*self.arView.snapshot(saveToHDR: false) { (image) in
+                self.ocrProperties.image = image
+            }*/
+            print("image: ", self.ocrProperties.image)
             ImageProcessingEngine(ocrProperties: ocrProperties).performImageRecognition()
         }
     }

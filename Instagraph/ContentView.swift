@@ -64,7 +64,8 @@ struct ContentView: View {
                     if showText {
                         ScrollView {Text(ocrProperties.text)}
                     } else {
-                        ocrProperties.finalImage?.resizable().padding([.vertical, .horizontal])
+                        //ocrProperties.finalImage?.resizable().padding([.vertical, .horizontal])
+                        Image(uiImage: (ocrProperties.image!))
                     }
                     Spacer()
                     HStack {
