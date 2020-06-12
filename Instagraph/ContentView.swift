@@ -53,7 +53,7 @@ struct ContentView: View {
             } else if self.ocrProperties.page == "Photo" {
                 ImagePicker(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Document" {
-                DocumentFinder(ocrProperties: self.ocrProperties)
+                //DocumentPicker(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Camera" {
                 NavigationIndicator(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Graph" {
