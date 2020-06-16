@@ -67,10 +67,10 @@ struct ContentView: View {
                     if showText {
                         ScrollView {Text(ocrProperties.text)}
                     } else {
-                        ocrProperties.finalImage?.resizable().padding([.vertical, .horizontal])
-                        //Image(uiImage: (ocrProperties.image!)).resizable().padding([.vertical, .horizontal])
+                        ocrProperties.finalImage?.resizable().aspectRatio(contentMode: .fit).padding(.horizontal, 10)
+                        //Image(uiImage: (ocrProperties.image!)).resizable().aspectRatio(1 , contentMode: .fit)
                     }
-                    Spacer()
+                    //Spacer()
                     HStack {
                         Button(showText ? "Show Image" : "Show Text") {
                             self.showText.toggle()

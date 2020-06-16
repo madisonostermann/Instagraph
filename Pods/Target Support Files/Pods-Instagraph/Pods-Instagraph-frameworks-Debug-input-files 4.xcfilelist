@@ -1,0 +1,4 @@
+${PODS_ROOT}/Target Support Files/Pods-Instagraph/Pods-Instagraph-frameworks.sh
+${BUILT_PRODUCTS_DIR}/GPUImage/GPUImage.framework
+${BUILT_PRODUCTS_DIR}/ImageDetect/ImageDetect.framework
+${BUILT_PRODUCTS_DIR}/TesseractOCRiOS/TesseractOCR.framework

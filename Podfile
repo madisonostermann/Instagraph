@@ -7,4 +7,6 @@ target 'Instagraph' do
 
   pod 'TesseractOCRiOS'
   pod 'GPUImage'
+  #pod 'CropViewController'
+  #pod 'ImageDetect'
 end
