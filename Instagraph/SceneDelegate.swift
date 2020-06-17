@@ -19,6 +19,56 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
+        // DALTON TESTING //
+        
+        var tables:[[[String]]] = []
+        
+        let bar:[[String]] = [["Student", "Maddie", "Dalton", "Aaron"], ["Score", "5", "1", "3"]]
+        tables.append(bar)
+        let line:[[String]] = [["Salt Concentration", "3", "6", "9"], ["Transmittance", "85.43", "50", "33.45"]]
+        tables.append(line)
+        let scatter:[[String]] = [["Height", "5", "4", "1"], ["Width", "2.2", "3.3", "5"]]
+        tables.append(scatter)
+        print(tables.count)
+        for table in tables {
+            print(table)
+        }
+        
+        for table in tables {
+            let g:GraphEngine = GraphEngine(table: table)
+            let result = g.determineGraphType()
+            print("RESULT (SUCCESS/FAILURE): ", result.0)
+            for x in result.1 {
+                switch x {
+                case is LineGraph:
+                    print("GRAPH TYPE: LINE")
+                    print("TITLE: ", x.title)
+                    print("X-LABEL: ", x.xAxisLabel)
+                    print("Y-LABEL: ", x.yAxisLabel)
+                    print("X-VALS: ", (x as! LineGraph).xAxisValues)
+                    print("DATA: ", (x as! LineGraph).data)
+                case is BarGraph:
+                    print("GRAPH TYPE: BAR")
+                    print("TITLE: ", x.title)
+                    print("X-LABEL: ", x.xAxisLabel)
+                    print("Y-LABEL: ", x.yAxisLabel)
+                    print("X-VALS: ", (x as! BarGraph).xAxisValues)
+                    print("DATA: ", (x as! BarGraph).data)
+                case is ScatterPlot:
+                    print("GRAPH TYPE: SCATTER")
+                    print("TITLE: ", x.title)
+                    print("X-LABEL: ", x.xAxisLabel)
+                    print("Y-LABEL: ", x.yAxisLabel)
+                    print("DATA: ", (x as! ScatterPlot).data)
+                default:
+                    print("GRAPH TYPE: NONE")
+                }
+            }
+        }
+        
+        // DALTON TESTING END //
+        
+        
         self.ocrProperties = OCRProperties()
         // Create the SwiftUI view that provides the window contents.
         let contentView = ContentView(ocrProperties: ocrProperties)//GraphView()

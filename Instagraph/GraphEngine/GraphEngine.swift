@@ -66,7 +66,8 @@ class GraphEngine {
         self.rawTable = table
     }
     
-    private func determineGraphType() -> (Status, [Graph]) {
+    func determineGraphType() -> (Status, [Graph]) {
+        var bestFit:GraphType = .none
         var status:Status = .failure
         var graphTypes:[GraphType] = []
         var graphs:[Graph] = []
@@ -79,26 +80,64 @@ class GraphEngine {
             downRows: for j in 0 ..< self.rawTable[i].count { //Down rows start
                 
                 ///Check if the first column is temporal descriptors rather than data if it contains numbers
-                if (i == 0) && (GraphEngine.representableAs(content: self.rawTable[i][j]).0 == .number) { //Check if temporal start
+                ///Block contains code to fully generate simple graph descriptions for 2xn tables based on the content of the first column and first couple rows
+                ///Temporal 2xn tables can be represented as a line or bar graph, categorical tables can be represented as a bar graph,
+                if (i == 0) && (GraphEngine.representableAs(content: self.rawTable[i][j]).0 == .number) {
+                    print("Number in col 0")
+                    //Check if numbers or other potential temporal types in first row (ADD OTHERS***)
                     var tempArr:[Double] = []
-                    for k in 0 ..< self.rawTable[i].count-j { //Populate an array with Double versions of numerical Strings in the column in question
+                    //for k in 0 ..< self.rawTable[i].count-j { //Populate an array with Double versions of numerical Strings in the column in question
+                    for k in j ..< self.rawTable[i].count {
                         if GraphEngine.representableAs(content: self.rawTable[i][k]).0 == .number {
-                            tempArr.append(Double(self.rawTable[i][k+j].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
+                            tempArr.append(Double(self.rawTable[i][k].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
                         }
                     }
+                    print("=====", tempArr)
                     if detectArithmeticSequence(numbers: tempArr) { //Check if numbers in the column constitute a sequence
+                        print("sequence detected")
                         canBeTemporal = true
                         if self.rawTable.count == 2 { //If only two columns, no more information necessary to construct a basic line and bar graph
                             graphTypes.append(.line)
                             let line:LineGraph = {
-                                //Find what row the data starts in, should be same as temporal descriptors...
-                                //Use temporal values as xAxisValues
-                                return LineGraph(title: "", xAxisLabel: "", yAxisLabel: "", data: [[]], xAxisValues: [])
-                            }()
+                                //Find what row the data starts in (if no data in 2nd column, return with .failure)
+                                check: for v in 0 ..< self.rawTable[1].count {
+                                    if GraphEngine.representableAs(content: self.rawTable[1][v]).0 == .number {
+                                        reachedDataStartRow = true; dataStartRow = v; dataStartCol = 1; reachedDataStartCol = true; break check
+                                    }
+                                }
+                                if !reachedDataStartRow || (j != dataStartRow) { //If no numerical data by the end of the column, no data exists at all and the table can probably not produce a valid graph.  Or if data row doesn't start at same place as temporal row there is a mismatch
+                                    //print("failed here"); print(j); print(dataStartRow)
+                                    status = .failure
+                                    return LineGraph(title: "", xAxisLabel: "", yAxisLabel: "", data: [], xAxisValues: [])
+                                }
+                                var data:[Double] = []
+                                for d in dataStartRow ..< self.rawTable[1].count { //Populate data field to build LineGraph
+                                    data.append(Double(self.rawTable[1][d].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
+                                }
+                                print(data)
+                                var xAxisVals:[String] = []
+                                for x in j /* j is start of temporal data */ ..< self.rawTable[0].count { //Use temporal values as xAxisValues
+                                    xAxisVals.append(self.rawTable[0][x])
+                                }
+                                let title:String = self.rawTable[0][0] == self.rawTable[1][0] ? self.rawTable[0][0] : ""
+                                var xAxisLabel:String; var yAxisLabel:String
+                                if self.rawTable[0][0] == self.rawTable[1][0] {
+                                    xAxisLabel = self.rawTable[0][1]; yAxisLabel = self.rawTable[1][1] //First col should label temporal i.e. x-axis
+                                } else {
+                                    xAxisLabel = self.rawTable[0][0]; yAxisLabel = self.rawTable[1][0]
+                                }
+                                status = .success
+                                return LineGraph(title: title, xAxisLabel: xAxisLabel, yAxisLabel: yAxisLabel, data: data, xAxisValues: xAxisVals)
+                            }(); if status == .failure {return (status, graphs)}
+                            graphs.append(line)
+                            //status = .success
+                            return (status, graphs) //HERE add bar graph too, temporal can be represented as bar graph - don't return just keep going?
+                        } else { //Represented temporally w/ more than two columns means many variable table
+                            analyzeManyVariableTable() //TO DO THIS FUNCTION
                         }
                     } else {
                         //If non-sequential numbers are present in the column and we are in the first column we can conclude that data spans all columns, and we also know what row the data starts in.  We can infer by the fact that all rows contain data that the table can probably be well represented as a scatter plot.
-                        /* dataStartCol already 0 */ reachedDataStartCol = true; dataStartRow = j; reachedDataStartRow = true
+                        /* dataStartCol already 0 */ reachedDataStartCol = true; dataStartRow = j; reachedDataStartRow = true; allColumnsData = true
                         if (self.rawTable.count == 2) && ({
                             dataStartRow == 1 || dataStartRow == 2 //In a scatter plot there should not be more than two descriptor rows (title & labels at most)
                         }()) && ({ //If all conditions true, we can definitely represent the table as a scatter plot
@@ -121,7 +160,7 @@ class GraphEngine {
                                 let title:String = self.rawTable[0][0] == self.rawTable[1][0] ? self.rawTable[0][0] : ""
                                 var xAxisLabel:String; var yAxisLabel:String
                                 if self.rawTable[0][0] == self.rawTable[1][0] {
-                                    xAxisLabel = self.rawTable[1][0]; yAxisLabel = self.rawTable[1][1] //ARBITRARY as to which label is which, **maybe produce variations later
+                                    xAxisLabel = self.rawTable[0][1]; yAxisLabel = self.rawTable[1][1] //ARBITRARY as to which label is which, **maybe produce variations later
                                 } else {
                                     xAxisLabel = self.rawTable[0][0]; yAxisLabel = self.rawTable[1][0]
                                 }
@@ -129,22 +168,58 @@ class GraphEngine {
                             }() //End scatter construction
                             graphs.append(scatter)
                             status = .success
-                            break acrossCols //Since a table like this won't realistically be representable by a bar or line graph
+                            return (status, graphs) //Since a table like this won't realistically be representable by a bar or line graph we are done
                         } //End if statement
-                        continue downRows
+                        status = .failure //If non-temporal numbers are in the first row but the results can't be well represented as a scatter plot, it is a failure to graph the table
+                        return (status, graphs)
                     }
-                } //Check if temporal end
-                
-                
-                
+                } else if (GraphEngine.representableAs(content: self.rawTable[i][j]).0 == .number) { //Check if cell is a number (data) in columns other than first - we know data is not temporal and therefore categorical (or nonsense) if no temporal data was found in first row
+                    reachedDataStartRow = true; reachedDataStartCol = true; dataStartCol = i; dataStartRow = j
+                    if self.rawTable.count != 2 { //Not simple table
+                        analyzeManyVariableTable()
+                    } else { //We know that the table has two columns and is categorical, we can produce a bar graph to represent it
+                        graphTypes.append(.bar)
+                        let bar:BarGraph = {
+                            //Find what row the data starts in (if no data in 2nd column, return with .failure) - DONE
+                            var data:[Double] = []
+                            for d in dataStartRow ..< self.rawTable[1].count { //Populate data field to build LineGraph
+                                data.append(Double(self.rawTable[1][d].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
+                            }
+                            var xAxisVals:[String] = []
+                            for x in dataStartRow /* Categorical descriptors should start at same row as data */ ..< self.rawTable[0].count { //Use categorical values as xAxisValues
+                                xAxisVals.append(self.rawTable[0][x])
+                            }
+                            let title:String = self.rawTable[0][0] == self.rawTable[1][0] ? self.rawTable[0][0] : ""
+                            var xAxisLabel:String; var yAxisLabel:String
+                            if self.rawTable[0][0] == self.rawTable[1][0] {
+                                xAxisLabel = self.rawTable[0][1]; yAxisLabel = self.rawTable[1][1] //First col should label temporal i.e. x-axis
+                            } else {
+                                xAxisLabel = self.rawTable[0][0]; yAxisLabel = self.rawTable[1][0]
+                            }
+                            //return LineGraph(title: title, xAxisLabel: xAxisLabel, yAxisLabel: yAxisLabel, data: data, xAxisValues: xAxisVals)
+                            return BarGraph(title: title, xAxisLabel: xAxisLabel, yAxisLabel: yAxisLabel, data: data, xAxisValues: xAxisVals)
+                        }()
+                        graphs.append(bar)
+                        status = .success
+                        return (status, graphs)
+                    }
+                    
+                } //else continue looping
             } //Down rows loop end
         } //Across cols loop end
+        if !reachedDataStartCol || !reachedDataStartRow { //if no data in table, can't make a graph
+            status = .failure
+        }
         return (status, graphs)
     }
     
+    func analyzeManyVariableTable() {
+        
+    }
+    
     func buildGraphComponents(graphType: GraphType, title: String = "",
-                              xAxisLabel: String, yAxisLabel: String, data: [[Double]]) -> Graph {
-        var graph:Graph = Graph(title: "", xAxisLabel: "", yAxisLabel: "", data: [[]])
+                              xAxisLabel: String, yAxisLabel: String) -> Graph {
+        var graph:Graph = Graph(title: "", xAxisLabel: "", yAxisLabel: "")
         switch graphType {
         case .scatter:
             print("Building graph for scatter plot.")
