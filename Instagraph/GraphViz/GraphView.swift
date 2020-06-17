@@ -11,25 +11,23 @@ import UIKit
 
 struct GraphView: View {
     
+     @Environment(\.colorScheme) var colorScheme
+    
     let base:CGFloat = 400 // Bottom edge of graph
     let start:CGFloat
     let frameHeight:CGFloat // Only square frames being used for now, represents both dimensions
-    //let frameWidth:CGFloat
+    let frameWidth:CGFloat
     
-    init() { //Adjust for variable input later - REVIEW
-        self.frameHeight = Constants.SCREEN_WIDTH*0.75
+    init(frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7) {
+        self.frameHeight = frameHeight
+        self.frameWidth = frameWidth
         self.start = (Constants.SCREEN_WIDTH-self.frameHeight)/2
     }
     
     let colors:[Color] = Constants.GRAPH_COLORS
     
-    let bars:[Double] = [12, 15, 15.5, 10.5, 25, 19.2, 5, 12]
+    let bars:[Double] = [12, 15, 15.5, 10, 25, 19.2, -3, 12]
     let barLabels:[String] = ["January", "February", "March", "April", "May", "June", "July", "August"]
-    
-    func scale() -> CGFloat {
-        let scaleFactor:CGFloat = self.frameHeight/CGFloat(self.bars.max()!)
-        return scaleFactor
-    }
     
     func width() -> CGFloat { // Determines width of bars
         return Constants.SCREEN_WIDTH/CGFloat(self.frameHeight > Constants.SCREEN_WIDTH*0.75 ? 6*3 : bars.count*3) // Sets minimum bar width if graph extends beyond screen
@@ -46,10 +44,26 @@ struct GraphView: View {
     }
     
     func makeBars() -> some View {
-        ForEach(0 ..< bars.count) { i in
+        let largestValue = bars.max()!
+        let smallestValue = bars.min()!
+        let labelValues = self.makeLabelValues(largest: largestValue, smallest: smallestValue)
+        let sizeOfOne = self.frameHeight/CGFloat(labelValues.max()!-labelValues.min()!) // Vertical height of one integer unit
+        let zeroLine:CGFloat = {
+            let labelIncSize:CGFloat = self.frameHeight/CGFloat(labelValues.count-1)
+            // Get number of increments before reaching 0 label
+            var numIncs:Int = 1
+            loop: for i in 0 ..< labelValues.count {
+                if labelValues[i] == 0 || labelValues[i] == 0.0 {
+                    numIncs = i
+                    break loop
+                }
+            }
+            return self.base-(labelIncSize*CGFloat(numIncs))
+        }()
+        return ForEach(0 ..< bars.count) { i in
             Path { path in
-                path.move(to: CGPoint(x: (self.start + 1.5*(CGFloat(i)*self.width())), y: self.base)) // Bars are 0.5 bars apart
-                path.addLine(to: CGPoint(x: self.start + 1.5*(CGFloat(i)*self.width()), y: (self.base-CGFloat(self.bars[i])*self.scale()))) // 10 is arbitrary to make bars larger - change to be dynamic
+                path.move(to: CGPoint(x: (self.start + 1.5*(CGFloat(i)*self.width())), y: zeroLine)) // Bars are 0.5 bars apart
+                path.addLine(to: CGPoint(x: self.start + 1.5*(CGFloat(i)*self.width()), y: (zeroLine-CGFloat(self.bars[i])*sizeOfOne)))
             }.stroke(self.colors[i >= self.colors.count-1 ? i % self.colors.count : i], lineWidth: self.width()) // Conditional keeps colors on a loop, once new colors run out start over again
         }
     }
@@ -59,23 +73,27 @@ struct GraphView: View {
             Path { path in // Horizontal bounding line
                 path.move(to: CGPoint(x: self.start-20, y: self.base+3)) // 20 and 3 are arbitrary, make dynamic
                 path.addLine(to: CGPoint(x: self.frameHeight+self.start, y: self.base+3))
-            }.stroke(Color.black, lineWidth: 3)
+            }.stroke(colorScheme == .dark ? Color.white : Color.black, lineWidth: 3)
             Path { path in // Vertical bounding line
                 path.move(to: CGPoint(x: self.start-20, y: self.base+3))
                 path.addLine(to: CGPoint(x: self.start-20, y: (self.base-frameHeight)))
-            }.stroke(Color.black, lineWidth: 3)
+            }.stroke(colorScheme == .dark ? Color.white : Color.black, lineWidth: 3)
         }
     }
     
     func makeValueLabels() -> some View {
-        Text("hi")
+        let labelVals = makeLabelValues(largest: bars.max()!, smallest: bars.min()!)
+        let spacerNumber:CGFloat = self.frameHeight/CGFloat(labelVals.count-1)
+        return ForEach(0 ..< labelVals.count) { i in
+            Text(String(labelVals[i])).position(x: self.start-40, y: (self.base-(CGFloat(i)*spacerNumber))) // -40 arbitrary
+        }
     }
     
-    func makeValueLabelValues(largest: Double, smallest: Double) -> [Double] { // Give numbers that represent labels on the y-axis
-        let range = largest - smallest
+    func makeLabelValues(largest: Double, smallest: Double) -> [Double] { // Give numbers that represent labels on the y-axis
+        let range = smallest >= 0 ? largest : largest - smallest
         var labels:[Double] = []
         let magnitude:Int = Int(log10(range).rounded(.down))
-        let originalIncrement:Double = pow(10, Double(magnitude-1)) // For magnitude 0, increment is 1 - for magnitude 1, increment is 10
+        let originalIncrement:Double = pow(10, Double(magnitude-1)) // Ex: For magnitude 0, increment is 1 -- for magnitude 1, increment is 10
         var actualIncrement:Double = 0
         checkLoop: for i in 1 ... 10 {
             let testIncrement = originalIncrement*Double(i)
@@ -100,7 +118,7 @@ struct GraphView: View {
             }
         }
         var i = labels.count-1
-        while i >= 0 {
+        while i >= 0 { // Make sure no extra whitespace
             if labels[i] > largest+actualIncrement {
                 labels.remove(at: i)
             } else {
@@ -116,6 +134,7 @@ struct GraphView: View {
             self.makeEnclosure()
             self.makeBars()
             self.labelsText()
+            self.makeValueLabels()
         }
     }
 }

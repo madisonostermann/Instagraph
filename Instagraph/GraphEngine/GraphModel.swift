@@ -8,38 +8,45 @@
 
 import Foundation
 
-//class Graph {
-//    let title:String
-//    let xLabel:String
-//    let yLabel:String
-//}
-//
-//class BarGraph: Graph {
-//    let barCount:Int
-//    var barValues:[Double]
-//}
-//
-//class Histogram: Graph {
-//    let barGroupCount:Int
-//    let categoryCount:Int
-//    var barValues:Dictionary<String, [Double]>
-//    var categoryKeys:[String]
-//}
-//
-//class LineGraph: Graph {
-//    let valueCount:Int //how many measurements
-//    let lineCount:Int
-//    var lineKeys:[String]
-//    var lineValues:Dictionary<String, [Double]>
-//}
-//
-//class ScatterPlot: Graph {
-//    var values:[Double]
-//}
-//
-//class PieChart {
-//    let title:String
-//    let categoryCount:Int
-//    var categoryKeys:[String]
-//    var categoryValues:[Dictionary<String, Double>]
-//}
+class Graph {
+    let title:String
+    let xAxisLabel:String
+    let yAxisLabel:String
+    let data:[[Double]]
+    
+    init(title: String, xAxisLabel: String, yAxisLabel: String, data: [[Double]]) {
+        self.title = title == "" ? "My Graph" : title
+        self.xAxisLabel = xAxisLabel == "" ? "x-Axis" : xAxisLabel
+        self.yAxisLabel = yAxisLabel == "" ? "y-Axis" : yAxisLabel
+        self.data = data
+    }
+}
+
+class BarGraph: Graph {
+    let xAxisValues:[String]
+    //yAxisValues are produced dynamically when graphing from data
+    init(title: String, xAxisLabel: String, yAxisLabel: String, data: [[Double]], xAxisValues: [String]) {
+        self.xAxisValues = xAxisValues
+        super.init(title: title, xAxisLabel: xAxisLabel, yAxisLabel: yAxisLabel, data: data)
+    }
+}
+
+class LineGraph: Graph {
+    let xAxisValues:[String]
+    //yAxisValues are produced dynamically when graphing from data
+    init(title: String, xAxisLabel: String, yAxisLabel: String, data: [[Double]], xAxisValues: [String]) {
+        self.xAxisValues = xAxisValues
+        super.init(title: title, xAxisLabel: xAxisLabel, yAxisLabel: yAxisLabel, data: data)
+    }
+}
+
+//class Histogram
+//class MultiLine
+//class Pie
+
+class ScatterPlot: Graph {
+    // x-Axis & y-Axis values are generated dynamically
+    override init(title: String, xAxisLabel: String, yAxisLabel: String, data: [[Double]]) {
+        super.init(title: title, xAxisLabel: xAxisLabel, yAxisLabel: yAxisLabel, data: data)
+    }
+}
