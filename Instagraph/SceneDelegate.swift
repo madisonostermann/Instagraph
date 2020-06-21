@@ -23,11 +23,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         var tables:[[[String]]] = []
         
-        let bar:[[String]] = [["Student", "Maddie", "Dalton", "Aaron"], ["Score", "5", "1", "3"]]
+        let bar:[[String]] = [["Student Scores", "Student", "Maddie", "Dalton", "Aaron"], ["Student Scores", "Score", "5", "1", "3"]]
         tables.append(bar)
-        let line:[[String]] = [["Salt Concentration", "3", "6", "9"], ["Transmittance", "85.43", "50", "33.45"]]
+        let line:[[String]] = [["The Graph", "Salt Concentration", "3", "6", "9"], ["The Graph", "Transmittance", "85.43", "50", "33.45"]]
         tables.append(line)
-        let scatter:[[String]] = [["Height", "5", "4", "1"], ["Width", "2.2", "3.3", "5"]]
+        let scatter:[[String]] = [["Size", "Height", "5", "4", "1"], ["Size", "Width", "2.2", "3.3", "5"]]
         tables.append(scatter)
         print(tables.count)
         for table in tables {
