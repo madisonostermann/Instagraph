@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C05D33724A24F550085BE9E /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C05D33624A24F550085BE9E /* opencv2.framework */; };
 		3C18F8B62493C90A00ADB315 /* Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C18F8B52493C90A00ADB315 /* Crop.swift */; };
 		3C25A3ED24870E5100100ABA /* ARCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C25A3EC24870E5100100ABA /* ARCameraView.swift */; };
 		3C711589247C62BA001CBF4E /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 3C711588247C62BA001CBF4E /* tessdata */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C05D33624A24F550085BE9E /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		3C18F8B52493C90A00ADB315 /* Crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crop.swift; sourceTree = "<group>"; };
 		3C25A3EC24870E5100100ABA /* ARCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraView.swift; sourceTree = "<group>"; };
 		3C711588247C62BA001CBF4E /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tessdata; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C05D33724A24F550085BE9E /* opencv2.framework in Frameworks */,
 				40E4B7A8363BC7FCBA7E4ECD /* Pods_Instagraph.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -131,6 +134,7 @@
 		3CCAB4EB247C0C4900E89AE8 = {
 			isa = PBXGroup;
 			children = (
+				3C05D33624A24F550085BE9E /* opencv2.framework */,
 				3CCAB4F6247C0C4900E89AE8 /* Instagraph */,
 				18172B988EAD1572EBB6BA0F /* Pods */,
 				3CCAB4F5247C0C4900E89AE8 /* Products */,
@@ -552,6 +556,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Instagraph/Preview Content\"";
 				DEVELOPMENT_TEAM = UVSFW3HDBB;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Instagraph/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -574,6 +582,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Instagraph/Preview Content\"";
 				DEVELOPMENT_TEAM = UVSFW3HDBB;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Instagraph/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
