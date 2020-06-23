@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3C05D33724A24F550085BE9E /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C05D33624A24F550085BE9E /* opencv2.framework */; };
+		3C05D33F24A24FEC0085BE9E /* LineDetectorBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C05D33A24A24FEC0085BE9E /* LineDetectorBridge.mm */; };
+		3C05D34024A24FEC0085BE9E /* LineDetection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C05D33E24A24FEC0085BE9E /* LineDetection.cpp */; };
 		3C18F8B62493C90A00ADB315 /* Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C18F8B52493C90A00ADB315 /* Crop.swift */; };
 		3C25A3ED24870E5100100ABA /* ARCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C25A3EC24870E5100100ABA /* ARCameraView.swift */; };
 		3C711589247C62BA001CBF4E /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 3C711588247C62BA001CBF4E /* tessdata */; };
@@ -48,6 +50,11 @@
 
 /* Begin PBXFileReference section */
 		3C05D33624A24F550085BE9E /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		3C05D33924A24FEB0085BE9E /* Instagraph-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Instagraph-Bridging-Header.h"; sourceTree = "<group>"; };
+		3C05D33A24A24FEC0085BE9E /* LineDetectorBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LineDetectorBridge.mm; sourceTree = "<group>"; };
+		3C05D33B24A24FEC0085BE9E /* LineDetector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LineDetector.hpp; sourceTree = "<group>"; };
+		3C05D33C24A24FEC0085BE9E /* LineDetectorBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineDetectorBridge.h; sourceTree = "<group>"; };
+		3C05D33E24A24FEC0085BE9E /* LineDetection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineDetection.cpp; sourceTree = "<group>"; };
 		3C18F8B52493C90A00ADB315 /* Crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crop.swift; sourceTree = "<group>"; };
 		3C25A3EC24870E5100100ABA /* ARCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraView.swift; sourceTree = "<group>"; };
 		3C711588247C62BA001CBF4E /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tessdata; sourceTree = "<group>"; };
@@ -126,6 +133,11 @@
 				3CCAB533247C198500E89AE8 /* DocumentPicker.swift */,
 				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
 				3C18F8B52493C90A00ADB315 /* Crop.swift */,
+				3C05D33924A24FEB0085BE9E /* Instagraph-Bridging-Header.h */,
+				3C05D33C24A24FEC0085BE9E /* LineDetectorBridge.h */,
+				3C05D33A24A24FEC0085BE9E /* LineDetectorBridge.mm */,
+				3C05D33B24A24FEC0085BE9E /* LineDetector.hpp */,
+				3C05D33E24A24FEC0085BE9E /* LineDetection.cpp */,
 				3CD479102487410A008E67CD /* ImageProcessingEngine.swift */,
 			);
 			path = OCR;
@@ -268,6 +280,7 @@
 				TargetAttributes = {
 					3CCAB4F3247C0C4900E89AE8 = {
 						CreatedOnToolsVersion = 11.4.1;
+						LastSwiftMigration = 1150;
 					};
 					3CCAB509247C0C4A00E89AE8 = {
 						CreatedOnToolsVersion = 11.4.1;
@@ -374,6 +387,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C05D33F24A24FEC0085BE9E /* LineDetectorBridge.mm in Sources */,
 				3CD4791324874330008E67CD /* OCRProperties.swift in Sources */,
 				3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */,
 				48C2600F2485D61A0042C3ED /* Constants.swift in Sources */,
@@ -382,6 +396,7 @@
 				3CD479112487410A008E67CD /* ImageProcessingEngine.swift in Sources */,
 				3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */,
 				3C18F8B62493C90A00ADB315 /* Crop.swift in Sources */,
+				3C05D34024A24FEC0085BE9E /* LineDetection.cpp in Sources */,
 				48C42360247F57CC004A322A /* GraphEngine.swift in Sources */,
 				48EC28142481C9980008AACA /* GraphView.swift in Sources */,
 				3C25A3ED24870E5100100ABA /* ARCameraView.swift in Sources */,
@@ -552,6 +567,7 @@
 			baseConfigurationReference = 776FD91F923AA58E6F5A845A /* Pods-Instagraph.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Instagraph/Preview Content\"";
 				DEVELOPMENT_TEAM = UVSFW3HDBB;
@@ -568,6 +584,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = MG.Instagraph;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Instagraph/OCR/Instagraph-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -578,6 +596,7 @@
 			baseConfigurationReference = A5E21D8D00A9CC2C8D6AA6B5 /* Pods-Instagraph.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Instagraph/Preview Content\"";
 				DEVELOPMENT_TEAM = UVSFW3HDBB;
@@ -594,6 +613,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = MG.Instagraph;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Instagraph/OCR/Instagraph-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
