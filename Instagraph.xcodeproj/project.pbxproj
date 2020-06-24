@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3C05D33724A24F550085BE9E /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C05D33624A24F550085BE9E /* opencv2.framework */; };
-		3C05D33F24A24FEC0085BE9E /* LineDetectorBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C05D33A24A24FEC0085BE9E /* LineDetectorBridge.mm */; };
-		3C05D34024A24FEC0085BE9E /* LineDetection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C05D33E24A24FEC0085BE9E /* LineDetection.cpp */; };
+		3C05D33F24A24FEC0085BE9E /* ClearLinesBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3C05D33A24A24FEC0085BE9E /* ClearLinesBridge.mm */; };
+		3C05D34024A24FEC0085BE9E /* ClearLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C05D33E24A24FEC0085BE9E /* ClearLines.cpp */; };
 		3C18F8B62493C90A00ADB315 /* Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C18F8B52493C90A00ADB315 /* Crop.swift */; };
 		3C25A3ED24870E5100100ABA /* ARCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C25A3EC24870E5100100ABA /* ARCameraView.swift */; };
 		3C711589247C62BA001CBF4E /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 3C711588247C62BA001CBF4E /* tessdata */; };
@@ -51,10 +51,10 @@
 /* Begin PBXFileReference section */
 		3C05D33624A24F550085BE9E /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		3C05D33924A24FEB0085BE9E /* Instagraph-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Instagraph-Bridging-Header.h"; sourceTree = "<group>"; };
-		3C05D33A24A24FEC0085BE9E /* LineDetectorBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LineDetectorBridge.mm; sourceTree = "<group>"; };
-		3C05D33B24A24FEC0085BE9E /* LineDetector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LineDetector.hpp; sourceTree = "<group>"; };
-		3C05D33C24A24FEC0085BE9E /* LineDetectorBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineDetectorBridge.h; sourceTree = "<group>"; };
-		3C05D33E24A24FEC0085BE9E /* LineDetection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineDetection.cpp; sourceTree = "<group>"; };
+		3C05D33A24A24FEC0085BE9E /* ClearLinesBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClearLinesBridge.mm; sourceTree = "<group>"; };
+		3C05D33B24A24FEC0085BE9E /* ClearLines.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ClearLines.hpp; sourceTree = "<group>"; };
+		3C05D33C24A24FEC0085BE9E /* ClearLinesBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClearLinesBridge.h; sourceTree = "<group>"; };
+		3C05D33E24A24FEC0085BE9E /* ClearLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClearLines.cpp; sourceTree = "<group>"; };
 		3C18F8B52493C90A00ADB315 /* Crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crop.swift; sourceTree = "<group>"; };
 		3C25A3EC24870E5100100ABA /* ARCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraView.swift; sourceTree = "<group>"; };
 		3C711588247C62BA001CBF4E /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tessdata; sourceTree = "<group>"; };
@@ -134,10 +134,10 @@
 				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
 				3C18F8B52493C90A00ADB315 /* Crop.swift */,
 				3C05D33924A24FEB0085BE9E /* Instagraph-Bridging-Header.h */,
-				3C05D33C24A24FEC0085BE9E /* LineDetectorBridge.h */,
-				3C05D33A24A24FEC0085BE9E /* LineDetectorBridge.mm */,
-				3C05D33B24A24FEC0085BE9E /* LineDetector.hpp */,
-				3C05D33E24A24FEC0085BE9E /* LineDetection.cpp */,
+				3C05D33C24A24FEC0085BE9E /* ClearLinesBridge.h */,
+				3C05D33A24A24FEC0085BE9E /* ClearLinesBridge.mm */,
+				3C05D33B24A24FEC0085BE9E /* ClearLines.hpp */,
+				3C05D33E24A24FEC0085BE9E /* ClearLines.cpp */,
 				3CD479102487410A008E67CD /* ImageProcessingEngine.swift */,
 			);
 			path = OCR;
@@ -387,7 +387,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C05D33F24A24FEC0085BE9E /* LineDetectorBridge.mm in Sources */,
+				3C05D33F24A24FEC0085BE9E /* ClearLinesBridge.mm in Sources */,
 				3CD4791324874330008E67CD /* OCRProperties.swift in Sources */,
 				3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */,
 				48C2600F2485D61A0042C3ED /* Constants.swift in Sources */,
@@ -396,7 +396,7 @@
 				3CD479112487410A008E67CD /* ImageProcessingEngine.swift in Sources */,
 				3CCAB52E247C0FEC00E89AE8 /* ImagePicker.swift in Sources */,
 				3C18F8B62493C90A00ADB315 /* Crop.swift in Sources */,
-				3C05D34024A24FEC0085BE9E /* LineDetection.cpp in Sources */,
+				3C05D34024A24FEC0085BE9E /* ClearLines.cpp in Sources */,
 				48C42360247F57CC004A322A /* GraphEngine.swift in Sources */,
 				48EC28142481C9980008AACA /* GraphView.swift in Sources */,
 				3C25A3ED24870E5100100ABA /* ARCameraView.swift in Sources */,

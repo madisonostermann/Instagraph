@@ -51,8 +51,8 @@ struct Crop: View {
         let cgimg = self.ocrProperties.image?.cgImage!
         let croppedCGImage = cgimg?.cropping(to: cropRect)
         self.ocrProperties.image = UIImage(cgImage: croppedCGImage!)
-        self.ocrProperties.image = LineDetectorBridge().detectLine(in: self.ocrProperties.image)
-        //ImageProcessingEngine(ocrProperties: self.ocrProperties).performImageRecognition()
+        self.ocrProperties.image = ClearLinesBridge().detectLine(in: self.ocrProperties.image)
+        ImageProcessingEngine(ocrProperties: self.ocrProperties).performImageRecognition()
     }
     
     var body: some View {

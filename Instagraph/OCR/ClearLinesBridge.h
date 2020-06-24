@@ -1,5 +1,5 @@
 //
-//  LineDetectorBridge.h
+//  ClearLinesBridge.h
 //  Instagraph
 //
 //  Created by Madison Gipson on 6/20/20.
@@ -11,7 +11,7 @@
 #import <UIKit/UIKit.h>
 #import <SwiftUI/SwiftUI.h>
 
-@interface LineDetectorBridge : NSObject
+@interface ClearLinesBridge : NSObject
 
 - (UIImage *) detectLineIn: (UIImage *) image;
 

@@ -1,5 +1,5 @@
 //
-//  LineDetectorBridge.mm
+//  ClearLinesBridge.mm
 //  Instagraph
 //
 //  Created by Madison Gipson on 6/20/20.
@@ -12,10 +12,10 @@
 #import <Foundation/Foundation.h>
 #import <opencv2/opencv.hpp>
 #import <opencv2/imgcodecs/ios.h>
-#import "LineDetectorBridge.h"
-#include "LineDetector.hpp"
+#import "ClearLinesBridge.h"
+#include "ClearLines.hpp"
 
-@implementation LineDetectorBridge : NSObject
+@implementation ClearLinesBridge : NSObject
 
 - (UIImage *) detectLineIn: (UIImage *) image {
     
@@ -28,12 +28,12 @@
     cv::cvtColor(opencvImage, convertedColorSpaceImage, COLOR_RGBA2RGB);
     
     // Run line detection
-    // Sends it to LineDetector.cpp
-    LineDetector lineDetector;
-    cv::Mat imageWithLineDetected = lineDetector.detect_line(convertedColorSpaceImage);
+    // Sends it to ClearLines.cpp
+    ClearLines clearLines;
+    cv::Mat imageWithNoLines = clearLines.clear_line(convertedColorSpaceImage);
     
-    // convert mat to uiimage and return it to the caller (LineDetectorBridge.h)
-    return MatToUIImage(imageWithLineDetected);
+    // convert mat to uiimage and return it to the caller (ClearLinesBridge.h)
+    return MatToUIImage(imageWithNoLines);
 }
 
 @end
