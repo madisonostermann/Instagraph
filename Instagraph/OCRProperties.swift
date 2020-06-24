@@ -16,4 +16,5 @@ class OCRProperties: ObservableObject {
     @Published var image: UIImage? = nil
     @Published var finalImage: Image? = nil
     @Published var text: String = ""
+    @Published var dataArray: [String] = []
 }
