@@ -23,6 +23,7 @@ class ImageProcessingEngine: NSObject {
     }
     
     func performImageRecognition() {
+        //by the time it gets here, i think it won't need to be processed at all because it will have already gone through opencv
         let scaledImage = ocrProperties.image!.scaledImage(1000) ?? ocrProperties.image!
         let preprocessedImage = scaledImage.preprocessedImage() ?? scaledImage
         ocrProperties.finalImage = Image(uiImage: preprocessedImage)

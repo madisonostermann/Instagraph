@@ -25,5 +25,10 @@ private:
     Mat prepare_image(Mat image);
     
     //grabs vertical & horiztonal lines from image
-    Mat isolate_lines(Mat image);
+    //takes out text to isolate cells
+    Mat isolate_lines(Mat prepared_image);
+    
+    //find contours in image to isolate cells
+    //then sorts
+    Mat find_contours(Mat lined_image, Mat image);
 };

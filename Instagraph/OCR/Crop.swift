@@ -107,8 +107,6 @@ struct CropCorner: View {
                     self.newPosition = self.currentPosition
                 }
             }).position(CGPoint(x: 0, y: 0)).onAppear() {
-                print("XLIMIT: ", self.xlimit)
-                print("YLIMIT: ", self.ylimit)
                 if self.initialX > 0 || self.initialY > 0 {
                     self.currentPosition = CGPoint(x: self.initialX, y: self.initialY)
                     self.newPosition = self.currentPosition
