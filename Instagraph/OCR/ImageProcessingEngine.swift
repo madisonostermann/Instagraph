@@ -35,12 +35,14 @@ class ImageProcessingEngine: NSObject {
             tesseract.pageSegmentationMode = .auto //lets it know how the text is divided- paragraph breaks
             tesseract.image = preprocessedImage
             tesseract.recognize()
+            //print(tesseract.recognizedText)
             //hocr gets html/text that orders text in columns from left to right
             let hocr = tesseract.recognizedHOCR(forPageNumber: 1)
             //print(hocr!)
             
-            //find all WORDS and add to the 'words' array- filter out excess html stuff
-            let words1d = matches(for: "([^<>]+(?=</strong))", in: hocr!)
+            //find all stuff we care about and add to the 'words' array- filter out excess html stuff
+            var words1d:[String] = matches(for: "(?<='eng'>)[0-9+.]*|([^<>]+(?=</strong))|([^<>]+(?=</em))|((?=<'ltr'>)[^<>]+(?=</span))", in: hocr!)
+            words1d.removeAll(where: { $0 == "" })
             //find all x_locations of those words through the bounding box attribute and convert to ints
             let x_locations_strings = matches(for: "(?<=bbox )...", in: hocr!)
             var x_locations_ints = [Int]()//(repeating: 0, count: x_locations_strings.count)
@@ -49,7 +51,6 @@ class ImageProcessingEngine: NSObject {
                     x_locations_ints.append(Int(x_locations_strings[i])!)
                 }
             }
-            
             //convert x_location strings to ints
             //if the x_location of two adjacent words are significantly different, it means its in a different column
             //and we create a new array for that column
@@ -59,9 +60,12 @@ class ImageProcessingEngine: NSObject {
             for i in 0...x_locations_ints.count-2 {
                 if words1d.count != x_locations_ints.count {
                     print("Conflict in number of words and x locations. Aborting.")
+                    print("Number of words: ", words1d.count)
+                    print("Number of x locations: ", x_locations_ints.count)
                     break
                 }
-                if x_locations_ints[i]-x_locations_ints[i+1] > 50 || x_locations_ints[i]-x_locations_ints[i+1] < -50 {
+                //X LOCATION DETERMINATION NEEDS MORE REFINEMENT
+                if x_locations_ints[i]-x_locations_ints[i+1] > 150 || x_locations_ints[i]-x_locations_ints[i+1] < -150 {
                     words2d[colNum][valsInCol] = words1d[i]
                     valsInCol = 0
                     colNum += 1
@@ -70,16 +74,9 @@ class ImageProcessingEngine: NSObject {
                     valsInCol += 1
                 }
             }
-            let filter_words2d = words2d.map { innerArray in
-                innerArray.filter { $0 != ""}
+            for i in words2d.indices {
+                words2d[i].removeAll(where: { $0 == "" })
             }
-            print(filter_words2d)
-            
-//            for i in words2d.indices {
-//                words2d[i].removeAll(where: { $0 == "" })
-//                words2d[i].removeAll(where: { $0.isEmpty })
-//            }
-//            print(words2d)
             
             //Create a printable string from the array- not needed for processing, but nice to see on the screen for testing
             var all_words = ""
@@ -87,7 +84,10 @@ class ImageProcessingEngine: NSObject {
                 all_words += word
                 all_words += " "
             }
-            self.ocrProperties.dataArray = filter_words2d
+            print(words1d)
+            print(x_locations_ints)
+            print(words2d)
+            self.ocrProperties.dataArray = words2d
             ocrProperties.text = (all_words != "" ? all_words : "No text recognized.")
         }
         self.ocrProperties.page = "Results"
