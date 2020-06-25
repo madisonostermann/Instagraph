@@ -36,58 +36,63 @@ class ImageProcessingEngine: NSObject {
             tesseract.image = preprocessedImage
             tesseract.recognize()
             //print(tesseract.recognizedText)
-            //hocr gets html/text that orders text in columns from left to right
-            let hocr = tesseract.recognizedHOCR(forPageNumber: 1)
-            //print(hocr!)
             
-            //find all stuff we care about and add to the 'words' array- filter out excess html stuff
-            var words1d:[String] = matches(for: "(?<='eng'>)[0-9+.]*|([^<>]+(?=</strong))|([^<>]+(?=</em))|((?=<'ltr'>)[^<>]+(?=</span))", in: hocr!)
-            words1d.removeAll(where: { $0 == "" })
-            //find all x_locations of those words through the bounding box attribute and convert to ints
-            let x_locations_strings = matches(for: "(?<=bbox )...", in: hocr!)
-            var x_locations_ints = [Int]()//(repeating: 0, count: x_locations_strings.count)
-            for i in 0...x_locations_strings.count-2 {
-                if Int(x_locations_strings[i]) != nil && (x_locations_strings[i] != x_locations_strings[i+1]) && !x_locations_strings[i].contains(" ") {
-                    x_locations_ints.append(Int(x_locations_strings[i])!)
+            ///hOCR gets html/text that orders text in columns from left to right
+            let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
+            ///find all stuff we care about and add to the 'words' array- filter out excess html stuff
+            let words:[String] = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
+            ///find all x_locations of those words through the bounding box attribute- returns "start_x start_y end_x end_y"
+            let bBox = matches(for: "((?<='bbox )[^<>]+(?=;))", in: hOCR!)
+            ///because some words will be useless (empty or whitespace), the word & bBox won't match
+            ///only add viable words to filteredWords and save start_y location at corresponding position in y array
+            var filteredWords = [String]()
+            var y = [Int]()
+            var counter = 0
+            for i in words.indices {
+                if words[i] != "" && !words[i].trimmingCharacters(in: .whitespaces).isEmpty && !words[i].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    filteredWords.append(words[i])
+                    var bBoxSplit = bBox[counter].split(separator: " ")
+                    var startY = Int(bBoxSplit[1].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
+                    if startY != 0 { y.append(startY) }
+                    bBoxSplit = []
+                    startY = 0
+                    counter += 1
                 }
             }
-            //convert x_location strings to ints
-            //if the x_location of two adjacent words are significantly different, it means its in a different column
-            //and we create a new array for that column
-            var words2d = [[String]](repeating: [String](repeating: "", count: words1d.count), count: words1d.count)
-            var valsInCol = 0 //values in a single column
-            var colNum = 0 //number of columns
-            for i in 0...x_locations_ints.count-2 {
-                if words1d.count != x_locations_ints.count {
+            ///if the y location of two adjacent words are significantly different, it means its in a different column, so we create a new inner array for that column
+            var dataArrays = [[String]](repeating: [String](repeating: "", count: filteredWords.count), count: filteredWords.count)
+            var colValues = 0
+            var colNum = 0
+            for i in 0...y.count-1 {
+                ///if the arrays aren't the same size (should be corrected for in previous verification), send message and abort (will get index out of bounds)
+                if filteredWords.count != y.count {
                     print("Conflict in number of words and x locations. Aborting.")
-                    print("Number of words: ", words1d.count)
-                    print("Number of x locations: ", x_locations_ints.count)
+                    print("Number of words: ", filteredWords.count)
+                    print("Number of y locations: ", y.count)
                     break
                 }
-                //X LOCATION DETERMINATION NEEDS MORE REFINEMENT
-                if x_locations_ints[i]-x_locations_ints[i+1] > 150 || x_locations_ints[i]-x_locations_ints[i+1] < -150 {
-                    words2d[colNum][valsInCol] = words1d[i]
-                    valsInCol = 0
+                ///check if there will be a next element before comparing i & i+1
+                ///change in y --> create new inner array and reset first value used in new inner array to 0
+                if i < y.count-1 && (y[i]-y[i+1] > 100 || y[i]-y[i+1] < -100) {
+                    dataArrays[colNum][colValues] = filteredWords[i]
+                    colValues = 0
                     colNum += 1
                 } else {
-                    words2d[colNum][valsInCol] = words1d[i]
-                    valsInCol += 1
+                    dataArrays[colNum][colValues] = filteredWords[i]
+                    colValues += 1
                 }
             }
-            for i in words2d.indices {
-                words2d[i].removeAll(where: { $0 == "" })
-            }
+            ///because dataArrays was created with extra "" elements, go back through &  clean it up
+            for i in dataArrays.indices { dataArrays[i].removeAll(where: { $0 == "" })}
             
-            //Create a printable string from the array- not needed for processing, but nice to see on the screen for testing
+            ///Create a printable string from the array- not needed for processing, but nice to see on screen for testing
             var all_words = ""
-            for word in words1d {
+            for word in filteredWords {
                 all_words += word
                 all_words += " "
             }
-            print(words1d)
-            print(x_locations_ints)
-            print(words2d)
-            self.ocrProperties.dataArray = words2d
+            ///pass dataArrays to graphing engine and display text for testing purposes
+            self.ocrProperties.dataArray = dataArrays
             ocrProperties.text = (all_words != "" ? all_words : "No text recognized.")
         }
         self.ocrProperties.page = "Results"
