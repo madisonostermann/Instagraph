@@ -57,7 +57,8 @@ struct ContentView: View {
             } else if self.ocrProperties.page == "Camera" {
                 NavigationIndicator(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Graph" {
-                GraphView()
+                LineGraphView()
+                //BarGraphView()
             //page for cropping
             } else if self.ocrProperties.page == "Crop" {
                 Crop(ocrProperties: self.ocrProperties)
