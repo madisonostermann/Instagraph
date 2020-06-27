@@ -111,8 +111,8 @@ class ImageProcessingEngine: NSObject {
             self.ocrProperties.dataArray = dataArrays
             ocrProperties.text = (all_words != "" ? all_words : "No text recognized.")
         }
-        self.ocrProperties.page = "Results"
-        //self.ocrProperties.page = "Graph"
+        //self.ocrProperties.page = "Results"
+        self.ocrProperties.page = "Graph"
     }
     
     func matches(for regex: String, in text: String) -> [String] {

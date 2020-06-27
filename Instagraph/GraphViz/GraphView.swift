@@ -11,13 +11,15 @@ import UIKit
 
 struct LineGraphView: View {
     @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var ocrProperties: OCRProperties
     
     let base:CGFloat = 400 // Bottom edge of graph
     let start:CGFloat
     let frameHeight:CGFloat // Only square frames being used for now, represents both dimensions
     let frameWidth:CGFloat
     
-    init(frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7) {
+    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7) {
+        self.ocrProperties = ocrProperties
         self.frameHeight = frameHeight
         self.frameWidth = frameWidth
         self.start = (Constants.SCREEN_WIDTH-self.frameHeight)/2
@@ -102,11 +104,19 @@ struct LineGraphView: View {
     }
     
     var body: some View {
-        ZStack {
-            self.makeEnclosure()
-            self.makeDots()
-            self.labelsText()
-            self.makeValueLabels()
+        VStack {
+            ZStack {
+                self.makeEnclosure()
+                self.makeDots()
+                self.labelsText()
+                self.makeValueLabels()
+            }
+            Button("Home") {
+                self.ocrProperties.page = "Home"
+                self.ocrProperties.source = ""
+                self.ocrProperties.image = nil
+                self.ocrProperties.finalImage = nil
+            }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
         }
     }
     
@@ -114,14 +124,16 @@ struct LineGraphView: View {
 
 struct BarGraphView: View {
     
-     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var ocrProperties: OCRProperties
     
     let base:CGFloat = 400 // Bottom edge of graph
     let start:CGFloat
     let frameHeight:CGFloat // Only square frames being used for now, represents both dimensions
     let frameWidth:CGFloat
     
-    init(frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7) {
+    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7) {
+        self.ocrProperties = ocrProperties
         self.frameHeight = frameHeight
         self.frameWidth = frameWidth
         self.start = (Constants.SCREEN_WIDTH-self.frameHeight)/2
@@ -193,11 +205,19 @@ struct BarGraphView: View {
     }
     
     var body: some View {
-        ZStack {
-            self.makeEnclosure()
-            self.makeBars()
-            self.labelsText()
-            self.makeValueLabels()
+        VStack {
+            ZStack {
+                self.makeEnclosure()
+                self.makeBars()
+                self.labelsText()
+                self.makeValueLabels()
+            }
+            Button("Home") {
+                self.ocrProperties.page = "Home"
+                self.ocrProperties.source = ""
+                self.ocrProperties.image = nil
+                self.ocrProperties.finalImage = nil
+            }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
         }
     }
 }

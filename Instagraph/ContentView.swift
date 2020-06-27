@@ -27,7 +27,7 @@ struct ContentView: View {
     @State private var screenSize = UIScreen.main.bounds
     
     var body: some View {
-        VStack {
+        return VStack {
             //Home Page: choose source or show graph
             if self.ocrProperties.page == "Home" {
                 Button("Import Image") {
@@ -45,10 +45,10 @@ struct ContentView: View {
                         },
                         .cancel()
                     ])
-                }.padding().background(Color.gray).foregroundColor(Color.white).cornerRadius(10)
+                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
                 Button("Graph") {
                     self.ocrProperties.page = "Graph"
-                }.padding().background(Color.gray).foregroundColor(Color.white).cornerRadius(10)
+                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
             //page for importing image, depends on source
             } else if self.ocrProperties.page == "Photo" {
                 ImagePicker(ocrProperties: self.ocrProperties)
@@ -57,8 +57,8 @@ struct ContentView: View {
             } else if self.ocrProperties.page == "Camera" {
                 NavigationIndicator(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Graph" {
-                LineGraphView()
-                //BarGraphView()
+                LineGraphView(ocrProperties: self.ocrProperties)
+                //BarGraphView(ocrProperties: self.ocrProperties)
             //page for cropping
             } else if self.ocrProperties.page == "Crop" {
                 Crop(ocrProperties: self.ocrProperties)
@@ -75,13 +75,13 @@ struct ContentView: View {
                     HStack {
                         Button(showText ? "Show Image" : "Show Text") {
                             self.showText.toggle()
-                        }.padding().background(Color.gray).foregroundColor(Color.white).cornerRadius(10)
+                        }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
                         Button("Home") {
                             self.ocrProperties.page = "Home"
                             self.ocrProperties.source = ""
                             self.ocrProperties.image = nil
                             self.ocrProperties.finalImage = nil
-                        }.padding().background(Color.gray).foregroundColor(Color.white).cornerRadius(10)
+                        }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
                     }
                 }.padding([.vertical, .horizontal])
             }
