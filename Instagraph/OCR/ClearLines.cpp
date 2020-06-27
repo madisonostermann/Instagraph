@@ -40,6 +40,7 @@ Mat ClearLines::remove_lines(Mat prepared_image) {
     Mat lined_image;
     addWeighted(horizontal_image, 0.5, vertical_image, 0.5, 0.0, lined_image);
     //find those lines and put into contours
+    //findContours(lined_image, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); //perspective correction- outside edges
     findContours(lined_image, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
     //draw over contours with white
     for(int i = 0; i< contours.size(); i++) {
