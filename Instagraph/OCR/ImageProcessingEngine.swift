@@ -34,11 +34,12 @@ class ImageProcessingEngine: NSObject {
             //.tesseractCubeCombined = runs both .tesseractOnly & .cubeOnly; slowest but most accurate
             tesseract.pageSegmentationMode = .auto //lets it know how the text is divided- paragraph breaks
             tesseract.image = preprocessedImage
-            tesseract.recognize()
+            //tesseract.recognize()
             //print(tesseract.recognizedText)
             
             ///hOCR gets html/text that orders text in columns from left to right
             let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
+            print(hOCR!)
             ///find all stuff we care about and add to the 'words' array- filter out excess html stuff
             let words:[String] = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
             ///find all x_locations of those words through the bounding box attribute- returns "start_x start_y end_x end_y"
@@ -54,11 +55,22 @@ class ImageProcessingEngine: NSObject {
                     var bBoxSplit = bBox[counter].split(separator: " ")
                     var startY = Int(bBoxSplit[1].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
                     if startY != 0 { y.append(startY) }
-                    bBoxSplit = []
                     startY = 0
+                    bBoxSplit = []
                     counter += 1
                 }
             }
+            
+            ///if the y location of two adjacent words is the same (or super close), it means they're on the same line and shouldn't be in different array elements
+            var i = 0
+            while i < y.count-2 {
+                if y[i]-y[i+1] < 20 && y[i]-y[i+1] > -20 {
+                    filteredWords[i] += filteredWords[i+1]
+                    filteredWords.remove(at: i+1)
+                    y.remove(at: i+1)
+                } else { i += 1 } /// if the comparison combined the two, don't move on because you still need to combine the new one + the next
+            }
+            
             ///if the y location of two adjacent words are significantly different, it means its in a different column, so we create a new inner array for that column
             var dataArrays = [[String]](repeating: [String](repeating: "", count: filteredWords.count), count: filteredWords.count)
             var colValues = 0
@@ -91,6 +103,10 @@ class ImageProcessingEngine: NSObject {
                 all_words += word
                 all_words += " "
             }
+            
+            print(filteredWords)
+            print(y)
+            print(dataArrays)
             ///pass dataArrays to graphing engine and display text for testing purposes
             self.ocrProperties.dataArray = dataArrays
             ocrProperties.text = (all_words != "" ? all_words : "No text recognized.")
