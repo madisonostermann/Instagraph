@@ -54,51 +54,54 @@ class ImageProcessingEngine: NSObject {
         ///because some words will be useless (empty or whitespace), the word & bBox won't match
         ///only add viable words to filteredWords and save start_y location at corresponding position in y array
         var filteredWords = [String]()
-        var y = [Int]()
-        var x = [Int]()
+        var starty = [Int]()
+        var startx = [Int]()
+        var endx = [Int]()
         var counter = 0
         for i in words.indices {
             if words[i] != "" && !words[i].trimmingCharacters(in: .whitespaces).isEmpty && !words[i].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 filteredWords.append(words[i])
                 var bBoxSplit = bBox[counter].split(separator: " ")
                 var startY = Int(bBoxSplit[1].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
-                if startY != 0 { y.append(startY) }
+                if startY != 0 { starty.append(startY) }
                 startY = 0
                 var startX = Int(bBoxSplit[0].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
-                if startX != 0 { x.append(startX) }
+                if startX != 0 { startx.append(startX) }
                 startX = 0
+                var endX = Int(bBoxSplit[2].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
+                if endX != 0 { endx.append(endX) }
+                endX = 0
                 bBoxSplit = []
                 counter += 1
             }
         }
         ///if the y & x locations of two adjacent words is the same (or super close), it means they're on the same line and shouldn't be in different array elements
         var i = 0
-        while i < y.count-2 {
-            print(x[i])
-            print(x[i+1])
-            if y[i]-y[i+1] < Int(scaledImage.size.height/40) && y[i]-y[i+1] > -(Int(scaledImage.size.height/40)) && x[i]-x[i+1] < Int(scaledImage.size.height/40) && x[i]-x[i+1] > -(Int(scaledImage.size.height/40)) { //was 20
+        while i < starty.count-2 {
+            if starty[i]-starty[i+1] < Int(scaledImage.size.height/50) && starty[i]-starty[i+1] > -(Int(scaledImage.size.height/50)) && endx[i]-startx[i+1] < Int(scaledImage.size.height/50) && endx[i]-startx[i+1] > -(Int(scaledImage.size.height/50)) { //was 20
                 filteredWords[i] += " "
                 filteredWords[i] += filteredWords[i+1]
                 filteredWords.remove(at: i+1)
-                y.remove(at: i+1)
-                x.remove(at: i+1)
+                starty.remove(at: i+1)
+                startx.remove(at: i+1)
+                endx.remove(at: i+1)
             } else { i += 1 } /// if the comparison combined the two, don't move on because you still need to combine the new one + the next
         }
         ///if the y location of two adjacent words are significantly different, it means its in a different column, so we create a new inner array for that column
         var dataArrays = [[String]](repeating: [String](repeating: "", count: filteredWords.count), count: filteredWords.count)
         var colValues = 0
         var colNum = 0
-        for i in 0...y.count-1 {
+        for i in 0...starty.count-1 {
             ///if the arrays aren't the same size (should be corrected for in previous verification), send message and abort (will get index out of bounds)
-            if filteredWords.count != y.count {
+            if filteredWords.count != starty.count {
                 print("Conflict in number of words and x locations. Aborting.")
                 print("Number of words: ", filteredWords.count)
-                print("Number of y locations: ", y.count)
+                print("Number of y locations: ", starty.count)
                 break
             }
             ///check if there will be a next element before comparing i & i+1
             ///change in y --> create new inner array and reset first value used in new inner array to 0
-            if i < y.count-1 && (y[i]-y[i+1] > Int(scaledImage.size.height/3) || y[i]-y[i+1] < -Int(scaledImage.size.height/3)) { //was 100
+            if i < starty.count-1 && (starty[i]-starty[i+1] > Int(scaledImage.size.height/3) || starty[i]-starty[i+1] < -Int(scaledImage.size.height/3)) { //was 100
                 dataArrays[colNum][colValues] = filteredWords[i]
                 colValues = 0
                 colNum += 1
@@ -116,7 +119,7 @@ class ImageProcessingEngine: NSObject {
             all_words += " "
         }
         print(filteredWords)
-        print(y)
+        print(starty)
         //print(dataArrays)
         ///pass dataArrays to graphing engine and display text for testing purposes
         self.ocrProperties.dataArray = {//dataArrays
