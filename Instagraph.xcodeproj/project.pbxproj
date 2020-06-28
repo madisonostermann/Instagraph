@@ -570,7 +570,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Instagraph/Preview Content\"";
-				DEVELOPMENT_TEAM = UVSFW3HDBB;
+				DEVELOPMENT_TEAM = NXHV9N6K45;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -582,7 +582,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = MG.Instagraph;
+				PRODUCT_BUNDLE_IDENTIFIER = LH.Instagraph;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Instagraph/OCR/Instagraph-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -599,7 +599,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Instagraph/Preview Content\"";
-				DEVELOPMENT_TEAM = UVSFW3HDBB;
+				DEVELOPMENT_TEAM = NXHV9N6K45;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -611,7 +611,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = MG.Instagraph;
+				PRODUCT_BUNDLE_IDENTIFIER = LH.Instagraph;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Instagraph/OCR/Instagraph-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

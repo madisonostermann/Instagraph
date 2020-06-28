@@ -117,9 +117,18 @@ class ImageProcessingEngine: NSObject {
         }
         print(filteredWords)
         print(y)
-        print(dataArrays)
+        //print(dataArrays)
         ///pass dataArrays to graphing engine and display text for testing purposes
-        self.ocrProperties.dataArray = dataArrays
+        self.ocrProperties.dataArray = {//dataArrays
+            var arr:[[String]] = []
+            for a in 0 ..< dataArrays.count {
+                if !(dataArrays[a].count == 0) {
+                    arr.append(dataArrays[a])
+                }
+            }
+            return arr
+        }()
+        print(self.ocrProperties.dataArray)
         ocrProperties.text = (all_words != "" ? all_words : "No text recognized.")
     }
     
