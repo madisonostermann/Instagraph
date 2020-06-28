@@ -27,12 +27,12 @@ Mat ClearLines::remove_lines(Mat prepared_image) {
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     //get all horizontal lines
-    Mat horizontal_kernel = getStructuringElement(MORPH_RECT, Size(prepared_image.cols/20, 1));
+    Mat horizontal_kernel = getStructuringElement(MORPH_RECT, Size(prepared_image.cols/10, 1));
     Mat horizontal_image;
     erode(prepared_image, horizontal_image, horizontal_kernel, Point(-1, -1));
     dilate(horizontal_image, horizontal_image, horizontal_kernel, Point(-1, -1));
     //get all vertical lines
-    Mat vertical_kernel = getStructuringElement(MORPH_RECT, Size(1, prepared_image.rows/20));
+    Mat vertical_kernel = getStructuringElement(MORPH_RECT, Size(1, prepared_image.rows/10));
     Mat vertical_image;
     erode(prepared_image, vertical_image, vertical_kernel, Point(-1, -1));
     dilate(vertical_image, vertical_image, vertical_kernel, Point(-1, -1));
