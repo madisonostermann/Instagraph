@@ -22,10 +22,10 @@ struct AnyGraphView: View {
         let result = self.graphEngine.determineGraphType()
         return Group {
             if result.1[0] is LineGraph {
-                LineGraphView(ocrProperties: ocrProperties, vals: (result.1[0] as! LineGraph).data, xLabels: (result.1[0] as! LineGraph).xAxisValues)
+                LineGraphView(ocrProperties: ocrProperties, vals: (result.1[0] as! LineGraph).data, xLabels: (result.1[0] as! LineGraph).xAxisValues, yAxisLabel: (result.1[0] as! LineGraph).yAxisLabel, xAxisLabel: (result.1[0] as! LineGraph).xAxisLabel)
             }
             if result.1[0] is BarGraph {
-                BarGraphView(ocrProperties: ocrProperties, bars: (result.1[0] as! BarGraph).data, barLabels: (result.1[0] as! BarGraph).xAxisValues)
+                BarGraphView(ocrProperties: ocrProperties, bars: (result.1[0] as! BarGraph).data, barLabels: (result.1[0] as! BarGraph).xAxisValues, yAxisLabel: (result.1[0] as! BarGraph).yAxisLabel, xAxisLabel: (result.1[0] as! BarGraph).xAxisLabel)
             }
         }
     }
@@ -43,13 +43,17 @@ struct LineGraphView: View {
     let start:CGFloat
     let frameHeight:CGFloat // Only square frames being used for now, represents both dimensions
     let frameWidth:CGFloat
+    let yAxisLabel:String
+    let xAxisLabel:String
     
-    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7, vals: [Double], xLabels: [String]) {
+    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7, vals: [Double], xLabels: [String], yAxisLabel: String, xAxisLabel: String) {
         self.ocrProperties = ocrProperties
         self.frameHeight = frameHeight
         self.frameWidth = frameWidth
         self.start = (Constants.SCREEN_WIDTH-self.frameHeight)/2
         self.vals = vals; self.xLabels = xLabels
+        self.xAxisLabel = xAxisLabel
+        self.yAxisLabel = yAxisLabel
     }
     
     let vals:[Double] //= [12, 15, 15.5, 10, 25, 19.2, -5, 12]
@@ -130,20 +134,30 @@ struct LineGraphView: View {
         }
     }
     
+    func makeAxisLabels() -> some View {
+        return Group {
+            Text(self.yAxisLabel).rotationEffect(Angle(degrees: 270)).position(CGPoint(x: self.start-90, y: self.base-(self.frameHeight/2)))
+            Text(self.xAxisLabel).position(CGPoint(x: (self.start+(self.frameWidth/2)), y: self.base+70))
+        }
+    }
+    
     var body: some View {
+        ScrollView(.horizontal) {
         VStack {
             ZStack {
                 self.makeEnclosure()
                 self.makeDots()
                 self.labelsText()
                 self.makeValueLabels()
-            }
-            Button("Home") {
+                self.makeAxisLabels()
+            }.offset(x: 70, y: 0)
+            /*Button("Home") {
                 self.ocrProperties.page = "Home"
                 self.ocrProperties.source = ""
                 self.ocrProperties.image = nil
                 self.ocrProperties.finalImage = nil
-            }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
+            }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)*/
+        }
         }
     }
     
@@ -158,13 +172,17 @@ struct BarGraphView: View {
     let start:CGFloat
     let frameHeight:CGFloat // Only square frames being used for now, represents both dimensions
     let frameWidth:CGFloat
+    let yAxisLabel:String
+    let xAxisLabel:String
     
-    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7, bars: [Double], barLabels: [String]) {
+    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7, bars: [Double], barLabels: [String], yAxisLabel: String, xAxisLabel: String) {
         self.ocrProperties = ocrProperties
         self.frameHeight = frameHeight
         self.frameWidth = frameWidth
         self.start = (Constants.SCREEN_WIDTH-self.frameHeight)/2
         self.bars = bars; self.barLabels = barLabels
+        self.xAxisLabel = xAxisLabel
+        self.yAxisLabel = yAxisLabel
     }
     
     let colors:[Color] = Constants.GRAPH_COLORS
@@ -232,20 +250,34 @@ struct BarGraphView: View {
         }
     }
     
+    func makeAxisLabels() -> some View {
+        return Group {
+            Text(self.yAxisLabel).rotationEffect(Angle(degrees: 270)).position(CGPoint(x: self.start-90, y: self.base-(self.frameHeight/2)))
+            Text(self.xAxisLabel).position(CGPoint(x: (self.start+(self.frameWidth/2)), y: self.base+70))
+        }
+    }
+    
     var body: some View {
-        VStack {
-            ZStack {
-                self.makeEnclosure()
-                self.makeBars()
-                self.labelsText()
-                self.makeValueLabels()
-            }
-            Button("Home") {
+        ScrollView(.horizontal) {
+            HStack {
+                //Text("Y axis label").rotationEffect(Angle(degrees: 270))
+                VStack {
+                    ZStack {
+                        self.makeEnclosure()
+                        self.makeBars()
+                        self.labelsText()
+                        self.makeValueLabels()
+                        self.makeAxisLabels()
+                    }.offset(x: 70, y: 0)
+                //Text("X axis label")
+            /*Button("Home") {
                 self.ocrProperties.page = "Home"
                 self.ocrProperties.source = ""
                 self.ocrProperties.image = nil
                 self.ocrProperties.finalImage = nil
-            }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
+            }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)*/
+                }
+            }
         }
     }
 }

@@ -57,7 +57,9 @@ struct ContentView: View {
             } else if self.ocrProperties.page == "Camera" {
                 NavigationIndicator(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Graph" {
-                AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray)
+                //ScrollView([.horizontal, .vertical]) {
+                    AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray)
+                //}
                 //BarGraphView(ocrProperties: self.ocrProperties)
             //page for cropping
             } else if self.ocrProperties.page == "Crop" {
