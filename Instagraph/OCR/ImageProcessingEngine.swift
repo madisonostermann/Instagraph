@@ -42,8 +42,8 @@ class ImageProcessingEngine: NSObject {
             print(hOCR!)
             sortText(hOCR: hOCR!, scaledImage: scaledImage)
         }
-        self.ocrProperties.page = "Results"
-        //self.ocrProperties.page = "Graph"
+        //self.ocrProperties.page = "Results"
+        self.ocrProperties.page = "Graph"
     }
     
     func sortText(hOCR: String, scaledImage: UIImage) {

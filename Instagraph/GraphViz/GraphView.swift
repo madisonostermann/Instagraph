@@ -9,6 +9,32 @@
 import SwiftUI
 import UIKit
 
+struct AnyGraphView: View {
+    var graphEngine:GraphEngine
+    var ocrProperties:OCRProperties
+    
+    init(_ ocrProperties: OCRProperties, table: [[String]]) {
+        self.ocrProperties = ocrProperties
+        self.graphEngine = GraphEngine(table: table)
+    }
+    
+    func whatType() -> some View {
+        let result = self.graphEngine.determineGraphType()
+        return Group {
+            if result.1[0] is LineGraph {
+                LineGraphView(ocrProperties: ocrProperties, vals: (result.1[0] as! LineGraph).data, xLabels: (result.1[0] as! LineGraph).xAxisValues)
+            }
+            if result.1[0] is BarGraph {
+                BarGraphView(ocrProperties: ocrProperties, bars: (result.1[0] as! BarGraph).data, barLabels: (result.1[0] as! BarGraph).xAxisValues)
+            }
+        }
+    }
+    
+    var body: some View {
+        self.whatType()
+    }
+}
+
 struct LineGraphView: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var ocrProperties: OCRProperties
@@ -18,15 +44,16 @@ struct LineGraphView: View {
     let frameHeight:CGFloat // Only square frames being used for now, represents both dimensions
     let frameWidth:CGFloat
     
-    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7) {
+    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7, vals: [Double], xLabels: [String]) {
         self.ocrProperties = ocrProperties
         self.frameHeight = frameHeight
         self.frameWidth = frameWidth
         self.start = (Constants.SCREEN_WIDTH-self.frameHeight)/2
+        self.vals = vals; self.xLabels = xLabels
     }
     
-    let vals:[Double] = [12, 15, 15.5, 10, 25, 19.2, -5, 12]
-    let xLabels:[String] = ["January", "February", "March", "April", "May", "June", "July", "August"]
+    let vals:[Double] //= [12, 15, 15.5, 10, 25, 19.2, -5, 12]
+    let xLabels:[String] //= ["January", "February", "March", "April", "May", "June", "July", "August"]
     
     func width() -> CGFloat {
         return Constants.SCREEN_WIDTH/CGFloat(self.frameWidth > Constants.SCREEN_WIDTH*0.75 ? 18 : vals.count*3)
@@ -132,17 +159,18 @@ struct BarGraphView: View {
     let frameHeight:CGFloat // Only square frames being used for now, represents both dimensions
     let frameWidth:CGFloat
     
-    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7) {
+    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7, bars: [Double], barLabels: [String]) {
         self.ocrProperties = ocrProperties
         self.frameHeight = frameHeight
         self.frameWidth = frameWidth
         self.start = (Constants.SCREEN_WIDTH-self.frameHeight)/2
+        self.bars = bars; self.barLabels = barLabels
     }
     
     let colors:[Color] = Constants.GRAPH_COLORS
     
-    let bars:[Double] = [12, 15, 15.5, 10, 25, 19.2, -5, 12]
-    let barLabels:[String] = ["January", "February", "March", "April", "May", "June", "July", "August"]
+    let bars:[Double] //= [12, 15, 15.5, 10, 25, 19.2, -5, 12]
+    let barLabels:[String] //= ["January", "February", "March", "April", "May", "June", "July", "August"]
     
     func width() -> CGFloat { // Determines width of bars
         return Constants.SCREEN_WIDTH/CGFloat(self.frameWidth > Constants.SCREEN_WIDTH*0.75 ? 6*3 : bars.count*3) // Sets minimum bar width if graph extends beyond screen
