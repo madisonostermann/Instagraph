@@ -21,10 +21,13 @@ struct AnyGraphView: View {
     func whatType() -> some View {
         let result = self.graphEngine.determineGraphType()
         return Group {
-            if result.1[0] is LineGraph {
+            if result.0 == .failure {
+                Text("Couldn't build graph")
+            }
+            if result.0 != .failure && result.1[0] is LineGraph {
                 LineGraphView(ocrProperties: ocrProperties, vals: (result.1[0] as! LineGraph).data, xLabels: (result.1[0] as! LineGraph).xAxisValues, yAxisLabel: (result.1[0] as! LineGraph).yAxisLabel, xAxisLabel: (result.1[0] as! LineGraph).xAxisLabel)
             }
-            if result.1[0] is BarGraph {
+            if result.0 != .failure && result.1[0] is BarGraph {
                 BarGraphView(ocrProperties: ocrProperties, bars: (result.1[0] as! BarGraph).data, barLabels: (result.1[0] as! BarGraph).xAxisValues, yAxisLabel: (result.1[0] as! BarGraph).yAxisLabel, xAxisLabel: (result.1[0] as! BarGraph).xAxisLabel)
             }
         }

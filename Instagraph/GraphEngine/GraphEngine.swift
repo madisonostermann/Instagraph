@@ -56,8 +56,38 @@ func detectArithmeticSequence<T: Numeric>(numbers: [T]) -> Bool {
     }
     return true
 }
-///Detects a date sequence
 
+func representableAsDate(str: String) -> Bool {
+    print(Constants.ALL_MONTHS)
+    //Attempt to match month names or month shorthand
+    for month in Constants.ALL_MONTHS {
+        if str.matchInsensitive(month) {
+            return true
+        }
+    }
+    
+    return false
+}
+
+func dateToInt(_ str: String) -> Int {
+    for month in 0 ..< Constants.ALL_MONTHS.count {
+        if str == Constants.ALL_MONTHS[month] {
+            return month % 12
+        }
+    }
+    
+    return 0
+}
+
+///Detects a date sequence
+func detectDateSequence(strings: [String]) -> Bool {
+    for i in 1 ..< strings.count-1 {
+        if dateToInt(strings[i+1]) - dateToInt(strings[i]) != dateToInt(strings[i]) - dateToInt(strings[i-1]) {
+            return false
+        }
+    }
+    return true
+}
 
 
 //Suggestions - one table in picture
@@ -86,6 +116,7 @@ class GraphEngine {
     ///Called on size 2xn tables to build appropriate graphs based mostly on the content of the first column
     ///Param: table - The table
     func buildSimpleGraphs(table: [[String]]) -> (Status, [Graph]) {
+        print("BUILDING SIMPLE GRAPH")
         var status:Status = .failure //At least one valid graph representation should be produced for this to be a success
         var graphs:[Graph] = []
         
@@ -93,16 +124,28 @@ class GraphEngine {
         if table[0].count != table[1].count { return (.failure, []) }
         
         var reachedNumbers = false; var numberStartRow:Int = 0 //The row at which numbers start appearing in the table in col 0
+        var reachedDateString = false; var dateStartRow:Int = 0
         var tempArr:[Double] = [] //Use to hold numbers in first column to test if they represent a sequence
+        var dateTempArr:[String] = []
         for i in 0 ..< table[0].count {
+            print(table[0][i])
             if GraphEngine.representableAs(content: table[0][i]).0 == .number {
                 if !reachedNumbers {
                     numberStartRow = i
                     reachedNumbers = true
                 }
-            }
-            if reachedNumbers {
                 tempArr.append(Double(table[0][i].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
+            }
+//            if reachedNumbers {
+//                tempArr.append(Double(table[0][i].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
+//            }
+            if representableAsDate(str: table[0][i]) {
+                print("REP AS DATE")
+                if !reachedDateString {
+                    dateStartRow = i
+                    reachedDateString = true
+                }
+                dateTempArr.append(table[0][i])
             }
         }
         
@@ -126,6 +169,20 @@ class GraphEngine {
                 if scatter.0 == .success {
                     status = .success
                     graphs.append(scatter.1)
+                }
+            }
+        } else if reachedDateString {
+            print("REACHED DATE STRING")
+            if detectDateSequence(strings: dateTempArr) {
+                let line:(Status, LineGraph) = buildSimpleLine(table: table, temporalStartRow: dateStartRow)
+                if line.0 == .success {
+                    status = .success
+                    graphs.append(line.1)
+                }
+                let bar:(Status, BarGraph) = buildSimpleBar(table: table, categoryStartRow: dateStartRow) //Use numbers as categories
+                if bar.0 == .success {
+                    status = .success
+                    graphs.append(bar.1)
                 }
             }
         } else { //Only a bar graph can still make sense for the table if no numbers are in the first column
@@ -367,6 +424,62 @@ extension String {
             }
         }
         return false
+    }
+    
+    func split(_ char: Character) -> [[String]] {
+        var split:[[String]] = []
+        split.append([])
+        var arrCount:Int = 0
+        var i:Int = 0
+        for c in self {
+            if char != c {
+                split[arrCount].append(String(c))
+            } else {
+                arrCount += 1
+            }
+            i += 1
+        }
+        return split
+    }
+    
+    ///Spits string into two at a given position - character at position is part of second string in the split
+    func split(_ pos: Int) -> (String, String) {
+        var split:[[String]] = [[], []]
+        var i:Int = 0
+        for c in self {
+            if i < pos {
+                split[0].append(String(c))
+            }
+            if i >= pos {
+                split[1].append(String(c))
+            }
+            i += 1
+        }
+        var partOne:String = ""
+        var partTwo:String = ""
+        for (c, ch) in zip(split[0], split[1]) {
+            partOne += String(c)
+            partTwo += String(ch)
+        }
+        return (partOne, partTwo)
+    }
+    
+    func at(_ pos: Int) -> Character {
+        var i:Int = 0
+        for c in self {
+            if i == pos {
+                return c
+            }
+            i += 1
+        }
+        return "a"
+    }
+    
+    func matchInsensitive(_ str: String) -> Bool {
+        if self.uppercased() != str.uppercased() {
+            return false
+        }
+        return true
     }
     
 }
