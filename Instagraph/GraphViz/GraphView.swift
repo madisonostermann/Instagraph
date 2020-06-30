@@ -296,9 +296,41 @@ struct BarGraphView: View {
         } //ScrollView end
             ValueSliderView(currentPosition: self.startPoint, newPosition: self.endPoint, offset: self.frameWidth, initialX: self.startPoint.x, initialY: self.base, xlimit: self.startPoint.x+self.frameWidth, ylimit: self.base+self.frameHeight, yPos: self.$yPos).offset(x: 70, y: 0)
         }
-            Text(String(Double(self.yPos)))
+            Text(String(screenPosToGraphVal(sizeOfOne: {
+                let largestValue = bars.max()!
+                let smallestValue = bars.min()!
+                let labelValues = makeLabelValues(largest: largestValue, smallest: smallestValue)
+                return self.frameHeight/CGFloat(labelValues.max()!-labelValues.min()!)
+            }(), zeroLine: {
+                let largestValue = bars.max()!
+                let smallestValue = bars.min()!
+                let labelValues = makeLabelValues(largest: largestValue, smallest: smallestValue)
+                let sizeOfOne = self.frameHeight/CGFloat(labelValues.max()!-labelValues.min()!) // Vertical height of one integer unit
+                let zeroLine:CGFloat = {
+                    let labelIncSize:CGFloat = self.frameHeight/CGFloat(labelValues.count-1)
+                    // Get number of increments before reaching 0 label
+                    var numIncs:Int = 1
+                    loop: for i in 0 ..< labelValues.count {
+                        if labelValues[i] == 0 || labelValues[i] == 0.0 {
+                            numIncs = i
+                            break loop
+                        }
+                    }
+                    return self.base-(labelIncSize*CGFloat(numIncs))
+                }()
+                return zeroLine
+            }(), yPos: self.yPos)))//Double(self.yPos)))
     }
     }
+}
+
+func screenPosToGraphVal(sizeOfOne: CGFloat, zeroLine: CGFloat, yPos: CGFloat) -> Double {
+    //size of one is CGFloat value for how much screen space one unit takes up
+    //zeroline is where zero is
+    var distanceFromZero = zeroLine-yPos
+    var value = distanceFromZero/sizeOfOne
+    return Double(value)
+    //return 0.0
 }
 
 func makeLabelValues(largest: Double, smallest: Double) -> [Double] { // Give numbers that represent labels on the y-axis
