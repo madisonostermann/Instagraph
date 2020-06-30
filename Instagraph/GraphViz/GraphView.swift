@@ -171,6 +171,10 @@ struct BarGraphView: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var ocrProperties: OCRProperties
     
+    var startPoint:CGPoint = CGPoint(x: 0.0, y: 0.0)
+    var endPoint:CGPoint = CGPoint(x: 0.0, y: 0.0)
+
+    
     let base:CGFloat = 400 // Bottom edge of graph
     let start:CGFloat
     let frameHeight:CGFloat // Only square frames being used for now, represents both dimensions
@@ -186,6 +190,9 @@ struct BarGraphView: View {
         self.bars = bars; self.barLabels = barLabels
         self.xAxisLabel = xAxisLabel
         self.yAxisLabel = yAxisLabel
+        self.startPoint = CGPoint(x: self.start-20, y: self.base)
+        self.endPoint = CGPoint(x: (self.start)+self.frameWidth, y: self.base)
+        self.yPos = self.base
     }
     
     let colors:[Color] = Constants.GRAPH_COLORS
@@ -260,7 +267,11 @@ struct BarGraphView: View {
         }
     }
     
+    @State var yPos:CGFloat = 0.0
+    
     var body: some View {
+        VStack {
+        ZStack {
         ScrollView(.horizontal) {
             HStack {
                 //Text("Y axis label").rotationEffect(Angle(degrees: 270))
@@ -271,6 +282,7 @@ struct BarGraphView: View {
                         self.labelsText()
                         self.makeValueLabels()
                         self.makeAxisLabels()
+                        //ValueSliderView(currentPosition: self.startPoint, newPosition: self.endPoint, offset: self.frameWidth, initialX: self.startPoint.x, initialY: self.base, xlimit: self.startPoint.x+self.frameWidth, ylimit: self.base+self.frameHeight)
                     }.offset(x: 70, y: 0)
                 //Text("X axis label")
             /*Button("Home") {
@@ -281,7 +293,11 @@ struct BarGraphView: View {
             }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)*/
                 }
             }
+        } //ScrollView end
+            ValueSliderView(currentPosition: self.startPoint, newPosition: self.endPoint, offset: self.frameWidth, initialX: self.startPoint.x, initialY: self.base, xlimit: self.startPoint.x+self.frameWidth, ylimit: self.base+self.frameHeight, yPos: self.$yPos).offset(x: 70, y: 0)
         }
+            Text(String(Double(self.yPos)))
+    }
     }
 }
 

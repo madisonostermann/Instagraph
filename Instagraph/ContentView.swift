@@ -58,7 +58,8 @@ struct ContentView: View {
                 NavigationIndicator(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Graph" {
                 //ScrollView([.horizontal, .vertical]) {
-                    AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray)
+                    //AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray)
+                AnyGraphView(self.ocrProperties, table: SceneDelegate.demoBar)
                 //}
                 //BarGraphView(ocrProperties: self.ocrProperties)
             //page for cropping
