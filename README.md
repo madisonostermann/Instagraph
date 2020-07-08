@@ -17,7 +17,13 @@ For example, a table with a column for months and a column for temperature proba
 After determining what types of graphs make sense to represent the data, the program attempts to map parts of the table to the appropriate properties of various graph models (e.g. axis labels or graph title). 
 These properties can then be passed to our visualization code to produce graphs on the user’s screen.
 
+![Image of Original Table](https://github.com/mgipson/Instagraph/blob/master/Table.png)
+![Image of Graph Results](https://github.com/mgipson/Instagraph/blob/master/Graph.png)
+
+
 # Demos
 Bar Chart Visualization: https://www.youtube.com/watch?v=n56lA2_Rc4Y&feature=emb_logo
+
 Line Graph Visualization: https://www.youtube.com/watch?v=WF4Gai-JpKY&feature=emb_logo
+
 Interactive Value Bar: https://www.youtube.com/watch?v=pT0dG35hkLQ&feature=emb_logo
