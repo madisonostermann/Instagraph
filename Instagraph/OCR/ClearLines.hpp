@@ -19,6 +19,8 @@ public:
     Mat clear_line(Mat image);
     
 private:
+    //correct perspective
+    Mat correct_perspective(Mat image);
     //remove lines from image
     Mat remove_lines(Mat prepared_image);
 };
