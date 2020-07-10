@@ -171,6 +171,10 @@ struct BarGraphView: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var ocrProperties: OCRProperties
     
+    var startPoint:CGPoint = CGPoint(x: 0.0, y: 0.0)
+    var endPoint:CGPoint = CGPoint(x: 0.0, y: 0.0)
+
+    
     let base:CGFloat = 400 // Bottom edge of graph
     let start:CGFloat
     let frameHeight:CGFloat // Only square frames being used for now, represents both dimensions
@@ -186,6 +190,10 @@ struct BarGraphView: View {
         self.bars = bars; self.barLabels = barLabels
         self.xAxisLabel = xAxisLabel
         self.yAxisLabel = yAxisLabel
+        self.startPoint = CGPoint(x: self.start-20, y: self.base)
+        self.endPoint = CGPoint(x: (self.start)+self.frameWidth, y: self.base)
+        self.yPos = self.base
+        //UIScrollView.appearance().bounces = false
     }
     
     let colors:[Color] = Constants.GRAPH_COLORS
@@ -260,8 +268,14 @@ struct BarGraphView: View {
         }
     }
     
+    @State var yPos:CGFloat = 0.0
+    
     var body: some View {
+        VStack {
+            //ScrollView(.horizontal) {
+        ZStack {
         ScrollView(.horizontal) {
+            ZStack {
             HStack {
                 //Text("Y axis label").rotationEffect(Angle(degrees: 270))
                 VStack {
@@ -271,6 +285,7 @@ struct BarGraphView: View {
                         self.labelsText()
                         self.makeValueLabels()
                         self.makeAxisLabels()
+                        //ValueSliderView(currentPosition: self.startPoint, newPosition: self.endPoint, offset: self.frameWidth, initialX: self.startPoint.x, initialY: self.base, xlimit: self.startPoint.x+self.frameWidth, ylimit: self.base+self.frameHeight)
                     }.offset(x: 70, y: 0)
                 //Text("X axis label")
             /*Button("Home") {
@@ -281,8 +296,53 @@ struct BarGraphView: View {
             }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)*/
                 }
             }
+                Button(action:{print("doing a thing")}) {
+                    ValueSliderView(currentPosition: self.startPoint, newPosition: self.endPoint, offset: self.frameWidth, initialX: self.startPoint.x, initialY: self.base, xlimit: self.startPoint.x+self.frameWidth, ylimit: self.base-self.frameHeight, yPos: self.$yPos).offset(x: 70, y: 0)//.onTapGesture {
+                        //print("hi")
+                    }//.gesture(DragGesture(minimumDistance: 0).onChanged { value in
+                      //  print("dragging")
+                        //}).delayTouches()
+                //}
+            }
+        } //ScrollView end
+            //ValueSliderView(currentPosition: self.startPoint, newPosition: self.endPoint, offset: self.frameWidth, initialX: self.startPoint.x, initialY: self.base, xlimit: self.startPoint.x+self.frameWidth, ylimit: self.base-self.frameHeight, yPos: self.$yPos).offset(x: 70, y: 0)
         }
+            //}
+            Text(String(screenPosToGraphVal(sizeOfOne: {
+                let largestValue = bars.max()!
+                let smallestValue = bars.min()!
+                let labelValues = makeLabelValues(largest: largestValue, smallest: smallestValue)
+                return self.frameHeight/CGFloat(labelValues.max()!-labelValues.min()!)
+            }(), zeroLine: {
+                let largestValue = bars.max()!
+                let smallestValue = bars.min()!
+                let labelValues = makeLabelValues(largest: largestValue, smallest: smallestValue)
+                //let sizeOfOne = self.frameHeight/CGFloat(labelValues.max()!-labelValues.min()!) // Vertical height of one integer unit
+                let zeroLine:CGFloat = {
+                    let labelIncSize:CGFloat = self.frameHeight/CGFloat(labelValues.count-1)
+                    // Get number of increments before reaching 0 label
+                    var numIncs:Int = 1
+                    loop: for i in 0 ..< labelValues.count {
+                        if labelValues[i] == 0 || labelValues[i] == 0.0 {
+                            numIncs = i
+                            break loop
+                        }
+                    }
+                    return self.base-(labelIncSize*CGFloat(numIncs))
+                }()
+                return zeroLine
+            }(), yPos: self.yPos)))//Double(self.yPos)))
     }
+    }
+}
+
+func screenPosToGraphVal(sizeOfOne: CGFloat, zeroLine: CGFloat, yPos: CGFloat) -> Double {
+    //size of one is CGFloat value for how much screen space one unit takes up
+    //zeroline is where zero is
+    var distanceFromZero = zeroLine-yPos
+    var value = distanceFromZero/sizeOfOne
+    return Double(value)
+    //return 0.0
 }
 
 func makeLabelValues(largest: Double, smallest: Double) -> [Double] { // Give numbers that represent labels on the y-axis
