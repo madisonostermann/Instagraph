@@ -7,9 +7,17 @@
 //
 
 import SwiftUI
+import UIKit
+
+func haptic() {
+    print("activated haptic")
+    let generator = UINotificationFeedbackGenerator()
+    generator.notificationOccurred(.success)
+}
+
+var activateHaptic = true
 
 struct ValueSliderView: View {
-    //@Binding var points:[CGPoint]
     
     @State var currentPosition: CGPoint
     @State var newPosition: CGPoint
@@ -24,31 +32,43 @@ struct ValueSliderView: View {
     @Binding var yPos:CGFloat
     
     func makeSlider() -> some View {
-        GeometryReader { geometry in
+        //GeometryReader { geometry in
             Path { path in
                 path.move(to: self.currentPosition)
                 path.addLine(to: .init(x: self.currentPosition.x + self.offset, y: self.currentPosition.y))
             }
-            //Circle().foregroundColor(Color.blue).frame(width: 20, height: 20).position(self.currentPosition)
             .stroke(Color.red, lineWidth: CGFloat(3))
-            .highPriorityGesture(DragGesture(minimumDistance: 0)
+            .onTapGesture {
+                //
+            }.highPriorityGesture(DragGesture(minimumDistance: 0)//1, coordinateSpace: .local)
             .onChanged { value in
-                //if (value.translation.width + self.newPosition.x < self.xlimit) && (value.translation.height + self.newPosition.y < self.ylimit) &&  (value.translation.width + self.newPosition.x > 0) && (value.translation.height + self.newPosition.y > 0) {
-                    self.currentPosition = CGPoint(x: self.initialX, y: value.translation.height + self.newPosition.y)
+                if activateHaptic {
+                    haptic()
+                    activateHaptic = false
+                }
+                self.currentPosition = CGPoint(x: self.initialX, y: value.translation.height + self.newPosition.y)
                 self.yPos = self.currentPosition.y
                     print(self.currentPosition)
-                //}
             }.onEnded { value in
-                //if (value.translation.width + self.newPosition.x < self.xlimit) && (value.translation.height + self.newPosition.y < self.ylimit) &&  (value.translation.width + self.newPosition.x > 0) && (value.translation.height + self.newPosition.y > 0) {
-                    self.currentPosition = CGPoint(x: self.initialX, y: value.translation.height + self.newPosition.y)
-                    self.newPosition = self.currentPosition
-                //}
-                })//.delayTouches()
-        }
+                if !activateHaptic {
+                    activateHaptic = true
+                }
+                self.currentPosition = CGPoint(x: self.initialX, y: value.translation.height + self.newPosition.y)
+                self.newPosition = self.currentPosition
+                if self.currentPosition.y >= self.initialY {
+                    self.currentPosition = CGPoint(x: self.initialX, y: self.initialY); self.newPosition = self.currentPosition
+                }
+                if self.currentPosition.y < (self.ylimit) {
+                    print(self.ylimit)
+                    self.currentPosition = CGPoint(x: self.initialX, y: self.ylimit); self.newPosition = self.currentPosition
+                }
+                self.yPos = self.currentPosition.y
+                })
+        //}
     }
     
     var body: some View {
-        makeSlider()
+        makeSlider().delayTouches()
     }
 }
 

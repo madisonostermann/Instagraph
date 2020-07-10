@@ -193,6 +193,7 @@ struct BarGraphView: View {
         self.startPoint = CGPoint(x: self.start-20, y: self.base)
         self.endPoint = CGPoint(x: (self.start)+self.frameWidth, y: self.base)
         self.yPos = self.base
+        //UIScrollView.appearance().bounces = false
     }
     
     let colors:[Color] = Constants.GRAPH_COLORS
@@ -271,8 +272,10 @@ struct BarGraphView: View {
     
     var body: some View {
         VStack {
+            //ScrollView(.horizontal) {
         ZStack {
         ScrollView(.horizontal) {
+            ZStack {
             HStack {
                 //Text("Y axis label").rotationEffect(Angle(degrees: 270))
                 VStack {
@@ -293,9 +296,18 @@ struct BarGraphView: View {
             }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)*/
                 }
             }
+                Button(action:{print("doing a thing")}) {
+                    ValueSliderView(currentPosition: self.startPoint, newPosition: self.endPoint, offset: self.frameWidth, initialX: self.startPoint.x, initialY: self.base, xlimit: self.startPoint.x+self.frameWidth, ylimit: self.base-self.frameHeight, yPos: self.$yPos).offset(x: 70, y: 0)//.onTapGesture {
+                        //print("hi")
+                    }//.gesture(DragGesture(minimumDistance: 0).onChanged { value in
+                      //  print("dragging")
+                        //}).delayTouches()
+                //}
+            }
         } //ScrollView end
-            ValueSliderView(currentPosition: self.startPoint, newPosition: self.endPoint, offset: self.frameWidth, initialX: self.startPoint.x, initialY: self.base, xlimit: self.startPoint.x+self.frameWidth, ylimit: self.base+self.frameHeight, yPos: self.$yPos).offset(x: 70, y: 0)
+            //ValueSliderView(currentPosition: self.startPoint, newPosition: self.endPoint, offset: self.frameWidth, initialX: self.startPoint.x, initialY: self.base, xlimit: self.startPoint.x+self.frameWidth, ylimit: self.base-self.frameHeight, yPos: self.$yPos).offset(x: 70, y: 0)
         }
+            //}
             Text(String(screenPosToGraphVal(sizeOfOne: {
                 let largestValue = bars.max()!
                 let smallestValue = bars.min()!
@@ -305,7 +317,7 @@ struct BarGraphView: View {
                 let largestValue = bars.max()!
                 let smallestValue = bars.min()!
                 let labelValues = makeLabelValues(largest: largestValue, smallest: smallestValue)
-                let sizeOfOne = self.frameHeight/CGFloat(labelValues.max()!-labelValues.min()!) // Vertical height of one integer unit
+                //let sizeOfOne = self.frameHeight/CGFloat(labelValues.max()!-labelValues.min()!) // Vertical height of one integer unit
                 let zeroLine:CGFloat = {
                     let labelIncSize:CGFloat = self.frameHeight/CGFloat(labelValues.count-1)
                     // Get number of increments before reaching 0 label
