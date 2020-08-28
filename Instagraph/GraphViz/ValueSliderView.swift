@@ -32,7 +32,6 @@ struct ValueSliderView: View {
     @Binding var yPos:CGFloat
     
     func makeSlider() -> some View {
-        //GeometryReader { geometry in
             Path { path in
                 path.move(to: self.currentPosition)
                 path.addLine(to: .init(x: self.currentPosition.x + self.offset, y: self.currentPosition.y))
@@ -64,25 +63,9 @@ struct ValueSliderView: View {
                 }
                 self.yPos = self.currentPosition.y
                 })
-        //}
     }
     
     var body: some View {
-        makeSlider().delayTouches()
-    }
-}
-
-struct NoButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-    }
-}
-
-extension View {
-    func delayTouches() -> some View {
-        Button(action: {}) {
-            highPriorityGesture(TapGesture())
-        }
-        .buttonStyle(NoButtonStyle())
+        makeSlider()
     }
 }

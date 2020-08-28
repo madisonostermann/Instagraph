@@ -15,7 +15,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var ocrProperties: OCRProperties!
     
     static let demoBar:[[String]] = [["Student Scores", "Student", "Maddie", "Dalton", "Aaron", "Rachel", "Kassie", "Cody"], ["Student Scores", "Score", "5", "1", "3", "9", "3", "7"]]
-
+    static let demoLine:[[String]] = [["Month", "July", "Aug", "Sep", "Oct", "Nov", "Dec"], ["Temperature", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"]]
+    static let demoMultiLine:[[String]] = [["Month", "July", "Aug", "Sep", "Oct", "Nov", "Dec"], ["Temperature", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3", "86.0", "83.2", "74.9", "65", "42.3", "40.0"]]
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.

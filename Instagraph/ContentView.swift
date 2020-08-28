@@ -59,7 +59,10 @@ struct ContentView: View {
             } else if self.ocrProperties.page == "Graph" {
                 //ScrollView([.horizontal, .vertical]) {
                     //AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray)
-                AnyGraphView(self.ocrProperties, table: SceneDelegate.demoBar)
+                //AnyGraphView(self.ocrProperties, table: SceneDelegate.demoLine)//demoBar)
+//                let doubleArr:[Double] = [90.0, 83.2, 69.9, 50.1, 40.0, 35.3, 86.0, 83.2, 74.9, 65, 42.3, 40.0]
+//                let xLabs:[String] = ["July", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                LineGraphView(ocrProperties: self.ocrProperties, vals: [90.0, 83.2, 69.9, 50.1, 40.0, 35.3, 86.0, 83.2, 74.9, 65, 42.3, 40.0, 54.0, 53.2, 45.9, 42, 44.4, 35.0], xLabels: ["July", "Aug", "Sep", "Oct", "Nov", "Dec"], yAxisLabel: "Temperature", xAxisLabel: "Months")
                 //}
                 //BarGraphView(ocrProperties: self.ocrProperties)
             //page for cropping
