@@ -42,28 +42,28 @@ struct ContentView: View {
                         .default(Text("Photo Library")) {
                             self.ocrProperties.page = "Photo"
                         },
-                        //                        .default(Text("Documents")) {
-                        //                            self.ocrProperties.page = "Document"
-                        //                        },
+//                        .default(Text("Documents")) {
+//                            self.ocrProperties.page = "Document"
+//                        },
                         .default(Text("Take Photo")) {
                             self.ocrProperties.page = "Camera"
                         },
                         .cancel()
                     ])
                 }.foregroundColor(Color.black).padding(10).background(RoundedRectangle(cornerRadius: 10).foregroundColor(Color.blue).opacity(0.4))
-                //                Button("Graph") {
-                //                    self.ocrProperties.page = "Graph"
-                //                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
+//                Button("Graph") {
+//                    self.ocrProperties.page = "Graph"
+//                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
             } else if self.ocrProperties.page == "Photo" {
                 ImagePicker(ocrProperties: self.ocrProperties) // 2. Image Picker or Camera (or later, Document)
             } else if self.ocrProperties.page == "Camera" {
                 NavigationIndicator(ocrProperties: self.ocrProperties) // 2. Image Picker or Camera (or later, Document)
-                //            } else if self.ocrProperties.page == "Document" {
-                //                DocumentPicker(ocrProperties: self.ocrProperties)
+//          } else if self.ocrProperties.page == "Document" {
+//                DocumentPicker(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Crop" {
-                Crop(ocrProperties: self.ocrProperties)
+                Crop(ocrProperties: self.ocrProperties) // 4. Crop (manually)
             } else if self.ocrProperties.page == "Graph" {
-                AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray/*SceneDelegate.demoBar*/)
+                AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray/*SceneDelegate.demoBar*/) // 6. Graph
             }
         } //end of vstack
     }
