@@ -13,8 +13,21 @@ import TesseractOCR
 import GPUImage
 import MobileCoreServices
 
+// driven by performImageRecognition: performs OCR and calls the following methods
+// 1. sanitize (the hOCR): parse HTML, sanitize for non-viable html components, then create data structures storing extracted text & their corresponding locations
+        // a. matches: parse the HTML for words & bbox info
+// 2. group: group text that may have been picked up as separate elements into the same cell, depending on location
+// 3. sortX: DOESN'T DO ANYTHING RIGHT NOW
+// 4. divideColumns: delineate columns based on y location of adjacent words- divide into inner arrays
+
 class ImageProcessingEngine: NSObject {
     @ObservedObject var ocrProperties: OCRProperties
+    var filteredWords = [String]()
+    var startx = [Int]()
+    var endx = [Int]()
+    var starty = [Int]()
+    var dataArrays = [[String]]()
+    
     init(ocrProperties: OCRProperties) {
         self.ocrProperties = ocrProperties
     }
@@ -29,112 +42,64 @@ class ImageProcessingEngine: NSObject {
         ocrProperties.finalImage = Image(uiImage: scaledImage) //preprocessedImage
         if let tesseract = G8Tesseract(language: "eng") {
             tesseract.engineMode = .tesseractCubeCombined
-            //.tesseractOnly = fastest but least accurate method
-            //.cubeOnly = slower but more accurate since it employs more AI
-            //.tesseractCubeCombined = runs both .tesseractOnly & .cubeOnly; slowest but most accurate
             tesseract.pageSegmentationMode = .auto //lets it know how the text is divided- paragraph breaks
             tesseract.image = scaledImage //preprocessedImage
-            //tesseract.recognize()
-            //print(tesseract.recognizedText)
             
             ///hOCR gets html/text that orders text in columns from left to right
             let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
             print(hOCR!)
-            sortText(hOCR: hOCR!, scaledImage: scaledImage)
+            
+            sanitize(hOCR: hOCR!)
+            group(scaledImage: scaledImage)
+            //sortX()
+            divideColumns(scaledImage: scaledImage)
         }
-        //self.ocrProperties.page = "Results"
+        print("===================== ACCURACY TESTING =========================")
+        print("================== ARRAY OUTPUT AFTER OCR ======================")
+        print(self.ocrProperties.dataArray)
+        print("==============================================")
         self.ocrProperties.page = "Graph"
     }
     
-    func sortText(hOCR: String, scaledImage: UIImage) {
-        ///find all stuff we care about and add to the 'words' array- filter out excess html stuff
+    ///parse HTML, sanitize for non-viable html components, then create data structures storing extracted text & their corresponding locations
+    func sanitize(hOCR: String) {
+        //parse HTML for text and location info
         let words:[String] = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR)
-        ///find all x_locations of those words through the bounding box attribute- returns "start_x start_y end_x end_y"
         let bBox = matches(for: "((?<='bbox )[^<>]+(?=;))", in: hOCR)
-        ///because some words will be useless (empty or whitespace), the word & bBox won't match
-        ///only add viable words to filteredWords and save start_y location at corresponding position in y array
-        var filteredWords = [String]()
-        var starty = [Int]()
-        var startx = [Int]()
-        var endx = [Int]()
+        print("words prior to sanitization: ", words)
+        print("words count: ", words.count)
+        print("bBox prior to sanitization: ", bBox)
+        print("bBox count: ", bBox.count)
+        //filter out non-viable words + record their corresponding locations in arrays
         var counter = 0
-        for i in words.indices {
+        var bBoxSplit = [String.SubSequence]()
+        var startX:Int
+        var endX:Int
+        var startY:Int
+        for i in 0...5 {
+        //for i in words.indices {
             if words[i] != "" && !words[i].trimmingCharacters(in: .whitespaces).isEmpty && !words[i].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                filteredWords.append(words[i])
-                var bBoxSplit = bBox[counter].split(separator: " ")
-                var startY = Int(bBoxSplit[1].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
-                if startY != 0 { starty.append(startY) }
-                startY = 0
-                var startX = Int(bBoxSplit[0].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
-                if startX != 0 { startx.append(startX) }
-                startX = 0
-                var endX = Int(bBoxSplit[2].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
-                if endX != 0 { endx.append(endX) }
-                endX = 0
-                bBoxSplit = []
-                counter += 1
+                    //only add words to filteredWords if they aren't empty
+                    filteredWords.append(words[i])
+                    //add the word's corresponding location to the different bbox arrays
+                    //separate counter is used because there isn't any bbox info for words that are empty
+                    bBoxSplit = bBox[counter].split(separator: " ")
+                    startX = Int(bBoxSplit[0].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
+                    if startX != 0 { startx.append(startX) }
+                    endX = Int(bBoxSplit[2].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
+                    if endX != 0 { endx.append(endX) }
+                    startY = Int(bBoxSplit[1].components(separatedBy: CharacterSet.decimalDigits.inverted).joined())!
+                    if startY != 0 { starty.append(startY) }
+                    //move to the next bbox info
+                    counter += 1
             }
         }
-        ///if the y & x locations of two adjacent words is the same (or super close), it means they're on the same line and shouldn't be in different array elements
-        var i = 0
-        while i < starty.count-2 {
-            if starty[i]-starty[i+1] < Int(scaledImage.size.height/50) && starty[i]-starty[i+1] > -(Int(scaledImage.size.height/50)) && endx[i]-startx[i+1] < Int(scaledImage.size.height/50) && endx[i]-startx[i+1] > -(Int(scaledImage.size.height/50)) { //was 20
-                filteredWords[i] += " "
-                filteredWords[i] += filteredWords[i+1]
-                filteredWords.remove(at: i+1)
-                starty.remove(at: i+1)
-                startx.remove(at: i+1)
-                endx.remove(at: i+1)
-            } else { i += 1 } /// if the comparison combined the two, don't move on because you still need to combine the new one + the next
-        }
-        ///if the y location of two adjacent words are significantly different, it means its in a different column, so we create a new inner array for that column
-        var dataArrays = [[String]](repeating: [String](repeating: "", count: filteredWords.count), count: filteredWords.count)
-        var colValues = 0
-        var colNum = 0
-        for i in 0...starty.count-1 {
-            ///if the arrays aren't the same size (should be corrected for in previous verification), send message and abort (will get index out of bounds)
-            if filteredWords.count != starty.count {
-                print("Conflict in number of words and x locations. Aborting.")
-                print("Number of words: ", filteredWords.count)
-                print("Number of y locations: ", starty.count)
-                break
-            }
-            ///check if there will be a next element before comparing i & i+1
-            ///change in y --> create new inner array and reset first value used in new inner array to 0
-            if i < starty.count-1 && (starty[i]-starty[i+1] > Int(scaledImage.size.height/3) || starty[i]-starty[i+1] < -Int(scaledImage.size.height/3)) { //was 100
-                dataArrays[colNum][colValues] = filteredWords[i]
-                colValues = 0
-                colNum += 1
-            } else {
-                dataArrays[colNum][colValues] = filteredWords[i]
-                colValues += 1
-            }
-        }
-        ///because dataArrays was created with extra "" elements, go back through &  clean it up
-        for i in dataArrays.indices { dataArrays[i].removeAll(where: { $0 == "" })}
-        ///Create a printable string from the array- not needed for processing, but nice to see on screen for testing
-        var all_words = ""
-        for word in filteredWords {
-            all_words += word
-            all_words += " "
-        }
-        print(filteredWords)
-        print(starty)
-        //print(dataArrays)
-        ///pass dataArrays to graphing engine and display text for testing purposes
-        self.ocrProperties.dataArray = {//dataArrays
-            var arr:[[String]] = []
-            for a in 0 ..< dataArrays.count {
-                if !(dataArrays[a].count == 0) {
-                    arr.append(dataArrays[a])
-                }
-            }
-            return arr
-        }()
-        print(self.ocrProperties.dataArray)
-        ocrProperties.text = (all_words != "" ? all_words : "No text recognized.")
+        print("words after sanitization: ", filteredWords)
+        print("filteredWords count: ", filteredWords.count)
+        print("startx (bBox info) after sanitization: ", startx)
+        print("startx count: ", startx.count)
     }
-    
+    ///used in "sanitize" method for parsing the HTML for words & bbox info
     func matches(for regex: String, in text: String) -> [String] {
         do {
             let regex = try NSRegularExpression(pattern: regex)
@@ -145,10 +110,85 @@ class ImageProcessingEngine: NSObject {
             return []
         }
     }
+    
+    ///group text that may have been picked up as separate elements into the same cell, depending on location
+    func group(scaledImage: UIImage) {
+        //if the y & x locations of two adjacent words is the same (or super close), it means they're on the same line and shouldn't be in different array elements
+        var i = 0
+        while i < starty.count-2 {
+            if starty[i]-starty[i+1] < Int(scaledImage.size.height/50) && starty[i]-starty[i+1] > -(Int(scaledImage.size.height/50)) && endx[i]-startx[i+1] < Int(scaledImage.size.height/50) && endx[i]-startx[i+1] > -(Int(scaledImage.size.height/50)) { //was 20
+                filteredWords[i] += " "
+                filteredWords[i] += filteredWords[i+1]
+                filteredWords.remove(at: i+1)
+                starty.remove(at: i+1)
+                startx.remove(at: i+1)
+                endx.remove(at: i+1)
+            } else { i += 1 } //if the comparison combined the two, don't move on because you still need to combine the new one + the next
+        }
+    }
+    
+//    func sortX() {
+//
+//    }
+    
+    ///delineate columns based on y location of adjacent words- divide into inner arrays
+    func divideColumns(scaledImage: UIImage) {
+        //if the y location of two adjacent words are significantly different, it means its in a different column, so we create a new inner array for that column
+        dataArrays = [[String]](repeating: [String](repeating: "", count: filteredWords.count), count: filteredWords.count)
+        var colValues = 0
+        var colNum = 0
+        for i in 0...starty.count-1 {
+            //if the arrays aren't the same size (should be corrected for in previous verification), send message and abort (will get index out of bounds)
+            if filteredWords.count != starty.count {
+                print("Conflict in number of words and x locations. Aborting.")
+                print("Number of words: ", filteredWords.count)
+                print("Number of y locations: ", starty.count)
+                break
+            }
+            //check if there will be a next element before comparing i & i+1
+            //change in y --> create new inner array and reset first value used in new inner array to 0
+            if i < starty.count-1 && (starty[i]-starty[i+1] > Int(scaledImage.size.height/3) || starty[i]-starty[i+1] < -Int(scaledImage.size.height/3)) { //was 100
+                dataArrays[colNum][colValues] = filteredWords[i]
+                colValues = 0
+                colNum += 1
+            } else {
+                dataArrays[colNum][colValues] = filteredWords[i]
+                colValues += 1
+            }
+        }
+        
+        //because dataArrays was created with extra "" elements, go back through &  clean it up
+        for i in dataArrays.indices { dataArrays[i].removeAll(where: { $0 == "" })}
+        //pass dataArrays to graphing engine and display text for testing purposes
+        self.ocrProperties.dataArray = { //dataArrays
+            var arr:[[String]] = []
+            for a in 0 ..< dataArrays.count {
+                if !(dataArrays[a].count == 0) {
+                    arr.append(dataArrays[a])
+                }
+            }
+            return arr
+        }()
+    }
+    
+    ///just for testing
+//    func testing() {
+//        //Create a printable string from the array- not needed for processing, but nice to see on screen for testing
+//        var all_words = ""
+//        for word in filteredWords {
+//            all_words += word
+//            all_words += " "
+//        }
+//        print(filteredWords)
+//        print(starty)
+//        //print(dataArrays)
+//        ocrProperties.text = (all_words != "" ? all_words : "No text recognized.")
+//    }
+    
 }
 
-//To scale image for Tesseract
-//UIImage Extension allows access to any of its methods directly through a UIImage object
+///To scale image for Tesseract
+///UIImage Extension allows access to any of its methods directly through a UIImage object
 extension UIImage {
     func scaledImage(_ maxDimension: CGFloat) -> UIImage? {
         var scaledSize = CGSize(width: maxDimension, height: maxDimension)

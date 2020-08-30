@@ -18,7 +18,12 @@ struct NavigationIndicator: UIViewControllerRepresentable {
     }
     func updateUIViewController(_ uiViewController: NavigationIndicator.UIViewControllerType, context: UIViewControllerRepresentableContext<NavigationIndicator>) { }
 }
-
+// 1. Home Page (Import Image Options)
+// 2. Image Picker or Camera (or later, Document)
+// 3. Image Processing (correct perspective & clean up image)
+// 4. Crop (manually)
+// 5. OCR & Cell Detection & Text Sorting
+// 6. Graph
 struct ContentView: View {
     @ObservedObject var ocrProperties: OCRProperties
     @State private var present: Bool = false
@@ -28,7 +33,7 @@ struct ContentView: View {
     
     var body: some View {
         return VStack {
-            //Home Page: choose source or show graph
+            // 1. Home Page (Import Image Options)
             if self.ocrProperties.page == "Home" {
                 Button("Import Image") {
                     self.actionSheet = true
@@ -37,56 +42,28 @@ struct ContentView: View {
                         .default(Text("Photo Library")) {
                             self.ocrProperties.page = "Photo"
                         },
-                        .default(Text("Documents")) {
-                            self.ocrProperties.page = "Document"
-                        },
+                        //                        .default(Text("Documents")) {
+                        //                            self.ocrProperties.page = "Document"
+                        //                        },
                         .default(Text("Take Photo")) {
                             self.ocrProperties.page = "Camera"
                         },
                         .cancel()
                     ])
-                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
-                Button("Graph") {
-                    self.ocrProperties.page = "Graph"
-                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
-            //page for importing image, depends on source
+                }.foregroundColor(Color.black).padding(10).background(RoundedRectangle(cornerRadius: 10).foregroundColor(Color.blue).opacity(0.4))
+                //                Button("Graph") {
+                //                    self.ocrProperties.page = "Graph"
+                //                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
             } else if self.ocrProperties.page == "Photo" {
-                ImagePicker(ocrProperties: self.ocrProperties)
-            } else if self.ocrProperties.page == "Document" {
-                //DocumentPicker(ocrProperties: self.ocrProperties)
+                ImagePicker(ocrProperties: self.ocrProperties) // 2. Image Picker or Camera (or later, Document)
             } else if self.ocrProperties.page == "Camera" {
-                NavigationIndicator(ocrProperties: self.ocrProperties)
-            } else if self.ocrProperties.page == "Graph" {
-                //ScrollView([.horizontal, .vertical]) {
-                    //AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray)
-                AnyGraphView(self.ocrProperties, table: SceneDelegate.demoBar)
-                //}
-                //BarGraphView(ocrProperties: self.ocrProperties)
-            //page for cropping
+                NavigationIndicator(ocrProperties: self.ocrProperties) // 2. Image Picker or Camera (or later, Document)
+                //            } else if self.ocrProperties.page == "Document" {
+                //                DocumentPicker(ocrProperties: self.ocrProperties)
             } else if self.ocrProperties.page == "Crop" {
                 Crop(ocrProperties: self.ocrProperties)
-            //page for showing transformed photo + extracted text
-            } else if self.ocrProperties.page == "Results" {
-                VStack {
-                    if showText {
-                        ScrollView {Text(ocrProperties.text)}
-                    } else {
-                        ocrProperties.finalImage?.resizable().aspectRatio(contentMode: .fit).padding(.horizontal, 10)
-                        //Image(uiImage: (ocrProperties.image!)).resizable().aspectRatio(1 , contentMode: .fit)
-                    }
-                    //Spacer()
-                    HStack {
-                        Button(showText ? "Show Image" : "Show Text") {
-                            self.showText.toggle()
-                        }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
-                        Button("Home") {
-                            self.ocrProperties.page = "Home"
-                            self.ocrProperties.source = ""
-                            self.ocrProperties.image = nil
-                            self.ocrProperties.finalImage = nil
-                        }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
-                    }
-                }.padding([.vertical, .horizontal])
+            } else if self.ocrProperties.page == "Graph" {
+                AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray/*SceneDelegate.demoBar*/)
             }
         } //end of vstack
     }

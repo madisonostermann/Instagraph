@@ -25,11 +25,11 @@ class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UIImageP
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         self.activityIndictor.startAnimating()
-        ocrProperties.image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+        self.ocrProperties.image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         picker.dismiss(animated: true, completion: nil)
         self.activityIndictor.stopAnimating()
-        Crop(ocrProperties: ocrProperties).setup()
-        //ImageProcessingEngine(ocrProperties: ocrProperties).performImageRecognition()
+        self.ocrProperties.image = ClearLinesBridge().detectLine(in: self.ocrProperties.image) // 3. Image Processing (correct perspective & clean up image)
+        Crop(ocrProperties: ocrProperties).setup() // 4. Crop (manually)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

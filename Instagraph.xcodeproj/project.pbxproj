@@ -66,7 +66,6 @@
 		3CCAB4FD247C0C4A00E89AE8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3CCAB500247C0C4A00E89AE8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3CCAB503247C0C4A00E89AE8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		3CCAB505247C0C4A00E89AE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CCAB50A247C0C4A00E89AE8 /* InstagraphTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InstagraphTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCAB515247C0C4B00E89AE8 /* InstagraphUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InstagraphUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
@@ -134,12 +133,12 @@
 				3C25A3EC24870E5100100ABA /* ARCameraView.swift */,
 				3CCAB533247C198500E89AE8 /* DocumentPicker.swift */,
 				3CCAB52D247C0FEC00E89AE8 /* ImagePicker.swift */,
-				3C18F8B52493C90A00ADB315 /* Crop.swift */,
 				3C05D33924A24FEB0085BE9E /* Instagraph-Bridging-Header.h */,
 				3C05D33C24A24FEC0085BE9E /* ClearLinesBridge.h */,
 				3C05D33A24A24FEC0085BE9E /* ClearLinesBridge.mm */,
 				3C05D33B24A24FEC0085BE9E /* ClearLines.hpp */,
 				3C05D33E24A24FEC0085BE9E /* ClearLines.cpp */,
+				3C18F8B52493C90A00ADB315 /* Crop.swift */,
 				3CD479102487410A008E67CD /* ImageProcessingEngine.swift */,
 			);
 			path = OCR;
@@ -170,7 +169,6 @@
 			isa = PBXGroup;
 			children = (
 				3CCAB4FD247C0C4A00E89AE8 /* Assets.xcassets */,
-				3CCAB505247C0C4A00E89AE8 /* Info.plist */,
 				3CD4791224874330008E67CD /* OCRProperties.swift */,
 				48C2600E2485D61A0042C3ED /* Constants.swift */,
 				3CCAB4F7247C0C4900E89AE8 /* AppDelegate.swift */,

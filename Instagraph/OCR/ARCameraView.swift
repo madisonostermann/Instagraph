@@ -60,9 +60,9 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
     @objc func takeSnapshot(rec: UITapGestureRecognizer){
         if rec.state == .ended {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            ocrProperties.image = self.arView.snapshot()
-            Crop(ocrProperties: ocrProperties).setup()
-            //ImageProcessingEngine(ocrProperties: ocrProperties).performImageRecognition()
+            self.ocrProperties.image = self.arView.snapshot()
+            self.ocrProperties.image = ClearLinesBridge().detectLine(in: self.ocrProperties.image) // 3. Image Processing (correct perspective & clean up image)
+            Crop(ocrProperties: ocrProperties).setup() // 4. Crop (manually)
         }
     }
 

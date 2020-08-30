@@ -34,7 +34,12 @@ struct AnyGraphView: View {
     }
     
     var body: some View {
-        self.whatType()
+        VStack {
+            Button("New Graph") {
+                self.ocrProperties.page = "Home"
+            }.foregroundColor(Color.black).padding(10).background(RoundedRectangle(cornerRadius: 10).foregroundColor(Color.blue).opacity(0.4))
+            self.whatType()
+        }
     }
 }
 

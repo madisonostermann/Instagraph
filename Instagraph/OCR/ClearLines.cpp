@@ -15,6 +15,7 @@ using namespace std;
 Scalar white = CV_RGB(255, 255, 255);
 Scalar black = CV_RGB(0, 0, 0);
 Mat original_image;
+Mat transformed_image;
 
 Mat ClearLines::clear_line(Mat image) {
     //preserve original_image
@@ -28,7 +29,7 @@ Mat ClearLines::clear_line(Mat image) {
     //Clean up image for easier OCR
     
     //Remove lines
-    return remove_lines(image);
+    return remove_lines(transformed_image);
 }
 
 Mat ClearLines::correct_perspective(Mat image) {
@@ -36,7 +37,6 @@ Mat ClearLines::correct_perspective(Mat image) {
     vector<Vec4i> hierarchy;
     Mat first_pass(image.rows,image.cols,CV_8UC1,Scalar::all(0));
     Mat second_pass(image.rows,image.cols,CV_8UC1,Scalar::all(0));
-    Mat transformed_image = Mat::zeros(image.rows, image.cols, CV_8UC3);
     
     //detect & draw external lines- may pick up lines inside the table this time
     findContours(image, table_outline_contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
@@ -100,12 +100,12 @@ Mat ClearLines::remove_lines(Mat image) {
     findContours(lined_image, all_contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
     //draw over contours with white
     for(int i = 0; i< all_contours.size(); i++) {
-        drawContours(original_image, all_contours, i, white, 5);
+        drawContours(transformed_image, all_contours, i, black, 5);
     }
     //==============================================================
     //prepared image is white on black image with table lines + text
     //horizontal and vertical images are white on black images with lines only
     //lined image has both horizontal and vertical lines
     //contours are drawn over the original image, so return the original image
-    return original_image;
+    return transformed_image;
 }
