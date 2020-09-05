@@ -55,6 +55,28 @@ struct LineGraphView: View {
         }
     }
     
+    func makePaths(i: Int, j: Int, sizeOfOne: CGFloat, zeroLine: CGFloat, this: Int) -> some View {
+        let path = Path { path in
+            path.addArc(
+                center: CGPoint(x: self.start + 1.5*(CGFloat(j)*self.width()), y: (zeroLine-CGFloat(self.vals[(i*(self.vals.count/this))+j])*sizeOfOne)),
+                radius: 3.0,
+                startAngle: .degrees(0.0),
+                endAngle: .degrees(360.0),
+                clockwise: true)
+        }.stroke(self.getColor(i), lineWidth: 2)
+        return path
+    }
+    
+    func makeDots(sizeOfOne: CGFloat, zeroLine: CGFloat, this: Int) -> some View { //this var might not be right - this is integer
+        let dots = ForEach(0 ..< vals.count/xLabels.count) { i in
+            ForEach(0 ..< (self.vals.count/(this))) { j in
+                //Text(String(i))
+                self.makePaths(i: i, j: j, sizeOfOne: sizeOfOne, zeroLine: zeroLine, this: this)
+            }
+        }
+        return dots
+    }
+    
     func makeManyLines() -> some View {
         
         let largestValue = vals.max()!
@@ -76,6 +98,27 @@ struct LineGraphView: View {
         let this = vals.count/xLabels.count
         print(vals.count/xLabels.count)
         print(vals.count)
+        
+//        let dots = ForEach(0 ..< vals.count) { i in
+//            Path { path in
+//                path.addArc(center: CGPoint(x: self.start + 1.5*(CGFloat(i)*self.width()), y: (zeroLine-CGFloat(self.vals[i])*sizeOfOne)), radius: 4.0, startAngle: .degrees(0.0), endAngle: .degrees(360.0), clockwise: true)
+//            }.foregroundColor(self.colorScheme == .dark ? Color.white : Color.black)
+//        }
+        let dots = self.makeDots(sizeOfOne: sizeOfOne, zeroLine: zeroLine, this: this)
+//        let dots = ForEach(0 ..< vals.count/xLabels.count) { i in
+//            ForEach(0 ..< (self.vals.count/(this))-1) { j in
+//                Text(String(i))
+//////                Path { path in
+//////                    path.addArc(
+//////                        center: CGPoint(x: self.start + 1.5*(CGFloat(j)*self.width()), y: (zeroLine-CGFloat(self.vals[(i*(self.vals.count/this))+j])*sizeOfOne)),
+//////                        radius: 3.0,
+//////                        startAngle: .degrees(0.0),
+//////                        endAngle: .degrees(360.0),
+//////                        clockwise: true)
+//////                }.stroke(self.getColor(i), lineWidth: 2)
+//            }
+//        }
+        
         let lines = ForEach(0 ..< vals.count/xLabels.count) { i in
             ForEach(0 ..< (self.vals.count/(this))-1) { j in
                 Path { path in
@@ -87,6 +130,7 @@ struct LineGraphView: View {
             }
         }
         return Group {
+            dots
             lines
         }
     }
