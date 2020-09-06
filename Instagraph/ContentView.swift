@@ -54,6 +54,9 @@ struct ContentView: View {
                 Button("Graph") {
                     self.ocrProperties.page = "Graph"
                 }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
+                Button("Table") {
+                    self.ocrProperties.page = "Table"
+                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
             } else if self.ocrProperties.page == "Photo" {
                 ImagePicker(ocrProperties: self.ocrProperties) // 2. Image Picker or Camera (or later, Document)
             } else if self.ocrProperties.page == "Camera" {
@@ -65,6 +68,8 @@ struct ContentView: View {
             } else if self.ocrProperties.page == "Graph" {
                 LineGraphView(ocrProperties: self.ocrProperties, vals: [90.0, 83.2, 69.9, 50.1, 40.0, 35.3, 86.0, 83.2, 74.9, 65, 42.3, 40.0, 54.0, 53.2, 45.9, 42, 44.4, 35.0], xLabels: ["July", "Aug", "Sep", "Oct", "Nov", "Dec"], yAxisLabel: "Temperature", xAxisLabel: "Months")
                 //AnyGraphView(self.ocrProperties, table: self.ocrProperties.dataArray/*SceneDelegate.demoBar*/) // 6. Graph
+            } else if self.ocrProperties.page == "Table" {
+                TableView()//TestView()//TableView()
             }
         } //end of vstack
     }
