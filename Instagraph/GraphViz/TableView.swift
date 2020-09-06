@@ -24,80 +24,75 @@ struct TableView: View {
     
     let table:[[String]] = [["Student Scores", "Student", "Maddie", "Dalton", "Aaron", "Rachel", "Kassie", "Cody"], ["Student Scores", "Score", "5", "1", "3", "9", "3", "7"]]
     
-    let width = Constants.SCREEN_WIDTH
-    let height = Constants.SCREEN_HEIGHT
-    
     @Environment(\.colorScheme) var colorScheme
     
     let minWidth = Constants.SCREEN_WIDTH/5
     let minHeight = Constants.SCREEN_HEIGHT/20
     
-    func generateCell(point: CGPoint, str: String) -> some View {
-        Cell(w: minWidth, h: minHeight, str: str)
-//        ZStack {
-//            Rectangle()
-//                .size(CGSize(width: minWidth, height: minHeight)).stroke(Color.white)//colorScheme == .dark ? Color.white : Color.black)
-//                //.offset(x: point.x, y: point.y)//.position(x: 200, y: 600)//point)
-//            Text(str)//.position()
-//        }//.position(x: 200, y: 200)//point.x, y: point.y)
+    let maxWidth = Constants.SCREEN_WIDTH/2.5
+    let maxHeight = Constants.SCREEN_HEIGHT/20
+    
+    struct ij: Hashable {
+        let i:Int
+        let j:Int
     }
     
-    @State var textSize: CGSize = .zero
-    @State var textLocation: CGPoint = .zero
+    var highlightedSet:Set<ij> = [] //Set of cell locations which should be highlighted when dragger is used
     
-    let initialPoint:CGPoint = CGPoint(x: Constants.SCREEN_WIDTH/8, y: Constants.SCREEN_HEIGHT/8)
+    //let initialPoint:CGPoint = CGPoint(x: Constants.SCREEN_WIDTH/8, y: Constants.SCREEN_HEIGHT/8)
     
-    func cells() -> some View {
-        print(initialPoint.y)
+    func generateCells() -> some View {
+        
+        struct Dimensions {
+            var h: CGFloat
+            var w: CGFloat
+        }
+        
+        var d:Dimensions = Dimensions(h: self.minHeight, w: 0.0) //2.5, 4, 5
+        
+        //Select width of cells - cells have a minimum width and if there are enough columns (or rows), the table will stretch offscreen
+        if table.count <= 2 {
+            d.w = Constants.SCREEN_WIDTH/2.5
+        } else if table.count == 3 {
+            d.w = Constants.SCREEN_WIDTH/3.5
+        } else {
+            d.w = self.minWidth
+        }
+        
+        let initialPoint:CGPoint = CGPoint(x: (d.w*0.75), y: Constants.SCREEN_HEIGHT/8)
+        
         return ZStack {
-        ForEach(0 ..< 3) { i in
-            self.generateCell(
-                point: CGPoint(
-                    x: CGFloat(self.initialPoint.x+(CGFloat(i)*self.minWidth)),//200,//CGFloat(self.initialPoint.x+(CGFloat(i)*self.minWidth)),
-                    y: self.initialPoint.y),//self.initialPoint.y),
-                str: "banana").position(x: CGFloat(self.initialPoint.x+(CGFloat(i)*self.minWidth)), y: self.initialPoint.y)
-        }
-        }
+            ForEach(0 ..< self.table.count) { i in
+                ForEach(0 ..< self.table[0].count) { j in
+                    Text(self.table[i][j])
+                    .multilineTextAlignment(.leading)
+                        .frame(width: d.w, height: d.h)
+                    .background(Rectangle().stroke(Color.white))
+                    .position(
+                        x: initialPoint.x+(CGFloat(i)*d.w),//self.minWidth),
+                        y: initialPoint.y+(CGFloat(j)*self.minHeight)
+                    )
+                        .onTapGesture {
+                            print(String(i) + String(j))
+                    }
+                    //.pop
+                } //Inner ForEach end
+            }
+        } //ZStack end
     }
     
     var body: some View {
-        //self.cells()
-        //Cell(w: self.minWidth, h: self.minHeight, str: "banana")
-        ZStack {
-        ForEach(0 ..< 4) { i in
-        Text("a long block of text")
-            //.fixedSize(horizontal: true, vertical: true)
-            .multilineTextAlignment(.leading)
-            //.padding()
-            .frame(width: self.minWidth, height: self.minHeight)
-            .background(Rectangle().stroke(Color.white))
-            .position(x: self.initialPoint.x+(CGFloat(i)*self.minWidth), y: self.initialPoint.y)
+        VStack {
+        self.generateCells()
+        Spacer()
+            Text("Press me")
+            Spacer()
+            Text("Press me too")
         }
-        }
-//        ZStack{
-//            Rectangle()
-//            .size(CGSize(width: minWidth, height: minHeight)).stroke(Color.white)//colorScheme == .dark ? Color.white : Color.black)
-//                .position(x: 60, y: 100)//.offset(x: 40, y: 100)//x: point.x, y: point.y)
-//            Text("Banana").position(x: 60, y: 100)
-//            //Rectangle()
-//            //.size(CGSize(width: minWidth, height: minHeight)).stroke(Color.red)//colorScheme == .dark ? Color.white : Color.black)
-////                .offset(x: 60, y: 100)
-//        }//.offset(x: 60, y: 100)
-//        ForEach(0 ..< 3) { i in
-//            self.generateCell(
-//                point: CGPoint(
-//                    x: CGFloat(self.initialPoint.x+(CGFloat(i)*self.minWidth)),//200,//CGFloat(self.initialPoint.x+(CGFloat(i)*self.minWidth)),
-//                    y: self.initialPoint.y),//self.initialPoint.y),
-//                str: "banana")
-//        }
-//        VStack {
-//            ChildSizeReader(size: $textSize) {
-//                Text("hi")
-//            }
-//            Text("Size is \(textSize.debugDescription)")
-//        }
     }
 }
+
+// ========== ========== ========== ========== ========== //
 
 struct ChildSizeReader<Content: View>: View {
     @Binding var size: CGSize
