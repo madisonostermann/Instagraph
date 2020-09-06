@@ -43,8 +43,44 @@ struct TableView: View {
         let j:Int
     }
     
-    func fillSelectedSet() {
+    func fillSelectedSet(start: CGPoint, end: CGPoint) {
+        var startij:ij
+        var endij:ij
         
+        var currentClosestij:ij = ij(i: 10000, j: 10000)
+        var currentDifference:CGFloat = 99999999.9
+        for i in 0 ..< self.tableModel.tableCellPositions.count {
+            for j in 0 ..< self.tableModel.tableCellPositions[i].count {
+                let xDifference = abs(self.tableModel.tableCellPositions[i][j].x-start.x)
+                let yDifference = abs(self.tableModel.tableCellPositions[i][j].y-start.y)
+                let totalDifference = xDifference + yDifference
+                print(totalDifference)
+                if totalDifference <= currentDifference {
+                    print("Thing here")
+                    currentDifference = totalDifference
+                    currentClosestij = ij(i: i, j: j)
+                }
+            }
+        }
+        startij = currentClosestij
+        currentClosestij = ij(i: 10000, j: 10000)
+        currentDifference = 99999999.9
+        for i in 0 ..< self.tableModel.tableCellPositions.count {
+            for j in 0 ..< self.tableModel.tableCellPositions[i].count {
+                let xDifference = abs(self.tableModel.tableCellPositions[i][j].x-end.x)
+                let yDifference = abs(self.tableModel.tableCellPositions[i][j].y-end.y)
+                let totalDifference = xDifference + yDifference
+                if totalDifference <= currentDifference {
+                    currentDifference = totalDifference
+                    currentClosestij = ij(i: i, j: j)
+                }
+            }
+        }
+        endij = currentClosestij
+        print("Start index:")
+        print(String(startij.i) + String(startij.j))
+        print("End index:")
+        print(String(endij.i) + String(endij.j))
     }
     
     func findClosest() -> ij {
@@ -128,6 +164,7 @@ struct TableView: View {
                     .onEnded { value in
                         self.isDragging = false
                         self.dragEndPoint = value.location
+                        self.fillSelectedSet(start: self.dragStartPoint, end: self.dragEndPoint)
                     }
                     .onChanged { value in
                         if !self.isDragging {
@@ -135,7 +172,7 @@ struct TableView: View {
                         }
                         self.isDragging = true
                         self.dragEndPoint = value.location
-                        print(value.location)
+                        //print(value.location)
                     }
             )
             if isDragging {
