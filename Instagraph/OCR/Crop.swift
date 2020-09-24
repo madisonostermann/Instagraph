@@ -58,7 +58,12 @@ struct Crop: View {
         let cgimg = self.ocrProperties.image?.cgImage!
         let croppedCGImage = cgimg?.cropping(to: cropRect)
         self.ocrProperties.image = UIImage(cgImage: croppedCGImage!)
-        ImageProcessingEngine(ocrProperties: self.ocrProperties).performImageRecognition()
+        //get smaller images & text locations
+        self.ocrProperties.croppedImages = PrepareImageBridge().splice_cells() as NSArray as? [UIImage]
+        self.ocrProperties.textLocations = PrepareImageBridge().locate_cells() as? [NSValue]
+//        self.ocrProperties.image = self.ocrProperties.croppedImages![3] for testing
+        //go to OCR
+        OCRSortingEngine(ocrProperties: self.ocrProperties).performImageRecognition()
     }
     
     var body: some View {

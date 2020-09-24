@@ -61,8 +61,10 @@ class ARCameraView: UIViewController, ARSCNViewDelegate {
         if rec.state == .ended {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             self.ocrProperties.image = self.arView.snapshot()
-            self.ocrProperties.image = ClearLinesBridge().detectLine(in: self.ocrProperties.image) // 3. Image Processing (correct perspective & clean up image)
-            Crop(ocrProperties: ocrProperties).setup() // 4. Crop (manually)
+            //correct perspective
+            self.ocrProperties.image = PrepareImageBridge().deskew(self.ocrProperties.image)
+            //crop
+            Crop(ocrProperties: ocrProperties).setup()
         }
     }
 

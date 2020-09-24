@@ -3,4 +3,4 @@
 //
 
 //CONNECTS SWIFT AND CPP by making cpp class accessible to Swift
-#import "ClearLinesBridge.h"
+#import "PrepareImageBridge.h"

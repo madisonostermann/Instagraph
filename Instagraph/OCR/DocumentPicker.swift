@@ -28,7 +28,7 @@ import MobileCoreServices
         //ocrProperties.image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         picker.dismiss(animated: true, completion: nil)
         self.activityIndictor.stopAnimating()
-        ImageProcessingEngine(ocrProperties: ocrProperties).performImageRecognition()
+        OCRSortingEngine(ocrProperties: ocrProperties).performImageRecognition()
     }
 
 
