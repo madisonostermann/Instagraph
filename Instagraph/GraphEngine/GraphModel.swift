@@ -26,7 +26,22 @@ class Graph {//: Equatable {
     }
 }
 
-class BarGraph: Graph {
+class BarGraph: Graph, Equatable {
+    static func == (lhs: BarGraph, rhs: BarGraph) -> Bool {
+        if lhs.title != rhs.title {
+            return false
+        } else if lhs.xAxisLabel != rhs.xAxisLabel {
+            return false
+        } else if lhs.yAxisLabel != rhs.yAxisLabel {
+            return false
+        } else if lhs.xAxisValues != rhs.xAxisValues {
+            return false
+        } else if lhs.data != rhs.data {
+            return false
+        }
+        return true
+    }
+    
     let xAxisValues:[String]
     let data:[Double]
     //yAxisValues are produced dynamically when graphing from data
@@ -37,7 +52,22 @@ class BarGraph: Graph {
     }
 }
 
-class LineGraph: Graph {
+class LineGraph: Graph, Equatable {
+    static func == (lhs: LineGraph, rhs: LineGraph) -> Bool {
+        if lhs.title != rhs.title {
+            return false
+        } else if lhs.xAxisLabel != rhs.xAxisLabel {
+            return false
+        } else if lhs.yAxisLabel != rhs.yAxisLabel {
+            return false
+        } else if lhs.xAxisValues != rhs.xAxisValues {
+            return false
+        } else if lhs.data != rhs.data {
+            return false
+        }
+        return true
+    }
+    
     let xAxisValues:[String]
     let data:[Double]
     //yAxisValues are produced dynamically when graphing from data
@@ -54,7 +84,20 @@ class PieChart: Graph {
     
 }
 
-class ScatterPlot: Graph {
+class ScatterPlot: Graph, Equatable {
+    static func == (lhs: ScatterPlot, rhs: ScatterPlot) -> Bool {
+        if lhs.title != rhs.title {
+            return false
+        } else if lhs.xAxisLabel != rhs.xAxisLabel {
+            return false
+        } else if lhs.yAxisLabel != rhs.yAxisLabel {
+            return false
+        } else if lhs.data != rhs.data {
+            return false
+        }
+        return true
+    }
+    
     let data:[[Double]]
     // x-Axis & y-Axis values are generated dynamically
     init(title: String, xAxisLabel: String, yAxisLabel: String, data: [[Double]]) {

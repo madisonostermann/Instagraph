@@ -38,6 +38,7 @@ class Testing {
     }
     
     static func processImages() {
+        
         for i in 0 ..< 16 {
             let ocrPInUse = Testing.imagesOcrProperties[i]
             do {
@@ -53,30 +54,59 @@ class Testing {
                 Testing.ocrOutputResults[i] = true
                 //Test GraphEngine on actual OCR output
                 let ge = GraphEngine(table: ocrPInUse.dataArray)
-                let result = ge.determineGraphType()
-                if result.0 == .failure {
-                    break checkIf
+                
+                do {
+                    let result = ge.determineGraphType()
+                    if result.0 == .failure {
+                        break checkIf
+                    }
+                    if Testing.areGraphsEqual(g1: result.1[0], g2: correctEngineOutput[i]) {
+                        engineOutputResults[i] = true
+                    }
+                } catch let error {
+                    print("Exception for determining graph type of image \(String(i+1))!")
+                    print("Error")
                 }
-//                if result.1[0] == correctEngineOutput[i] {
-//                    engineOutputResults[i] = true
-//                }
             }
         }
+        
         doFor: for i in 0 ..< 16 {
             //Test GraphEngine on correct OCR output
             let ge = GraphEngine(table: Testing.correctOcrOutputs[i])
-            let result = ge.determineGraphType()
-            if result.0 == .failure {
-                break doFor
+            do {
+                let result = ge.determineGraphType()
+                if result.0 == .failure {
+                    break doFor
+                }
+                if Testing.areGraphsEqual(g1: result.1[0], g2: correctEngineOutput[i]) {
+                    engineOutputResultsForCleanInput[i] = true
+                }
+            } catch let error {
+                print("Clean input: Exception for determining graph type of image \(String(i+1))!")
+                print("Error")
             }
-//            if result.1[0] == correctEngineOutput[i] {
-//                engineOutputResults[i] = true
-//            }
         }
+        
     }
     
     static func areGraphsEqual(g1: Graph, g2: Graph) -> Bool {
-        
+        if type(of: g1) != type(of: g2) {
+            return false
+        }
+        if g1 is BarGraph {
+            if g1 as! BarGraph == g2 as! BarGraph {
+                return true
+            }
+        } else if g1 is LineGraph {
+            if g1 as! LineGraph == g2 as! LineGraph {
+                return true
+            }
+        } else if g2 is ScatterPlot {
+            if g1 as! ScatterPlot == g2 as! ScatterPlot {
+                return true
+            }
+        }
+        return false
     }
     
     static var correctOcrOutputs:[[[String]]] = [[]]
