@@ -8,7 +8,11 @@
 
 import Foundation
 
-class Graph {
+class Graph {//: Equatable {
+//    static func == (lhs: Graph, rhs: Graph) -> Bool {
+//        <#code#>
+//    }
+    
     let title:String
     let xAxisLabel:String
     let yAxisLabel:String
