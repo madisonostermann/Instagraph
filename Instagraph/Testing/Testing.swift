@@ -19,6 +19,7 @@ class Testing {
     static func runTestingPipeline() {
         Testing.loadImages()
         Testing.processImages()
+        print(Testing.percentCorrect(arr: Testing.ocrOutputResults).1)
     }
     
     static func loadImages() {
@@ -53,39 +54,39 @@ class Testing {
             checkIf: if ocrPInUse.dataArray == Testing.correctOcrOutputs[i] {
                 Testing.ocrOutputResults[i] = true
                 //Test GraphEngine on actual OCR output
-                let ge = GraphEngine(table: ocrPInUse.dataArray)
-                
-                do {
-                    let result = ge.determineGraphType()
-                    if result.0 == .failure {
-                        break checkIf
-                    }
-                    if Testing.areGraphsEqual(g1: result.1[0], g2: correctEngineOutput[i]) {
-                        engineOutputResults[i] = true
-                    }
-                } catch let error {
-                    print("Exception for determining graph type of image \(String(i+1))!")
-                    print("Error")
-                }
+//                let ge = GraphEngine(table: ocrPInUse.dataArray)
+//
+//                do {
+//                    let result = ge.determineGraphType()
+//                    if result.0 == .failure {
+//                        break checkIf
+//                    }
+//                    if Testing.areGraphsEqual(g1: result.1[0], g2: correctEngineOutput[i]) {
+//                        engineOutputResults[i] = true
+//                    }
+//                } catch let error {
+//                    print("Exception for determining graph type of image \(String(i+1))!")
+//                    print("Error")
+//                }
             }
         }
         
-        doFor: for i in 0 ..< 18 {
-            //Test GraphEngine on correct OCR output
-            let ge = GraphEngine(table: Testing.correctOcrOutputs[i])
-            do {
-                let result = ge.determineGraphType()
-                if result.0 == .failure {
-                    break doFor
-                }
-                if Testing.areGraphsEqual(g1: result.1[0], g2: correctEngineOutput[i]) {
-                    engineOutputResultsForCleanInput[i] = true
-                }
-            } catch let error {
-                print("Clean input: Exception for determining graph type of image \(String(i+1))!")
-                print("Error")
-            }
-        }
+//        doFor: for i in 0 ..< 18 {
+//            //Test GraphEngine on correct OCR output
+//            let ge = GraphEngine(table: Testing.correctOcrOutputs[i])
+//            do {
+//                let result = ge.determineGraphType()
+//                if result.0 == .failure {
+//                    break doFor
+//                }
+//                if Testing.areGraphsEqual(g1: result.1[0], g2: correctEngineOutput[i]) {
+//                    engineOutputResultsForCleanInput[i] = true
+//                }
+//            } catch let error {
+//                print("Clean input: Exception for determining graph type of image \(String(i+1))!")
+//                print("Error")
+//            }
+//        }
         
     }
     
