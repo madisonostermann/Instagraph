@@ -93,6 +93,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self.window = window
             window.makeKeyAndVisible()
         }
+        Testing.loadImages()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

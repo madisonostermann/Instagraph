@@ -26,15 +26,15 @@ class Testing {
         for i in 1 ... 18 { //16 images in TestTables
             //Initialize new OCRProperties for each image
             let ocrP = OCRProperties()
-            Testing.imagesOcrProperties[i-1] = ocrP
+            Testing.imagesOcrProperties.append(ocrP)//[i-1] = ocrP
                 
             //load image
             //set image to appropriate OCRProperties instance
             ocrP.image = UIImage(named: "\(String(i))")
             
             //Initialize result arrays to false
-            Testing.ocrOutputResults[i-1] = false
-            Testing.engineOutputResults[i-1] = false
+            Testing.ocrOutputResults.append(false)//[i-1] = false
+            Testing.engineOutputResults.append(false)//[i-1] = false
         }
     }
     
