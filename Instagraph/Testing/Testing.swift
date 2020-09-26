@@ -22,7 +22,7 @@ class Testing {
     }
     
     static func loadImages() {
-        for i in 1 ... 16 { //16 images in TestTables
+        for i in 1 ... 18 { //16 images in TestTables
             //Initialize new OCRProperties for each image
             let ocrP = OCRProperties()
             Testing.imagesOcrProperties[i-1] = ocrP
@@ -39,13 +39,13 @@ class Testing {
     
     static func processImages() {
         
-        for i in 0 ..< 16 {
+        for i in 0 ..< 18 {
             let ocrPInUse = Testing.imagesOcrProperties[i]
             do {
                 ocrPInUse.image = PrepareImageBridge().deskew(ocrPInUse.image)
                 ocrPInUse.croppedImages = PrepareImageBridge().splice_cells() as NSArray as? [UIImage]
                 ocrPInUse.textLocations = PrepareImageBridge().locate_cells() as? [NSValue]
-                OCRSortingEngine(ocrProperties: ocrPInUse)
+                OCRSortingEngine(ocrProperties: ocrPInUse).performImageRecognition()
             } catch let error {
                 print("Exception for image \(String(i+1)) while testing OpenCV and OCR!!!")
                 print(error)
@@ -70,7 +70,7 @@ class Testing {
             }
         }
         
-        doFor: for i in 0 ..< 16 {
+        doFor: for i in 0 ..< 18 {
             //Test GraphEngine on correct OCR output
             let ge = GraphEngine(table: Testing.correctOcrOutputs[i])
             do {
@@ -109,13 +109,6 @@ class Testing {
         return false
     }
     
-    static var correctOcrOutputs:[[[String]]] = [[]]
-    static var ocrOutputResults:[Bool] = []
-    
-    static var correctEngineOutput:[Graph] = []
-    static var engineOutputResults:[Bool] = []
-    static var engineOutputResultsForCleanInput:[Bool] = []
-    
     static func percentCorrect(arr: [Bool]) -> (Double, String) {
         var numTrue = 0
         for ele in arr {
@@ -125,6 +118,106 @@ class Testing {
         let percentString = String(percent)
         return (percent, percentString)
     }
+    
+    static var correctOcrOutputs:[[[String]]] = [
+        [   //Good example once ï is sorted out and European commas are accounted for
+            ["Method", "Naïve Bayes", "C45", "GOV", "DOG", "RF_CT"],
+            ["Classification Accuracy (%)", "58,3", "69,8", "71,2", "71,4", "87,7"],
+            ["Standard Deviation", "1,5", "4,7", "2,9", "2,6", "0,6"]
+        ], //1
+        [
+            ["City", "London", "Paris", "Tokyo", "Washington DC", "Kyoto", "Los Angeles"],
+            ["Date opened", "1863", "1900", "1927", "1976", "1981", "2001"],
+            ["Kilometres of route", "394", "199", "155", "126", "11", "28"],
+            ["Passengers per year (in millions)", "775", "1191", "1927", "144", "45", "50"]
+        ],
+        [   //Probably will never pass
+            ["No", "1,", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+            ["Uncertainty Parmeters", "Residual oil saturation", "Endpoint Krw", "Polymer viscosity", "Polymer adsorption", "Permeability reduction", "Inaccesible pore volume", "Shear thinning", "Surfactant Adsorption (mg/g)", "Microemulsion viscosity (cp)", "Sor: High capillary number"],
+            ["Low", "0.15", "0.1", "7", "70", "1.3", "0.9", "Low", "0.5", "25", "0.06"],
+            ["Mid", "0.225", "0.25", "10", "50", "1.2", "0.95", "Mid", "0.3", "18", "0.03"],
+            ["High", "0.3", "0.4", "12", "30", "1", "1", "High", "0.15", "14", "0.01"]
+        ],
+        [   //Will never pass GraphEngine
+            ["", "TEAM A", "TEAM B", "TEAM C", "TEAM D"],
+            ["Ogun State", "105", "15", "55", "0"],
+            ["Oyo State", "0", "0", "0", "0"],
+            ["Ekiti State", "55", "25", "0", "5"],
+            ["Lagos State", "15", "75", "10", "0"],
+            ["Remarks", "", "", "", ""]
+        ],
+        [
+            ["NUMBER OF CDS", "0 TO 4", "5 TO 9", "10 TO 14", "15 TO 19"],
+            ["FREQUENCY, F", "10", "12", "6", "2"],
+            ["MID-POINT, X", "2", "7", "12", "17"],
+            ["FX", "20", "84", "72", "34"]
+        ],
+        [   //Good example - note that blank top right is fairly common
+            ["", "France", "Germany", "UK", "Turkey", "Spain"],
+            ["Food and drink", "25%", "22%", "27%", "36%", "31%"],
+            ["Housing", "31%", "33%", "37%", "20%", "18%"],
+            ["Clothing", "7%", "15%", "11%", "12%", "8%"],
+            ["Entertainment", "13%", "19%", "11%", "10%", "15%"]
+        ],
+        [], //7 - Too deviant
+        [   //Highly unlikely to pass because of the diagonally slashed cell
+            ["", "skill", "Html", "mySQl", "C", "C++", "SQL"],
+            ["Division Ratio = 0.2", "Pass", "0.91", "0.9", "0.98", "0.94", "0.85"],
+            ["Division Ratio = 0.2", "Fail", "0.09", "0.1", "0.02", "0.06", "0.15"],
+            ["Division Ratio = 0.25", "Pass", "0.9", "0.93", "0.97", "0.93", "0.82"],
+            ["Division Ratio = 0.25", "Fail", "0.1", "0.07", "0.03", "0.07", "0.18"]
+        ],
+        [   //Super easy
+            ["x", "11", "12", "13", "14", "15"],
+            ["y", "27", "29", "31", "33", "35"]
+        ],
+        [], //10 - Too deviant
+        [
+            ["What flavor of ice cream would you pick?", "", "Children", "Teens", "Adults", "Total"],
+            ["What flavor of ice cream would you pick?", "Chocolate", "40", "12", "55", "107"],
+            ["What flavor of ice cream would you pick?", "Vanilla", "22", "16", "54", "92"],
+            ["What flavor of ice cream would you pick?", "Neither", "15", "45", "10", "70"]
+        ],
+        [   //Solid goal, thin lines but otherwise good - could work already as a 2xN table
+            ["Month", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
+            ["Revenue", "$28,361", "$14,744", "$19,407", "$15,891", "$21,277", "$21,530", "$17,990", "$21,838", "$20,174", "$20,025", "$48,055", "$24,318"]
+        ],
+        [   //Good one if title is stripped
+            ["Object", "A", "B", "C", "D"],
+            ["Mass (kg)", "4.0", "6.0", "8.0", "16.0"],
+            ["Speed (m/s)", "6.0", "5.0", "3.0", "1.5"]
+        ], //13
+        [
+            ["", "X", "Y", "Z"],
+            ["A", "$40", "$50", "$60"],
+            ["B", "240", "200", "310"],
+            ["C", "48", "59", "79"]
+        ],
+        [   //Reasonably good
+            ["", "First Class Passengers", "Second Class Passengers", "Third Class Passengers", "Total Passengers"],
+            ["Survived", "201", "118", "181", "500"],
+            ["Did Not Survived", "123", "166", "528", "817"],
+            ["Total", "324", "284", "709", "1317"]
+        ],
+        [   //Probably will not pass GraphEngine soon, possibly add blank col ignorer code?
+            ["Interval", "91-100", "101-110", "111-120", "121-130", "131-140", "141-150", "151-160"],
+            ["Frequency", "6", "3", "0", "3", "0", "2", "2"],
+            ["Cumulative Frequency", "", "", "", "", "", "", ""]
+        ], //16
+        [   //Should pass
+            ["Month", "Jan", "Feb", "Mar", "Apr"],
+            ["Average Temp.", "30", "26", "42", "58"]
+        ],
+        [   //Should pass
+            ["Gamer", "Zac", "Sam", "Zoe", "Oscar", "Sue"],
+            ["Score", "55", "25", "52", "67", "23"]
+        ]
+    ]
+    static var ocrOutputResults:[Bool] = []
+    
+    static var correctEngineOutput:[Graph] = []
+    static var engineOutputResults:[Bool] = []
+    static var engineOutputResultsForCleanInput:[Bool] = []
     
 }
 
