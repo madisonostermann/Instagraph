@@ -32,6 +32,7 @@
 		48C4235E247F57A4004A322A /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C4235D247F57A4004A322A /* Cell.swift */; };
 		48C42360247F57CC004A322A /* GraphEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C4235F247F57CC004A322A /* GraphEngine.swift */; };
 		48C42362247F5802004A322A /* GraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C42361247F5802004A322A /* GraphModel.swift */; };
+		48C827FC250DA5B900804A6C /* GraphBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C827FB250DA5B900804A6C /* GraphBuilderView.swift */; };
 		48EC28142481C9980008AACA /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EC28132481C9980008AACA /* GraphView.swift */; };
 		48EF85DE251E460E0057D80B /* Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EF85DD251E460E0057D80B /* Testing.swift */; };
 		48EF85F9251E4CBC0057D80B /* 5.png in Resources */ = {isa = PBXBuildFile; fileRef = 48EF85E9251E4CBB0057D80B /* 5.png */; };
@@ -100,6 +101,7 @@
 		48C4235D247F57A4004A322A /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		48C4235F247F57CC004A322A /* GraphEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphEngine.swift; sourceTree = "<group>"; };
 		48C42361247F5802004A322A /* GraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphModel.swift; sourceTree = "<group>"; };
+		48C827FB250DA5B900804A6C /* GraphBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphBuilderView.swift; sourceTree = "<group>"; };
 		48EC28132481C9980008AACA /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		48EF85DD251E460E0057D80B /* Testing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Testing.swift; sourceTree = "<group>"; };
 		48EF85E9251E4CBB0057D80B /* 5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 5.png; sourceTree = "<group>"; };
@@ -252,6 +254,7 @@
 				48EC28132481C9980008AACA /* GraphView.swift */,
 				48AD744E24AAE86F0008A031 /* ValueSliderView.swift */,
 				480E8C3A25047611001EB2EC /* TableView.swift */,
+				48C827FB250DA5B900804A6C /* GraphBuilderView.swift */,
 			);
 			path = GraphViz;
 			sourceTree = "<group>";
@@ -488,6 +491,7 @@
 				3CCAB4F8247C0C4900E89AE8 /* AppDelegate.swift in Sources */,
 				48C2600F2485D61A0042C3ED /* Constants.swift in Sources */,
 				3CCAB4FA247C0C4900E89AE8 /* SceneDelegate.swift in Sources */,
+				48C827FC250DA5B900804A6C /* GraphBuilderView.swift in Sources */,
 				48C4235E247F57A4004A322A /* Cell.swift in Sources */,
 				3CD479112487410A008E67CD /* OCRSortingEngine.swift in Sources */,
 				48AD744F24AAE86F0008A031 /* ValueSliderView.swift in Sources */,
