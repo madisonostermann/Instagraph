@@ -51,7 +51,10 @@ Mat PrepareImage::deskew(Mat image) {
     if(appx_table_contours[0].size() != 4) {
         //TODO: HAVE THIS DO SOMETHING ON THE APP END
         cout<<"DID NOT DETECT 4 CORNERS OF TABLE, ABORTING PERSPECTIVE CORRECTION"<<endl;
-        return image;
+        //back to black on white
+        threshold(image, deskewed_image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
+        
+        return deskewed_image;
     }
     
     //each appx_table_contour point is a corner of the table
@@ -146,6 +149,21 @@ vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
         tempRect.y = tempRect.y-(tempybuffer/2);
         tempRect.width = tempRect.width+tempxbuffer;
         tempRect.height = tempRect.height+tempybuffer;
+        //make sure that adding the buffers didn't make the rectangle outside of the actual image dimensions
+        if (tempRect.x < 0) { tempRect.x = 0; }
+        if (tempRect.width < 0) { tempRect.width = 0; }
+        if (tempRect.y < 0) { tempRect.y = 0; }
+        if (tempRect.height < 0) { tempRect.height = 0; }
+        if (tempRect.x + tempRect.width > image.cols) {
+            tempRect.x = 0;
+            tempRect.width = image.cols;
+        }
+        if (tempRect.y + tempRect.height > image.rows) {
+            tempRect.y = 0;
+            tempRect.height = image.rows;
+        }
+        
+        
         bool overlap = false; //used to see if contours need to be merged or not
         
         //create a boundingRect for first contour for sure
@@ -198,6 +216,25 @@ vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
     for(int i = 0; i< boundingRectIndex; i++) {
         contourCenters[i] = Point((boundRect[i].width/2)+boundRect[i].x, (boundRect[i].height/2)+boundRect[i].y);
         Rect roi(boundRect[i].x, boundRect[i].y, boundRect[i].width, boundRect[i].height);
+//        if (0 <= roi.x
+//            && 0 <= roi.width
+//            && roi.x + roi.width <= image.cols
+//            && 0 <= roi.y
+//            && 0 <= roi.height
+//            && roi.y + roi.height <= image.rows){
+//            // roi within the image plane
+//            cout << "GOOD" << endl;
+//        } else {
+//            cout << "BAD" << endl;
+//            cout << roi.x << endl;
+//            cout << roi.width << endl;
+//            cout << roi.x + roi.width << endl;
+//            cout << image.cols << endl;
+//            cout << roi.y << endl;
+//            cout << roi.height << endl;
+//            cout << roi.y + roi.height << endl;
+//            cout << image.rows << endl;
+//        }
         croppedImages[i] = image(roi);
     }
     return croppedImages;

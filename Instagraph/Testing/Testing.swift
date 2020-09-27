@@ -41,6 +41,7 @@ class Testing {
     static func processImages() {
         
         for i in 0 ..< 18 {
+            print("IMAGE ", i+1, ".png IN TESTING PIPELINE")
             let ocrPInUse = Testing.imagesOcrProperties[i]
             do {
                 ocrPInUse.image = PrepareImageBridge().deskew(ocrPInUse.image)

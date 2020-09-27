@@ -27,6 +27,9 @@ class OCRSortingEngine: NSObject {
     }
     
     func pipeline() {
+//        print("textLocations count: ", self.ocrProperties.textLocations!.count)
+//        print("textLocations: ", self.ocrProperties.textLocations!)
+//        print("cropped images count: ", self.ocrProperties.croppedImages!.count)
         //recognize text- get cellContents array
         ocr()
         print("textLocations count: ", self.ocrProperties.textLocations!.count)
@@ -50,6 +53,7 @@ class OCRSortingEngine: NSObject {
     
     func ocr() {
         var imageCount = 0
+        var textLocationsCount = 0
         //loop through individual cell images and get OCR
         for image in self.ocrProperties.croppedImages! {
             if let tesseract = G8Tesseract(language: "eng") {
@@ -63,6 +67,8 @@ class OCRSortingEngine: NSObject {
                 //go through extracted text for a cell and see if there's any text there
                 var noContent = true
                 var thisCell = ""
+//                print("imageCount: ", imageCount)
+//                print("textlocations count: ", self.ocrProperties.textLocations!.count)
                 for i in text.indices {
                     //remove whitespaces and see if there's anything
                     if text[i] != "" && !text[i].trimmingCharacters(in: .whitespaces).isEmpty && !text[i].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -77,9 +83,11 @@ class OCRSortingEngine: NSObject {
                 //if no content was found in this cell, remove the corresponding textLocation from array so things stay synchronized
                 //otherwise add the cell contents to array
                 if noContent {
-                    self.ocrProperties.textLocations!.remove(at: imageCount) //remove NSPoint at i if there's no words at that corresponding location after all
+                    self.ocrProperties.textLocations!.remove(at: textLocationsCount) //remove NSPoint at i if there's no words at that corresponding location after all
+//                    print("REMOVING TEXT LOCATION AT: ", textLocationsCount)
                 } else {
                     cellContents.append(thisCell)
+                    textLocationsCount += 1
                 }
             }
             imageCount += 1
