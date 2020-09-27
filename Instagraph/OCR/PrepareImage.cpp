@@ -131,26 +131,85 @@ vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
     vector<vector<Point> > text_contours;
     vector<Vec4i> hierarchy;
     findContours(dilated_text_image, text_contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-    vector<Rect> boundRect(text_contours.size());
+    
+    //get text contours and check for overlaps, merge contours with overlaps
     vector<vector<Point>> contours_poly(text_contours.size());
-    contourCenters.resize(text_contours.size());
-    vector<Mat> croppedImages(text_contours.size());
+    vector<Rect> boundRect(text_contours.size());
+    int boundingRectIndex = 0; //use separate index for boundingRects since there will be less of these than contours
     for(int i = 0; i< text_contours.size(); i++) {
         approxPolyDP(text_contours[i], contours_poly[i], 3, true);
-        boundRect[i] = boundingRect(contours_poly[i]);
-        contourCenters[i] = boundRect[i].tl() + (boundRect[i].br() - boundRect[i].tl())/2; //only uses ints for points, rounding should be fine
-        cout << "center " << contourCenters[i] << endl;
-        drawContours(dilated_text_image, contours_poly, (int)i, color);
-        rectangle(dilated_text_image, boundRect[i].tl(), boundRect[i].br(), color, 2);
-        // Use rectangle to define region of interest & crop image to be contained in ROI
-        int ybuffer = boundRect[i].height/2;
-        int xbuffer = boundRect[i].width/2;
-        Rect roi(boundRect[i].x-(xbuffer/4), boundRect[i].y-(ybuffer/2), boundRect[i].width+xbuffer, boundRect[i].height+ybuffer); //buffer helps OCR
+        //create tempRect and add "buffers" to help OCR (doesn't fit text so tightly)
+        Rect tempRect = boundingRect(contours_poly[i]);
+        int tempybuffer = tempRect.height/2;
+        int tempxbuffer = tempRect.width/2;
+        tempRect.x = tempRect.x-(tempxbuffer/4);
+        tempRect.y = tempRect.y-(tempybuffer/2);
+        tempRect.width = tempRect.width+tempxbuffer;
+        tempRect.height = tempRect.height+tempybuffer;
+        bool overlap = false; //used to see if contours need to be merged or not
+        
+        //create a boundingRect for first contour for sure
+        if (boundingRectIndex == 0) {
+            boundRect[boundingRectIndex] = tempRect;
+            boundingRectIndex += 1;
+        } else {
+            //check for overlapping contours
+            for(int j = 0; j<boundingRectIndex; j++) {
+                if((tempRect.y >= boundRect[j].y) && (tempRect.y <= (boundRect[j].y+boundRect[j].height))){ //if this y is within height of another
+                    if((tempRect.x >= boundRect[j].x) && (tempRect.x <= (boundRect[j].x+boundRect[j].width))) { //if this x is within width of another
+                        overlap = true;
+                        boundRect[j].width = (tempRect.x+tempRect.width)-boundRect[j].x;
+                        boundRect[j].height = (tempRect.y+tempRect.height)-boundRect[j].y;
+                    }
+                    if ((boundRect[j].x >= tempRect.x) && (boundRect[j].x <= (tempRect.x+tempRect.width))) { //if other x is within width of this
+                        overlap = true;
+                        boundRect[j].width = (boundRect[j].x+boundRect[j].width)-tempRect.x;
+                        boundRect[j].x = tempRect.x;
+                        boundRect[j].height = (tempRect.y+tempRect.height)-boundRect[j].y;
+                    }
+                }
+                if ((boundRect[j].y >= tempRect.y) && (boundRect[j].y <= (tempRect.y+tempRect.height))){ //if other y is within height of this
+                    if((tempRect.x >= boundRect[j].x) && (tempRect.x <= (boundRect[j].x+boundRect[j].width))) { //if this x is within width of another
+                        overlap = true;
+                        boundRect[j].width = (tempRect.x+tempRect.width)-boundRect[j].x;
+                        boundRect[j].height = (boundRect[j].y+boundRect[j].height)-tempRect.y;
+                        boundRect[j].y = tempRect.y;
+                    }
+                    if ((boundRect[j].x >= tempRect.x) && (boundRect[j].x <= (tempRect.x+tempRect.width))) { //if other x is within width of this
+                        overlap = true;
+                        boundRect[j].width = (boundRect[j].x+boundRect[j].width)-tempRect.x;
+                        boundRect[j].x = tempRect.x;
+                        boundRect[j].height = (boundRect[j].y+boundRect[j].height)-tempRect.y;
+                        boundRect[j].y = tempRect.y;
+                    }
+                }
+            }
+            // if this new boundingRect doesn't overlap any existing ones, create a new boundRect at i
+            if (overlap == false) {
+                boundRect[boundingRectIndex] = tempRect;
+                boundingRectIndex += 1;
+            }
+        }
+        
+    }
+    //compute centers of merged contours and crop images around the rectangles
+    contourCenters.resize(boundingRectIndex);
+    vector<Mat> croppedImages(boundingRectIndex);
+    for(int i = 0; i< boundingRectIndex; i++) {
+        contourCenters[i] = Point((boundRect[i].width/2)+boundRect[i].x, (boundRect[i].height/2)+boundRect[i].y);
+        Rect roi(boundRect[i].x, boundRect[i].y, boundRect[i].width, boundRect[i].height);
+        if (0 <= roi.x
+            && 0 <= roi.width
+            //&& roi.x + roi.width <= m.cols
+            && 0 <= roi.y
+            && 0 <= roi.height) {
+            //&& roi.y + roi.height <= m.rows){
+            cout << "EVERYTHING IS FINE" << endl;
+        } else {
+            cout << i << endl;
+            cout << "ISSUE" << endl;
+        }
         croppedImages[i] = image(roi);
-//        //help OCR
-//        Mat cell_text_kernel = getStructuringElement(MORPH_RECT, Size(1, 1));
-//        dilate(croppedImages[i], croppedImages[i], cell_text_kernel, Point(-1, -1));
-//        GaussianBlur(croppedImages[i], croppedImages[i], Size(3, 3), 0); //needed to smooth words for OCR
     }
     return croppedImages;
 }

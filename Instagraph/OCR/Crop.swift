@@ -63,7 +63,7 @@ struct Crop: View {
         self.ocrProperties.textLocations = PrepareImageBridge().locate_cells() as? [NSValue]
 //        self.ocrProperties.image = self.ocrProperties.croppedImages![3] for testing
         //go to OCR
-        OCRSortingEngine(ocrProperties: self.ocrProperties).performImageRecognition()
+        OCRSortingEngine(ocrProperties: self.ocrProperties).pipeline()
     }
     
     var body: some View {
