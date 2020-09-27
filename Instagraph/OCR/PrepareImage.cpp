@@ -198,17 +198,6 @@ vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
     for(int i = 0; i< boundingRectIndex; i++) {
         contourCenters[i] = Point((boundRect[i].width/2)+boundRect[i].x, (boundRect[i].height/2)+boundRect[i].y);
         Rect roi(boundRect[i].x, boundRect[i].y, boundRect[i].width, boundRect[i].height);
-        if (0 <= roi.x
-            && 0 <= roi.width
-            //&& roi.x + roi.width <= m.cols
-            && 0 <= roi.y
-            && 0 <= roi.height) {
-            //&& roi.y + roi.height <= m.rows){
-            cout << "EVERYTHING IS FINE" << endl;
-        } else {
-            cout << i << endl;
-            cout << "ISSUE" << endl;
-        }
         croppedImages[i] = image(roi);
     }
     return croppedImages;

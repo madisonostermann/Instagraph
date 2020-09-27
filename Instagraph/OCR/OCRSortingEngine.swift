@@ -16,8 +16,8 @@ import MobileCoreServices
 class OCRSortingEngine: NSObject {
     @ObservedObject var ocrProperties: OCRProperties
     var cellContents = [String]()
-    var columnsY = [[CGFloat]]()
-    var columns = [[String]]()
+    var locationColumns = [[CGFloat]]()
+//    var contentColumns = [[String]]() //TODO: make this an ocrProperties value
     
     init(ocrProperties: OCRProperties) {
         self.ocrProperties = ocrProperties
@@ -27,23 +27,25 @@ class OCRSortingEngine: NSObject {
     }
     
     func pipeline() {
-        ocr() //recognize text- get cellContents array
-        //sorting by x value
-        quickSort(coord: "x", low: 0, high: self.ocrProperties.textLocations!.count-1, row: 0)
-        print("x sorted")
-        print(self.ocrProperties.textLocations!)
-        print(cellContents)
+        //recognize text- get cellContents array
+        ocr()
+        print("textLocations count: ", self.ocrProperties.textLocations!.count)
+        print("textLocations: ", self.ocrProperties.textLocations!)
+        print("cellContents count: ", cellContents.count)
+        print("cellContents: ", cellContents)
+        //sort cellContents array by x value
+        quickSort(sort: "x", low: 0, high: self.ocrProperties.textLocations!.count-1, row: 0)
+        print("x sorted: ", cellContents)
+        //splice cellContents array into separate columns (locationColumns & self.ocrProperties.contentColumns)
         divideColumns()
-        
-        //sorting by y value
-        for row in 0...columnsY.count-1 {
-            quickSort(coord: "y", low: 0, high: columnsY[row].count-1, row: row)
+        print("columns divided: ", self.ocrProperties.contentColumns)
+        //sort locationColumns & self.ocrProperties.contentColumns arrays by y value
+        for row in 0...locationColumns.count-1 {
+            quickSort(sort: "y", low: 0, high: locationColumns[row].count-1, row: row)
         }
-        print("y sorted")
-        print(columnsY)
-        print(columns)
-        
-        //self.ocrProperties.page = "Graph"
+        print("y sorted: ", self.ocrProperties.contentColumns)
+        //present graph view, uses self.ocrProperties.contentColumns array for values
+        self.ocrProperties.page = "Graph"
     }
     
     func ocr() {
@@ -82,15 +84,6 @@ class OCRSortingEngine: NSObject {
             }
             imageCount += 1
         }
-        
-        print("textLocations count: ", self.ocrProperties.textLocations!.count)
-        for loc in self.ocrProperties.textLocations! {
-            print(loc)
-        }
-        print("cellContents count: ", cellContents.count)
-        for item in cellContents {
-            print(item)
-        }
     }
     
     //used in ocr method for parsing the HTML for words & bbox info
@@ -105,132 +98,74 @@ class OCRSortingEngine: NSObject {
         }
     }
     
-    /* low  --> Starting index,  high  --> Ending index */
-    func quickSort(coord: String, low: Int, high: Int, row: Int) {
+    func quickSort(sort: String, low: Int, high: Int, row: Int) {
         if (low < high) {
-            let partition_index:Int = partition(coord: coord, low: low, high: high, row: row)
-            quickSort(coord: coord, low: low, high: partition_index-1, row: row)  //before partition_index
-            quickSort(coord: coord, low: partition_index+1, high: high, row: row) //after partition_index
+            let partition_index:Int = partition(sort: sort, low: low, high: high, row: row)
+            quickSort(sort: sort, low: low, high: partition_index-1, row: row)  //before partition_index
+            quickSort(sort: sort, low: partition_index+1, high: high, row: row) //after partition_index
         }
     }
     
-    /* This function takes last element as pivot, places
-       the pivot element at its correct position in sorted
-        array, and places all smaller (smaller than pivot)
-       to left of pivot and all greater elements to right
-       of pivot */
-    func partition (coord: String, low: Int, high: Int, row: Int) -> Int {
-        // pivot (Element to be placed at right position)
-        var pivot:CGFloat = 0
+    func partition (sort: String, low: Int, high: Int, row: Int) -> Int {
+        var pivot:CGFloat = 0 //element to be placed at right position
         var current_element:CGFloat = 0
+        var smaller_index = (low - 1)  //index of smaller element
         
-        if coord == "x" {
-            //pivot = self.ocrProperties.textLocations![high].cgPointValue.x
+        if sort == "x" {
             pivot = self.ocrProperties.textLocations![high].cgPointValue.x
-        } else if coord == "y" {
-            //pivot = self.ocrProperties.textLocations![high].cgPointValue.y //columnsY[0][high]
-            pivot = columnsY[row][high]
-        }
-     
-        var smaller_index = (low - 1)  // Index of smaller element
-
-        for j in low...high-1 {
-            if coord == "x" {
-                current_element = self.ocrProperties.textLocations![j].cgPointValue.x//self.ocrProperties.textLocations![j].cgPointValue.x
-            } else if coord == "y" {
-                current_element = columnsY[row][j]//self.ocrProperties.textLocations![j].cgPointValue.y
-            }
-            // If current element is smaller than the pivot
-            if (current_element < pivot) {
-                smaller_index += 1    // increment index of smaller element
-                if coord == "x" {
+            for j in low...high-1 {
+                current_element = self.ocrProperties.textLocations![j].cgPointValue.x
+                //if current element is smaller than the pivot
+                if (current_element < pivot) {
+                    smaller_index += 1  // increment index of smaller element
                     self.ocrProperties.textLocations!.swapAt(smaller_index, j)
                     cellContents.swapAt(smaller_index, j)
-                } else if coord == "y" {
-                    columnsY[row].swapAt(smaller_index, j)
-                    columns[row].swapAt(smaller_index, j)
                 }
             }
-        }
-        if coord == "x" {
             self.ocrProperties.textLocations!.swapAt(smaller_index+1, high)
             cellContents.swapAt(smaller_index+1, high)
-        } else if coord == "y" {
-            columnsY[row].swapAt(smaller_index+1, high)
-            columns[row].swapAt(smaller_index+1, high)
+        } else if sort == "y" {
+            pivot = locationColumns[row][high]
+            for j in low...high-1 {
+                current_element = locationColumns[row][j]
+                //if current element is smaller than the pivot
+                if (current_element < pivot) {
+                    smaller_index += 1    // increment index of smaller element
+                    locationColumns[row].swapAt(smaller_index, j)
+                    self.ocrProperties.contentColumns[row].swapAt(smaller_index, j)
+                }
+            }
+            locationColumns[row].swapAt(smaller_index+1, high)
+            self.ocrProperties.contentColumns[row].swapAt(smaller_index+1, high)
         }
         return (smaller_index + 1)
     }
     
-//    func partition (coord: String, low: Int, high: Int) -> Int {
-//          // pivot (Element to be placed at right position)
-//          var smaller_index = (low - 1) // Index of smaller element
-//
-//          if coord == "x" {
-//              var array = self.ocrProperties.textLocations!
-//              let pivot = array[high].cgPointValue.x
-//              for j in low...high-1 {
-//                  let current_element = array[j].cgPointValue.x
-//                  if (current_element < pivot) {
-//                      smaller_index += 1    // increment index of smaller element
-//                      array.swapAt(smaller_index, j)
-//                      cellContents.swapAt(smaller_index, j)
-//                  }
-//              }
-//              array.swapAt(smaller_index+1, high)
-//              cellContents.swapAt(smaller_index+1, high)
-//          } else if coord == "y" {
-//              var array = columnsY
-//              let pivot = array[0][high]
-//              for j in low...high-1 {
-//                  let current_element = array[0][j]
-//                  if (current_element < pivot) {
-//                      smaller_index += 1    // increment index of smaller element
-//                      array.swapAt(smaller_index, j)
-//                      columns.swapAt(smaller_index, j)
-//                  }
-//              }
-//              array.swapAt(smaller_index+1, high)
-//              columns.swapAt(smaller_index+1, high)
-//          }
-//          return (smaller_index + 1)
-//      }
-    
     func divideColumns() {
-        var columnY = [CGFloat]()
-        var column = [String]()
+        var singleLocationColumn = [CGFloat]()
+        var singleContentColumn = [String]()
         for i in 0...self.ocrProperties.textLocations!.count-1 {
             let point = self.ocrProperties.textLocations![i].cgPointValue
-            if i == 0 {
-                columnY.append(point.y) //columnsY[columnIndex][cell] = point.y
-                column.append(cellContents[i])//columns[columnIndex][cell] = cellContents[i]
-                //cell += 1
-            } else if i == self.ocrProperties.textLocations!.count-1{
-                columnY.append(point.y) //columnsY[columnIndex][cell] = point.y
-                column.append(cellContents[i])//columns[columnIndex][cell] = cellContents[i]
-                columnsY.append(columnY)
-                columns.append(column)
-            } else {
+            //if you're not at the first or the last value, compare last one to this one and add this one to a new column if reqs are met
+            if i > 0 && i < self.ocrProperties.textLocations!.count-1 {
                 let lastPoint = self.ocrProperties.textLocations![i-1].cgPointValue
                 if lastPoint.x+10 < point.x { //TODO: generalize this x differences
-                    columnsY.append(columnY)
-                    columns.append(column)
+                    //add last column to all columns
+                    locationColumns.append(singleLocationColumn)
+                    self.ocrProperties.contentColumns.append(singleContentColumn)
                     //remove elements to start a fresh new column
-                    columnY.removeAll()
-                    column.removeAll()
-                    //columnIndex += 1 //create a new column
-                    //cell = 0
+                    singleLocationColumn.removeAll()
+                    singleContentColumn.removeAll()
                 }
-                columnY.append(point.y) //columnsY[columnIndex][cell] = point.y
-                column.append(cellContents[i])//columns[columnIndex][cell] = cellContents[i]
-                //cell += 1
+            }
+            //add this point to the a new/existing column
+            singleLocationColumn.append(point.y)
+            singleContentColumn.append(cellContents[i])
+            //if you're at the last value, make sure to add this column to all columns
+            if i == self.ocrProperties.textLocations!.count-1 {
+                locationColumns.append(singleLocationColumn)
+                self.ocrProperties.contentColumns.append(singleContentColumn)
             }
         }
-        
-        //because arrays were created with extra elements, go back through &  clean them up
-        for i in columnsY.indices { columnsY[i].removeAll(where: { $0 == 0.0 })}
-        for i in columns.indices { columns[i].removeAll(where: { $0 == "" })}
-        print(columnsY)
-        print(columns)
     }
 }

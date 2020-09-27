@@ -46,15 +46,15 @@ class Testing {
                 ocrPInUse.image = PrepareImageBridge().deskew(ocrPInUse.image)
                 ocrPInUse.croppedImages = PrepareImageBridge().splice_cells() as NSArray as? [UIImage]
                 ocrPInUse.textLocations = PrepareImageBridge().locate_cells() as? [NSValue]
-                OCRSortingEngine(ocrProperties: ocrPInUse).performImageRecognition()
+                OCRSortingEngine(ocrProperties: ocrPInUse).pipeline()
             } catch let error {
                 print("Exception for image \(String(i+1)) while testing OpenCV and OCR!!!")
                 print(error)
             }
-            checkIf: if ocrPInUse.dataArray == Testing.correctOcrOutputs[i] {
+            checkIf: if ocrPInUse.contentColumns == Testing.correctOcrOutputs[i] {
                 Testing.ocrOutputResults[i] = true
                 //Test GraphEngine on actual OCR output
-//                let ge = GraphEngine(table: ocrPInUse.dataArray)
+//                let ge = GraphEngine(table: ocrPInUse.contentColumns)
 //
 //                do {
 //                    let result = ge.determineGraphType()
@@ -237,5 +237,6 @@ class Testing {
 //    @Published var textLocations: [NSValue]? = []
 //    @Published var finalImage: Image? = nil
 //    @Published var text: String = ""
-//    @Published var dataArray: [[String]] = [[String]](repeating: [String](repeating: "", count: 1), count: 1)
+//    //@Published var dataArray: [[String]] = [[String]](repeating: [String](repeating: "", count: 1), count: 1)
+//    @Published var contentColumns = [[String]]()
 //}

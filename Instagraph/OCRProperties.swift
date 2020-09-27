@@ -18,5 +18,6 @@ class OCRProperties: ObservableObject {
     @Published var textLocations: [NSValue]? = []
     @Published var finalImage: Image? = nil
     @Published var text: String = ""
-    @Published var dataArray: [[String]] = [[String]](repeating: [String](repeating: "", count: 1), count: 1)
+//    @Published var dataArray: [[String]] = [[String]](repeating: [String](repeating: "", count: 1), count: 1)
+    @Published var contentColumns = [[String]]()
 }
