@@ -14,6 +14,7 @@ enum GraphType {
     case line
     case multiLine
     case scatter
+    case pie
     case none
 }
 
