@@ -60,11 +60,25 @@ func detectArithmeticSequence<T: Numeric>(numbers: [T]) -> Bool {
 
 func representableAsDate(str: String) -> Bool {
     print(Constants.ALL_MONTHS)
-    //Attempt to match month names or month shorthand
+    //Attempt to match month names or month shorthand; Jan, January
     for month in Constants.ALL_MONTHS {
         if str.matchInsensitive(month) {
             return true
         }
+    }
+    //Attempt to match dates; 12/02/2000, 02 / 12 / 2000, 5/5/05, 12-02-2000, 1/5
+    let splitSlashes = str.split("/")
+    if !(splitSlashes.count == 2 || splitSlashes.count == 3) {
+        var allNumeric = true
+        for item in splitSlashes {
+//            if GraphEngine.representableAs(content: item).0 == RepresentableAs.number {
+//
+//            }
+        }
+    }
+    let splitDashes = str.split("-")
+    if !(splitDashes.count == 2 || splitDashes.count == 3) {
+        
     }
     
     return false
