@@ -12,6 +12,9 @@ import SwiftUI
 class TableModel {
     var tableModelFinished:Bool = false
     var tableCellPositions:[[CGPoint]] = []
+    var wasTableTransformed:Bool = false //Determines if drag to select moved the table
+    //When drag to select is brought to edge of screen & moves table this var is used to calculate start index
+    var preTransformTableCellPositions:[[CGPoint]] = []
 }
 
 struct TableView: View {
@@ -194,8 +197,19 @@ struct TableView: View {
     @State var currentOffset = CGSize(width: 0, height: 0)
     @State var offset = CGSize(width: 0, height: 0)
     
-    func checkBeyondBordersWhileDragging() -> Bool {
-        
+    func checkBeyondBordersWhileDragging(_ point: CGPoint) -> Bool {
+        if point.x > (Constants.SCREEN_WIDTH/8)*7 {
+            return true
+        }
+        if point.x < Constants.SCREEN_WIDTH/8 {
+            return true
+        }
+        if point.y > (Constants.SCREEN_HEIGHT/10)*7 {
+            return true
+        }
+        if point.y < Constants.SCREEN_HEIGHT/10 {
+            return true
+        }
         return false
     }
     
@@ -210,15 +224,21 @@ struct TableView: View {
                             self.isDragging = false
                             self.dragEndPoint = value.location
                             self.highlightedAndSelectedSet = []
-                            self.fillSelectedSet(start: self.dragStartPoint, end: self.dragEndPoint)
+                            if !self.tableModel.wasTableTransformed {
+                                self.fillSelectedSet(start: self.dragStartPoint, end: self.dragEndPoint)
+                            } else {
+                                
+                            }
                         } else {
                             self.currentOffset = self.offset
                         }
+                        self.tableModel.wasTableTransformed = false //reset var
+                        self.tableModel.preTransformTableCellPositions = [] //reset var
                     }
                     .onChanged { value in
                         if self.selectOrAdjust {
                             
-                            if !self.checkBeyondBordersWhileDragging() { //If not beyond borders that cause offset to change - happens as a result of dragging to edge of screen/table
+                            if !self.checkBeyondBordersWhileDragging(value.location) { //If not beyond borders that cause offset to change - happens as a result of dragging to edge of screen/table
                             
                                 if !self.isDragging {
                                     self.dragStartPoint = value.location
@@ -227,7 +247,36 @@ struct TableView: View {
                                 self.dragEndPoint = value.location
                             
                             } else {
-                                
+                                if !self.isDragging {
+                                    self.dragStartPoint = value.location
+                                }
+                                self.isDragging = true
+                                self.dragEndPoint = value.location
+                                if !self.tableModel.wasTableTransformed {
+                                    self.tableModel.preTransformTableCellPositions = self.tableModel.tableCellPositions
+                                }
+                                self.tableModel.wasTableTransformed = true
+                                var offsetX:CGFloat = 0
+                                var offsetY:CGFloat = 0
+                                //print(value.location.y)
+                                //VALUES USE LOCAL VIEW - TRY TO GET USE WHOLE SCREEN, NATIVEPOS?
+                                if value.location.x > (Constants.SCREEN_WIDTH/8)*7 { //right side, table should go left
+                                    offsetX = -5
+                                }
+                                if value.location.x < Constants.SCREEN_WIDTH/8 { //left side
+                                    offsetX = 5
+                                }
+                                if value.location.y > (Constants.SCREEN_HEIGHT/10)*7 { //bottom
+                                    offsetY = -5
+                                }
+                                if value.location.y < Constants.SCREEN_HEIGHT/10 { //top
+                                    offsetY = 5
+                                }
+                                self.offset = CGSize(
+                                    width: self.currentOffset.width + offsetX,
+                                    height: self.currentOffset.height + offsetY
+                                )
+                                self.currentOffset = self.offset
                             }
                             
                         } else {
