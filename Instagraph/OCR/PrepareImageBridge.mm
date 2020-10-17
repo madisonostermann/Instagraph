@@ -18,9 +18,30 @@
 @implementation PrepareImageBridge : NSObject
 
 - (UIImage *) deskew: (UIImage *) image {
+    
     // convert uiimage to mat
-    cv::Mat opencvImage;
-    UIImageToMat(image, opencvImage, true);
+    CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
+    CGFloat cols = image.size.width;
+    CGFloat rows = image.size.height;
+
+    if  (image.imageOrientation == UIImageOrientationLeft || image.imageOrientation == UIImageOrientationRight) {
+        cols = image.size.height;
+        rows = image.size.width;
+    }
+
+    cv::Mat opencvImage(rows, cols, CV_8UC4); // 8 bits per component, 4 channels (color channels + alpha)
+
+    CGContextRef contextRef = CGBitmapContextCreate(opencvImage.data, cols, rows, 8, opencvImage.step[0], colorSpace,  kCGImageAlphaNoneSkipLast | kCGBitmapByteOrderDefault); // Bitmap info flags
+
+    CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), image.CGImage);
+    CGContextRelease(contextRef);
+    CGColorSpaceRelease(colorSpace);
+
+    //--swap channels -- //
+    std::vector<Mat> ch;
+    cv::split(opencvImage,ch);
+    std::swap(ch[0],ch[2]);
+    cv::merge(ch,opencvImage);
     
     // convert colorspace to RGB
     cv::Mat convertedColorSpaceImage;
@@ -30,7 +51,34 @@
     PrepareImage prepareImage;
     Mat deskewed_image = prepareImage.deskew(convertedColorSpaceImage);
     
-    return MatToUIImage(deskewed_image);
+    //Convert from Mat to UIImage
+    NSData *data = [NSData dataWithBytes:deskewed_image.data length:deskewed_image.elemSize()*deskewed_image.total()];
+
+    CGColorSpaceRef colorSpace2;
+    CGBitmapInfo bitmapInfo;
+
+    if (deskewed_image.elemSize() == 1) {
+        colorSpace2 = CGColorSpaceCreateDeviceGray();
+        bitmapInfo = kCGImageAlphaNone | kCGBitmapByteOrderDefault;
+    } else {
+        colorSpace2 = CGColorSpaceCreateDeviceRGB();
+        bitmapInfo = kCGBitmapByteOrder32Little | (deskewed_image.elemSize() == 3? kCGImageAlphaNone : kCGImageAlphaNoneSkipFirst);
+    }
+
+    CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
+
+    // Creating CGImage from cv::Mat
+    CGImageRef imageRef = CGImageCreate(deskewed_image.cols, deskewed_image.rows, 8, 8 * deskewed_image.elemSize(),
+                                        deskewed_image.step[0], colorSpace2, bitmapInfo, provider, NULL, false, kCGRenderingIntentDefault);
+
+    // Getting UIImage from CGImage
+
+    UIImage *deskewed_uiimage = [UIImage imageWithCGImage:imageRef scale:1 orientation:image.imageOrientation];
+    CGImageRelease(imageRef);
+    CGDataProviderRelease(provider);
+    CGColorSpaceRelease(colorSpace2);
+    
+    return deskewed_uiimage;
 }
 
 - (NSMutableArray<UIImage*> *) splice_cells {
