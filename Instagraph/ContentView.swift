@@ -72,14 +72,19 @@ struct ContentView: View {
                 //LineGraphView(ocrProperties: self.ocrProperties, vals: [90.0, 83.2, 69.9, 50.1, 40.0, 35.3, 86.0, 83.2, 74.9, 65, 42.3, 40.0, 54.0, 53.2, 45.9, 42, 44.4, 35.0], xLabels: ["July", "Aug", "Sep", "Oct", "Nov", "Dec"], yAxisLabel: "Temperature", xAxisLabel: "Months")
                 AnyGraphView(self.ocrProperties, table: SceneDelegate.demoBar) // 6. Graph
             } else if self.ocrProperties.page == "Table" {
-                VStack {
+                ZStack {
+                    Color(red: 44/255, green: 47/255, blue: 51/255, opacity: 1.0).edgesIgnoringSafeArea([.top, .bottom])
+                    GraphBuilderView()
+                    VStack {
                     HStack {
                         Button("Home") {
                             self.ocrProperties.page = "Home"
-                            }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10).padding()
+                        }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10).padding()
                         Spacer()
                     }
-                    GraphBuilderView()//TestView()//TableView()
+                        Spacer()
+                    }
+//                    GraphBuilderView()//TestView()//TableView()
                 }
             }
         } //end of vstack

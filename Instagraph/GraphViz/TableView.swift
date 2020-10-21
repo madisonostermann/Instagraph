@@ -11,7 +11,11 @@ import SwiftUI
 //Used to store data about where cells are rendered in screen space & whether the initial render has completed
 class TableModel {
     var tableModelFinished:Bool = false
-    var tableCellPositions:[[CGPoint]] = []
+    var tableCellPositions:[[CGPoint]] = [] {
+        didSet {
+            //print("Modified table cell positions")
+        }
+    }
     var wasTableTransformed:Bool = false //Determines if drag to select moved the table
     //When drag to select is brought to edge of screen & moves table this var is used to calculate start index
     var preTransformTableCellPositions:[[CGPoint]] = []
@@ -45,9 +49,47 @@ struct TableView: View {
     
     @State var highlightedAndSelectedSet:Set<ij> = [] //Set of cell locations which should be highlighted when dragger is used
     
+    //Used instead of fillSelectedSet if the drag-to-select tool also caused the view to pan - start point is compared against start locations, end point is compared against new locations in TableModel
+//    func fillSelectedSetDragged(start: CGPoint, end: CGPoint) -> (ij, ij) {
+//
+//    }
+    
+    func generateCellPosArr() { //Because generating cell views is done asynchronously, positions must be generated using this method when the view is moved w/ the select tool
+        var h:CGFloat
+        var w:CGFloat
+        if table.count <= 2 {
+            w = Constants.SCREEN_WIDTH/2.5
+        } else if table.count == 3 {
+            w = Constants.SCREEN_WIDTH/3.5
+        } else {
+            w = self.minWidth
+        }
+        let initialPoint:CGPoint = CGPoint(x: (w*0.75), y: Constants.SCREEN_HEIGHT/16)
+        h = self.minHeight
+        self.tableModel.tableCellPositions = []
+        for i in 0 ..< self.table.count {
+            for j in 0 ..< self.table[0].count {
+                let xPos:CGFloat = initialPoint.x+(CGFloat(i)*w)
+                let yPos:CGFloat = initialPoint.y+(CGFloat(j)*self.minHeight)
+                if j == 0 {
+                    self.tableModel.tableCellPositions.append([])
+                }
+                self.tableModel.tableCellPositions[i].append(CGPoint(
+                    x: xPos + offset.width,
+                    y: yPos + offset.height))
+            }
+        }
+    }
+    
     //Function determines correct indices that give a bound to the cells selected by the user on the visible table view
     //Fills variable highlightedAndSelectedSet which is used for render information
+    @discardableResult
     func fillSelectedSet(start: CGPoint, end: CGPoint) -> (ij, ij) {
+        if self.tableModel.wasTableTransformed {
+            self.generateCellPosArr()
+        }
+        //while !self.tableModel.tableModelFinished {} //spin
+        //self.tableModel.tableModelFinished = false
         var startij:ij
         var endij:ij
         //print("Start: + \(String(Double(start.x))) \(String(Double(start.y)))")
@@ -62,8 +104,12 @@ struct TableView: View {
         for i in 0 ..< self.tableModel.tableCellPositions.count {
             for j in 0 ..< self.tableModel.tableCellPositions[i].count {
                 //start
-                let xDifferenceStart = abs(self.tableModel.tableCellPositions[i][j].x-start.x)
-                let yDifferenceStart = abs(self.tableModel.tableCellPositions[i][j].y-start.y)
+                let xDifferenceStart = abs(
+                    (self.tableModel.wasTableTransformed ? self.tableModel.preTransformTableCellPositions[i][j].x : self.tableModel.tableCellPositions[i][j].x) - start.x
+                )
+                let yDifferenceStart = abs(
+                    (self.tableModel.wasTableTransformed ? self.tableModel.preTransformTableCellPositions[i][j].y : self.tableModel.tableCellPositions[i][j].y) - start.y
+                )
                 let totalDifferenceStart = xDifferenceStart + yDifferenceStart
                 if totalDifferenceStart <= currentDifferenceStart {
                     currentDifferenceStart = totalDifferenceStart
@@ -124,7 +170,7 @@ struct TableView: View {
     
     //Generates an individual cell at the correct screen location using indices of table, initial table start position (center of cell 1, 1), and cell dimensions
     func generateCell(i: Int, j: Int, w: CGFloat, h: CGFloat, initial: CGPoint) -> some View {
-        
+        //self.tableModel.tableModelFinished = false
         let xPos:CGFloat = initial.x+(CGFloat(i)*w)
         let yPos:CGFloat = initial.y+(CGFloat(j)*self.minHeight)
         
@@ -157,7 +203,7 @@ struct TableView: View {
     }
     
     func generateCells() -> some View {
-        
+        print("Called")
         struct Dimensions { //Represented cell dimensions
             var h: CGFloat
             var w: CGFloat
@@ -191,8 +237,6 @@ struct TableView: View {
     @State var dragStartPoint:CGPoint = CGPoint(x: 0, y: 0)
     @State var dragEndPoint:CGPoint = CGPoint(x: 0, y: 0)
     
-    
-    
     //Used when panning in adjust mode or selecting cells with select mode & swipe gesture is bordering on edge of screen
     @State var currentOffset = CGSize(width: 0, height: 0)
     @State var offset = CGSize(width: 0, height: 0)
@@ -213,6 +257,9 @@ struct TableView: View {
         return false
     }
     
+    @State var sliderStartOffset:CGSize = CGSize(width: 0.0, height: 0.0)
+    @State var prevSliderOffset:CGSize = CGSize(width: 0.0, height: 0.0)
+    
     var body: some View {
         ZStack {
             self.generateCells().offset(offset).highPriorityGesture(
@@ -224,16 +271,21 @@ struct TableView: View {
                             self.isDragging = false
                             self.dragEndPoint = value.location
                             self.highlightedAndSelectedSet = []
-                            if !self.tableModel.wasTableTransformed {
-                                self.fillSelectedSet(start: self.dragStartPoint, end: self.dragEndPoint)
-                            } else {
+                            //if !self.tableModel.wasTableTransformed {
+                            selectOrAdjust.toggle()
+                            selectOrAdjust.toggle()
+                            self.fillSelectedSet(start: self.dragStartPoint, end: self.dragEndPoint)
+                            //} else {
                                 
-                            }
+                            //}
                         } else {
                             self.currentOffset = self.offset
                         }
                         self.tableModel.wasTableTransformed = false //reset var
                         self.tableModel.preTransformTableCellPositions = [] //reset var
+                        self.prevSliderOffset = self.sliderStartOffset
+                        self.sliderStartOffset = CGSize(width: 0.0, height: 0.0)
+                        //self.sliderStartOffset = CGSize(width: 0.0, height: 0.0)
                     }
                     .onChanged { value in
                         if self.selectOrAdjust {
@@ -241,6 +293,7 @@ struct TableView: View {
                             if !self.checkBeyondBordersWhileDragging(value.location) { //If not beyond borders that cause offset to change - happens as a result of dragging to edge of screen/table
                             
                                 if !self.isDragging {
+                                    print("=====")
                                     self.dragStartPoint = value.location
                                 }
                                 self.isDragging = true
@@ -248,6 +301,7 @@ struct TableView: View {
                             
                             } else {
                                 if !self.isDragging {
+                                    print("=====")
                                     self.dragStartPoint = value.location
                                 }
                                 self.isDragging = true
@@ -260,22 +314,35 @@ struct TableView: View {
                                 var offsetY:CGFloat = 0
                                 //print(value.location.y)
                                 //VALUES USE LOCAL VIEW - TRY TO GET USE WHOLE SCREEN, NATIVEPOS?
+                                //VALUES PRETTY ARBITRARY
                                 if value.location.x > (Constants.SCREEN_WIDTH/8)*7 { //right side, table should go left
-                                    offsetX = -5
+                                    if self.dragEndPoint.x > self.dragStartPoint.x { //dragging right
+                                        offsetX = -5
+                                    }
                                 }
                                 if value.location.x < Constants.SCREEN_WIDTH/8 { //left side
-                                    offsetX = 5
+                                    if self.dragEndPoint.x < self.dragStartPoint.x {
+                                        offsetX = 5
+                                    }
                                 }
                                 if value.location.y > (Constants.SCREEN_HEIGHT/10)*7 { //bottom
-                                    offsetY = -5
+                                    if self.dragEndPoint.y > self.dragStartPoint.y {
+                                        offsetY = -5
+                                    }
                                 }
                                 if value.location.y < Constants.SCREEN_HEIGHT/10 { //top
-                                    offsetY = 5
+                                    if self.dragEndPoint.y < self.dragStartPoint.y {
+                                        offsetY = 5
+                                    }
                                 }
                                 self.offset = CGSize(
                                     width: self.currentOffset.width + offsetX,
                                     height: self.currentOffset.height + offsetY
                                 )
+                                self.sliderStartOffset = CGSize(
+                                    width: self.prevSliderOffset.width,
+                                    height: self.prevSliderOffset.height
+                                )//self.offset
                                 self.currentOffset = self.offset
                             }
                             
@@ -286,13 +353,17 @@ struct TableView: View {
                                 width: self.currentOffset.width + translationx,
                                 height: self.currentOffset.height + translationy
                             )
+                            //self.sliderStartOffset = self.offset
                         }
                     }
             )
             //Visualizes drag motion as a line on screen from where the drag started to where the user's finger currently is
             if isDragging {
                 Path { path in
-                    path.move(to: self.dragStartPoint)
+                    path.move(to: /*self.dragStartPoint + */CGPoint(
+                        x: self.dragStartPoint.x, //+ self.sliderStartOffset.width,
+                        y: self.dragStartPoint.y// + self.sliderStartOffset.height
+                    ))
                     path.addLine(to: .init(x: self.dragEndPoint.x, y: self.dragEndPoint.y))
                 }.stroke(Color.blue, lineWidth: CGFloat(3))
 //                Circle()
