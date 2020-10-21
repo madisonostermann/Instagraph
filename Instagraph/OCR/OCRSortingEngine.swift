@@ -32,21 +32,25 @@ class OCRSortingEngine: NSObject {
 //        print("cropped images count: ", self.ocrProperties.croppedImages!.count)
         //recognize text- get cellContents array
         ocr()
-        print("textLocations count: ", self.ocrProperties.textLocations!.count)
-        print("textLocations: ", self.ocrProperties.textLocations!)
-        print("cellContents count: ", cellContents.count)
-        print("cellContents: ", cellContents)
+//        print("textLocations count: ", self.ocrProperties.textLocations!.count)
+//        print("textLocations: ", self.ocrProperties.textLocations!)
+//        print("cellContents count: ", cellContents.count)
+//        print("cellContents: ", cellContents)
+        print("OCR OUTPUT: ", cellContents)
         //sort cellContents array by x value
         quickSort(sort: "x", low: 0, high: self.ocrProperties.textLocations!.count-1, row: 0)
-        print("x sorted: ", cellContents)
+//        print("x sorted: ", cellContents)
         //splice cellContents array into separate columns (locationColumns & self.ocrProperties.contentColumns)
         divideColumns()
-        print("columns divided: ", self.ocrProperties.contentColumns)
+//        print("columns divided: ", self.ocrProperties.contentColumns)
         //sort locationColumns & self.ocrProperties.contentColumns arrays by y value
-        for row in 0...locationColumns.count-1 {
-            quickSort(sort: "y", low: 0, high: locationColumns[row].count-1, row: row)
+        if locationColumns.count-1 >= 0 {
+            for row in 0...locationColumns.count-1 {
+                quickSort(sort: "y", low: 0, high: locationColumns[row].count-1, row: row)
+            }
         }
-        print("y sorted: ", self.ocrProperties.contentColumns)
+//        print("y sorted: ", self.ocrProperties.contentColumns)
+        print("SORTED 2D ARRAY: ", self.ocrProperties.contentColumns)
         //present graph view, uses self.ocrProperties.contentColumns array for values
         self.ocrProperties.page = "Graph"
     }
@@ -55,6 +59,7 @@ class OCRSortingEngine: NSObject {
         var imageCount = 0
         var textLocationsCount = 0
         //loop through individual cell images and get OCR
+        print("NUMBER OF CROPPED IMAGES: ", self.ocrProperties.croppedImages!.count)
         for image in self.ocrProperties.croppedImages! {
             if let tesseract = G8Tesseract(language: "eng") {
                 tesseract.engineMode = .tesseractCubeCombined
@@ -152,27 +157,29 @@ class OCRSortingEngine: NSObject {
     func divideColumns() {
         var singleLocationColumn = [CGFloat]()
         var singleContentColumn = [String]()
-        for i in 0...self.ocrProperties.textLocations!.count-1 {
-            let point = self.ocrProperties.textLocations![i].cgPointValue
-            //if you're not at the first or the last value, compare last one to this one and add this one to a new column if reqs are met
-            if i > 0 && i < self.ocrProperties.textLocations!.count-1 {
-                let lastPoint = self.ocrProperties.textLocations![i-1].cgPointValue
-                if lastPoint.x+10 < point.x { //TODO: generalize this x differences
-                    //add last column to all columns
+        if self.ocrProperties.textLocations!.count-1 >= 0 {
+            for i in 0...self.ocrProperties.textLocations!.count-1 {
+                let point = self.ocrProperties.textLocations![i].cgPointValue
+                //if you're not at the first or the last value, compare last one to this one and add this one to a new column if reqs are met
+                if i > 0 && i < self.ocrProperties.textLocations!.count-1 {
+                    let lastPoint = self.ocrProperties.textLocations![i-1].cgPointValue
+                    if lastPoint.x+10 < point.x { //TODO: generalize this x differences
+                        //add last column to all columns
+                        locationColumns.append(singleLocationColumn)
+                        self.ocrProperties.contentColumns.append(singleContentColumn)
+                        //remove elements to start a fresh new column
+                        singleLocationColumn.removeAll()
+                        singleContentColumn.removeAll()
+                    }
+                }
+                //add this point to the a new/existing column
+                singleLocationColumn.append(point.y)
+                singleContentColumn.append(cellContents[i])
+                //if you're at the last value, make sure to add this column to all columns
+                if i == self.ocrProperties.textLocations!.count-1 {
                     locationColumns.append(singleLocationColumn)
                     self.ocrProperties.contentColumns.append(singleContentColumn)
-                    //remove elements to start a fresh new column
-                    singleLocationColumn.removeAll()
-                    singleContentColumn.removeAll()
                 }
-            }
-            //add this point to the a new/existing column
-            singleLocationColumn.append(point.y)
-            singleContentColumn.append(cellContents[i])
-            //if you're at the last value, make sure to add this column to all columns
-            if i == self.ocrProperties.textLocations!.count-1 {
-                locationColumns.append(singleLocationColumn)
-                self.ocrProperties.contentColumns.append(singleContentColumn)
             }
         }
     }

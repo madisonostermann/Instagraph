@@ -40,13 +40,61 @@ class Testing {
     
     static func processImages() {
         
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        print(documentsDirectory)
+        
         for i in 0 ..< 18 {
-            print("IMAGE ", i+1, ".png IN TESTING PIPELINE")
+            print("-----------------------------------")
+            print("IMAGE ", i+1, " IN TESTING PIPELINE")
             let ocrPInUse = Testing.imagesOcrProperties[i]
+            
             do {
+                let fileURL3 = documentsDirectory.appendingPathComponent(String(i+1)+"original.jpg")
+                if let data3 = ocrPInUse.image?.jpegData(compressionQuality:  1.0),
+                  !FileManager.default.fileExists(atPath: fileURL3.path) {
+                    do {
+                        try data3.write(to: fileURL3)
+                    } catch {
+                        print("error saving file:", error)
+                    }
+                }
+                
                 ocrPInUse.image = PrepareImageBridge().deskew(ocrPInUse.image)
+                print("deskewed")
+                
+                let fileURL = documentsDirectory.appendingPathComponent(String(i+1)+"processed.jpg")
+                if let data = ocrPInUse.image?.jpegData(compressionQuality:  1.0),
+                  !FileManager.default.fileExists(atPath: fileURL.path) {
+                    do {
+                        try data.write(to: fileURL)
+                    } catch {
+                        print("error saving file:", error)
+                    }
+                }
+                
                 ocrPInUse.croppedImages = PrepareImageBridge().splice_cells() as NSArray as? [UIImage]
                 ocrPInUse.textLocations = PrepareImageBridge().locate_cells() as? [NSValue]
+                print("generated croppedImages and textLocations")
+                
+                for j in 0 ... ocrPInUse.croppedImages!.count-1 {
+                    let newDir = documentsDirectory.appendingPathComponent(String(i+1)).path
+                    do{
+                        try FileManager.default.createDirectory(atPath: newDir,withIntermediateDirectories: true, attributes: nil)
+                    } catch {
+                        print("Error: \(error.localizedDescription)")
+                    }
+                    let fileURL2 = documentsDirectory.appendingPathComponent(String(i+1)).appendingPathComponent(String(j+1)+"cropped.jpg")
+                    if let data2 = ocrPInUse.croppedImages![j].jpegData(compressionQuality:  1.0),
+                      !FileManager.default.fileExists(atPath: fileURL2.path) {
+                        do {
+                            try data2.write(to: fileURL2)
+//                            print("file saved")
+                        } catch {
+                            print("error saving file:", error)
+                        }
+                    }
+                }
+                
                 OCRSortingEngine(ocrProperties: ocrPInUse).pipeline()
             } catch let error {
                 print("Exception for image \(String(i+1)) while testing OpenCV and OCR!!!")
