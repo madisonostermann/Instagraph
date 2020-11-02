@@ -32,7 +32,7 @@ Mat PrepareImage::deskew(Mat image) {
     vector<Vec4i> hierarchy;
     Mat first_pass(image.rows,image.cols,CV_8UC1,Scalar::all(0));
     Mat second_pass(image.rows,image.cols,CV_8UC1,Scalar::all(0));
-    
+
     //detect & draw external lines- may pick up lines inside the table this time
     findContours(image, table_outline_contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
     for(int i = 0; i< table_outline_contours.size(); i++) {
@@ -41,7 +41,7 @@ Mat PrepareImage::deskew(Mat image) {
     //detect external lines a second time- will only pick up table outline- and fill the shape
     findContours(first_pass, table_outline_contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
     drawContours(second_pass, table_outline_contours, 0, white, FILLED);
-    
+
     //approximate the contour to get corners
     vector<vector<Point> > appx_table_contours(1);
     approxPolyDP(Mat(table_outline_contours[0]), appx_table_contours[0], 25, true);
@@ -53,10 +53,9 @@ Mat PrepareImage::deskew(Mat image) {
         cout<<"DID NOT DETECT 4 CORNERS OF TABLE, ABORTING PERSPECTIVE CORRECTION"<<endl;
         //back to black on white
         threshold(image, deskewed_image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
-        
         return deskewed_image;
     }
-    
+
     //each appx_table_contour point is a corner of the table
     std::vector<Point2f> table_corners;
     table_corners.push_back(Point2f(appx_table_contours[0][0].x,appx_table_contours[0][0].y));
@@ -69,6 +68,15 @@ Mat PrepareImage::deskew(Mat image) {
     dest_corners.push_back(Point2f(boundedRect.x,boundedRect.y+boundedRect.height));
     dest_corners.push_back(Point2f(boundedRect.x+boundedRect.width,boundedRect.y));
     dest_corners.push_back(Point2f(boundedRect.x+boundedRect.width,boundedRect.y+boundedRect.height));
+    
+    //if place where point will end up is way far away, don't move it (perspective correction might be totally off of trying to rotate table)
+    if ((boundedRect.x > appx_table_contours[0][0].x+(appx_table_contours[0][0].x/2)) || (boundedRect.x < appx_table_contours[0][0].x/2) ||
+        (boundedRect.y > appx_table_contours[0][0].y+(appx_table_contours[0][0].y/2)) || (boundedRect.y < appx_table_contours[0][0].y/2)) {
+        cout<<"PERSPECTIVE CORRECTION TOO DRAMATIC, PROCEDING WITH ORIGINAL IMAGE"<<endl;
+        //back to black on white
+        threshold(image, deskewed_image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
+        return deskewed_image;
+    }
     
     //calculate perspective transform from four pairs of corresponding points
     Mat transform_matrix = getPerspectiveTransform(table_corners, dest_corners);
@@ -98,7 +106,7 @@ vector<Mat> PrepareImage::splice_cells() {
 
 Mat PrepareImage::remove_lines(Mat image) {
     //get all horizontal lines
-    Mat horizontal_kernel = getStructuringElement(MORPH_RECT, Size(image.cols/10, 1));
+    Mat horizontal_kernel = getStructuringElement(MORPH_RECT, Size(image.cols/20, 1));
     Mat horizontal_image;
     erode(image, horizontal_image, horizontal_kernel, Point(-1, -1));
     dilate(horizontal_image, horizontal_image, horizontal_kernel, Point(-1, -1));
@@ -110,7 +118,7 @@ Mat PrepareImage::remove_lines(Mat image) {
         drawContours(image, horizontal_contours, i, black, 5);
     }
     //get all vertical lines
-    Mat vertical_kernel = getStructuringElement(MORPH_RECT, Size(1, image.rows/10));
+    Mat vertical_kernel = getStructuringElement(MORPH_RECT, Size(1, image.rows/20));
     Mat vertical_image;
     erode(image, vertical_image, vertical_kernel, Point(-1, -1));
     dilate(vertical_image, vertical_image, vertical_kernel, Point(-1, -1));
@@ -124,6 +132,57 @@ Mat PrepareImage::remove_lines(Mat image) {
     
     return image;
 }
+
+void thinningGuoHallIteration(cv::Mat& im, int iter)
+{
+    cv::Mat marker = cv::Mat::zeros(im.size(), CV_8UC1);
+
+    for (int i = 1; i < im.rows; i++)
+    {
+        for (int j = 1; j < im.cols; j++)
+        {
+            uchar p2 = im.at<uchar>(i-1, j);
+            uchar p3 = im.at<uchar>(i-1, j+1);
+            uchar p4 = im.at<uchar>(i, j+1);
+            uchar p5 = im.at<uchar>(i+1, j+1);
+            uchar p6 = im.at<uchar>(i+1, j);
+            uchar p7 = im.at<uchar>(i+1, j-1);
+            uchar p8 = im.at<uchar>(i, j-1);
+            uchar p9 = im.at<uchar>(i-1, j-1);
+
+            int C  = (!p2 & (p3 | p4)) + (!p4 & (p5 | p6)) +
+                     (!p6 & (p7 | p8)) + (!p8 & (p9 | p2));
+            int N1 = (p9 | p2) + (p3 | p4) + (p5 | p6) + (p7 | p8);
+            int N2 = (p2 | p3) + (p4 | p5) + (p6 | p7) + (p8 | p9);
+            int N  = N1 < N2 ? N1 : N2;
+            int m  = iter == 0 ? ((p6 | p7 | !p9) & p8) : ((p2 | p3 | !p5) & p4);
+
+            if (C == 1 && (N >= 2 && N <= 3) & m == 0)
+                marker.at<uchar>(i,j) = 1;
+        }
+    }
+
+    im &= ~marker;
+}
+
+void thinningGuoHall(cv::Mat& im)
+{
+    im /= 255;
+
+    cv::Mat prev = cv::Mat::zeros(im.size(), CV_8UC1);
+    cv::Mat diff;
+
+    do {
+        thinningGuoHallIteration(im, 0);
+        thinningGuoHallIteration(im, 1);
+        cv::absdiff(im, prev, diff);
+        im.copyTo(prev);
+    }
+    while (cv::countNonZero(diff) > 0);
+
+    im *= 255;
+}
+
 
 vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
     //dilate text
@@ -140,15 +199,20 @@ vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
     vector<Rect> boundRect(text_contours.size());
     int boundingRectIndex = 0; //use separate index for boundingRects since there will be less of these than contours
     for(int i = 0; i< text_contours.size(); i++) {
-        approxPolyDP(text_contours[i], contours_poly[i], 3, true);
-        //create tempRect and add "buffers" to help OCR (doesn't fit text so tightly)
+        approxPolyDP(text_contours[i], contours_poly[i], 3, true); 
         Rect tempRect = boundingRect(contours_poly[i]);
-        int tempybuffer = tempRect.height/2;
-        int tempxbuffer = tempRect.width/2;
-        tempRect.x = tempRect.x-(tempxbuffer/4);
-        tempRect.y = tempRect.y-(tempybuffer/2);
-        tempRect.width = tempRect.width+tempxbuffer;
-        tempRect.height = tempRect.height+tempybuffer;
+        
+        //add buffers for identifying overlap
+        int buffer = 0;
+        if (tempRect.height >= tempRect.width) {
+            buffer = tempRect.width;
+        } else {
+            buffer = tempRect.height;
+        }
+        tempRect.x -= buffer/2;
+        tempRect.y -= buffer/2;
+        tempRect.width += buffer;
+        tempRect.height += buffer;
         //make sure that adding the buffers didn't make the rectangle outside of the actual image dimensions
         if (tempRect.x < 0) { tempRect.x = 0; }
         if (tempRect.width < 0) { tempRect.width = 0; }
@@ -162,81 +226,78 @@ vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
             tempRect.y = 0;
             tempRect.height = image.rows;
         }
-        
-        
+
         bool overlap = false; //used to see if contours need to be merged or not
-        
+
         //create a boundingRect for first contour for sure
         if (boundingRectIndex == 0) {
-            boundRect[boundingRectIndex] = tempRect;
-            boundingRectIndex += 1;
+            if(tempRect.height < image.size().height && tempRect.width < image.size().width) {
+                boundRect[boundingRectIndex] = tempRect;
+                boundingRectIndex += 1;
+            }
         } else {
             //check for overlapping contours
             for(int j = 0; j<boundingRectIndex; j++) {
-                if((tempRect.y >= boundRect[j].y) && (tempRect.y <= (boundRect[j].y+boundRect[j].height))){ //if this y is within height of another
-                    if((tempRect.x >= boundRect[j].x) && (tempRect.x <= (boundRect[j].x+boundRect[j].width))) { //if this x is within width of another
-                        overlap = true;
-                        boundRect[j].width = (tempRect.x+tempRect.width)-boundRect[j].x;
-                        boundRect[j].height = (tempRect.y+tempRect.height)-boundRect[j].y;
-                    }
-                    if ((boundRect[j].x >= tempRect.x) && (boundRect[j].x <= (tempRect.x+tempRect.width))) { //if other x is within width of this
-                        overlap = true;
-                        boundRect[j].width = (boundRect[j].x+boundRect[j].width)-tempRect.x;
-                        boundRect[j].x = tempRect.x;
-                        boundRect[j].height = (tempRect.y+tempRect.height)-boundRect[j].y;
-                    }
-                }
-                if ((boundRect[j].y >= tempRect.y) && (boundRect[j].y <= (tempRect.y+tempRect.height))){ //if other y is within height of this
-                    if((tempRect.x >= boundRect[j].x) && (tempRect.x <= (boundRect[j].x+boundRect[j].width))) { //if this x is within width of another
-                        overlap = true;
-                        boundRect[j].width = (tempRect.x+tempRect.width)-boundRect[j].x;
-                        boundRect[j].height = (boundRect[j].y+boundRect[j].height)-tempRect.y;
+                overlap = false;
+                int left_1 = boundRect[j].x;
+                int right_1 = boundRect[j].x+boundRect[j].width;
+                int top_1 = boundRect[j].y;
+                int bottom_1 = boundRect[j].y+boundRect[j].height;
+                int midY_1 = (bottom_1+top_1)/2;
+                int left_2 = tempRect.x;
+                int right_2 = tempRect.x+tempRect.width;
+                int top_2 = tempRect.y;
+                int bottom_2 = tempRect.y+tempRect.height;
+                int midY_2 = (bottom_2+top_2)/2;
+                if(((right_2 > left_1 && right_2 < right_1) || (left_2 > left_1 && left_2 < right_1)) &&
+                    ((midY_1 > top_2 && midY_1 < bottom_2) || (midY_2 > top_1 && midY_2 < bottom_1))){
+                    overlap = true;
+                    if(boundRect[j].y > tempRect.y) {
+                        boundRect[j].height = boundRect[j].y-tempRect.y+boundRect[j].height;
                         boundRect[j].y = tempRect.y;
+                    } else {
+                        boundRect[j].height = tempRect.y-boundRect[j].y+tempRect.height;
                     }
-                    if ((boundRect[j].x >= tempRect.x) && (boundRect[j].x <= (tempRect.x+tempRect.width))) { //if other x is within width of this
-                        overlap = true;
-                        boundRect[j].width = (boundRect[j].x+boundRect[j].width)-tempRect.x;
+                    if(boundRect[j].x > tempRect.x) {
+                        boundRect[j].width = boundRect[j].x-tempRect.x+boundRect[j].width;
                         boundRect[j].x = tempRect.x;
-                        boundRect[j].height = (boundRect[j].y+boundRect[j].height)-tempRect.y;
-                        boundRect[j].y = tempRect.y;
+                    } else {
+                        boundRect[j].width = tempRect.x-boundRect[j].x+tempRect.width;
                     }
+                    break;
                 }
             }
             // if this new boundingRect doesn't overlap any existing ones, create a new boundRect at i
             if (overlap == false) {
-                boundRect[boundingRectIndex] = tempRect;
-                boundingRectIndex += 1;
+                if(tempRect.height < image.size().height && tempRect.width < image.size().width) {
+                    boundRect[boundingRectIndex] = tempRect;
+                    boundingRectIndex += 1;
+                }
             }
         }
         
     }
+    
     //compute centers of merged contours and crop images around the rectangles
     contourCenters.resize(boundingRectIndex);
     vector<Mat> croppedImages(boundingRectIndex);
-    for(int i = 0; i< boundingRectIndex; i++) {
+    vector<Rect> existingROI(boundingRectIndex);
+    for(int i = 0; i<boundingRectIndex; i++) {
         contourCenters[i] = Point((boundRect[i].width/2)+boundRect[i].x, (boundRect[i].height/2)+boundRect[i].y);
         Rect roi(boundRect[i].x, boundRect[i].y, boundRect[i].width, boundRect[i].height);
-//        if (0 <= roi.x
-//            && 0 <= roi.width
-//            && roi.x + roi.width <= image.cols
-//            && 0 <= roi.y
-//            && 0 <= roi.height
-//            && roi.y + roi.height <= image.rows){
-//            // roi within the image plane
-//            cout << "GOOD" << endl;
-//        } else {
-//            cout << "BAD" << endl;
-//            cout << roi.x << endl;
-//            cout << roi.width << endl;
-//            cout << roi.x + roi.width << endl;
-//            cout << image.cols << endl;
-//            cout << roi.y << endl;
-//            cout << roi.height << endl;
-//            cout << roi.y + roi.height << endl;
-//            cout << image.rows << endl;
-//        }
-        croppedImages[i] = image(roi);
+//        Mat src = image(roi);
+//        cv::Mat dest(src.rows*2, src.cols*2, CV_8UC1, black);
+//        src.copyTo(dest(cv::Rect(src.cols/2, src.rows/2, src.cols, src.rows)));
+
+//        thinningGuoHall(dest);
+//        Mat text_kernel = getStructuringElement(MORPH_RECT, Size(2, 2));
+//        Mat new_image;
+//        dilate(dest, new_image, text_kernel, Point(-1, -1));
+
+        croppedImages[i] = image(roi); //dest; //new_image;
     }
+    
+    
     return croppedImages;
 }
 
@@ -249,49 +310,3 @@ vector<Point2f> PrepareImage::locate_cells() {
         return contourCenters;
     }
 }
-
-
-// NOT USED //
-//Mat PrepareImage::adjust_brightness_and_contrast(Mat image) {
-//
-//    // establish number of bins & set range
-//    int histSize = 256;
-//    float range[] = {0, 256};
-//    const float* histRange = {range};
-//
-//    // create matrix for histogram
-//    Mat hist;
-//    calcHist(&image, 1, 0, Mat(), hist, 1, &histSize, &histRange, true/*uniform*/, false/*accumulate*/);
-//    minMaxLoc(hist, 0, 0/*max_val*/);
-//
-//    // calculate cumulative distribution from the histogram
-//    vector<float> accumulator(histSize);
-//    accumulator[0] = hist.at<float>(0);
-//    for (int i = 1; i < histSize; i++) {
-//        accumulator[i] = accumulator[i - 1] + hist.at<float>(i);
-//    }
-//
-//    // locate points that cuts at required value
-//    float max = accumulator.back();
-//    float clipHistPercent = 0;
-//    clipHistPercent *= (max / 100.0); //make percent as absolute
-//    clipHistPercent /= 2.0; // left and right wings
-//
-//    // locate left and right cuts
-//    double minGray = 0;
-//    while (accumulator[minGray] < clipHistPercent)
-//        minGray++;
-//
-//    double maxGray = histSize - 1;
-//    while (accumulator[maxGray] >= (max - clipHistPercent))
-//        maxGray--;
-//
-//    // calculate optimal contrast and brightness from maxGray & minGray
-//    double alpha = 255 / (maxGray - minGray); //contrast
-//    double beta = -minGray * alpha; //brightness
-//
-//    // apply contrast and brightness to image
-//    convertScaleAbs(image, image, alpha, beta);
-//
-//    return image;
-//}

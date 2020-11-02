@@ -55,6 +55,25 @@ class OCRSortingEngine: NSObject {
         self.ocrProperties.page = "Graph"
     }
     
+    func checkForContent(text: [String]) -> (Bool, String){
+        //go through extracted text for a cell and see if there's any text there
+        var noContent = true
+        var thisCell = ""
+        for i in text.indices {
+            //remove whitespaces and see if there's anything
+            if text[i] != "" && !text[i].trimmingCharacters(in: .whitespaces).isEmpty && !text[i].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                if noContent { //if there hasn't been any content before, initialize thisCell with the first text found
+                    thisCell = text[i]
+                } else { //if there's already content, add a space and append the new content
+                    thisCell += (" " + text[i])
+                }
+                noContent = false //let us know that some content was found
+            }
+        }
+        
+        return (noContent, thisCell)
+    }
+    
     func ocr() {
         var imageCount = 0
         var textLocationsCount = 0
@@ -69,22 +88,71 @@ class OCRSortingEngine: NSObject {
                 let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
                 //extract all text from OCR reading
                 let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
-                //go through extracted text for a cell and see if there's any text there
-                var noContent = true
-                var thisCell = ""
-//                print("imageCount: ", imageCount)
-//                print("textlocations count: ", self.ocrProperties.textLocations!.count)
-                for i in text.indices {
-                    //remove whitespaces and see if there's anything
-                    if text[i] != "" && !text[i].trimmingCharacters(in: .whitespaces).isEmpty && !text[i].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        if noContent { //if there hasn't been any content before, initialize thisCell with the first text found
-                            thisCell = text[i]
-                        } else { //if there's already content, add a space and append the new content
-                            thisCell += (" " + text[i])
-                        }
-                        noContent = false //let us know that some content was found
+                
+                
+                var result = checkForContent(text: text)
+                var noContent = result.0
+                var thisCell = result.1
+                
+                if noContent{
+                    if let tesseract = G8Tesseract(language: "eng") {
+                        tesseract.engineMode = .tesseractCubeCombined
+                        tesseract.pageSegmentationMode = .singleLine
+                        tesseract.image = image
+                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
+                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
+
+                        result = checkForContent(text: text)
+                        noContent = result.0
+                        thisCell = result.1
                     }
                 }
+                
+                if noContent{
+                    if let tesseract = G8Tesseract(language: "eng") {
+                        tesseract.engineMode = .tesseractCubeCombined
+                        tesseract.pageSegmentationMode = .singleBlock
+                        tesseract.image = image
+                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
+                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
+
+                        result = checkForContent(text: text)
+                        noContent = result.0
+                        thisCell = result.1
+                    }
+                }
+                
+                if noContent{
+                    if let tesseract = G8Tesseract(language: "eng") {
+                        tesseract.engineMode = .tesseractCubeCombined
+                        tesseract.pageSegmentationMode = .singleChar
+                        tesseract.image = image
+                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
+                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
+
+                        result = checkForContent(text: text)
+                        noContent = result.0
+                        thisCell = result.1
+                    }
+                }
+                
+                if noContent{
+                    if let tesseract = G8Tesseract(language: "eng") {
+                        tesseract.engineMode = .tesseractCubeCombined
+                        tesseract.pageSegmentationMode = .singleWord
+                        tesseract.image = image
+                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
+                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
+
+                        result = checkForContent(text: text)
+                        noContent = result.0
+                        thisCell = result.1
+                    }
+                }
+                
+//                print(hOCR!)
+//                print(text)
+                
                 //if no content was found in this cell, remove the corresponding textLocation from array so things stay synchronized
                 //otherwise add the cell contents to array
                 if noContent {
