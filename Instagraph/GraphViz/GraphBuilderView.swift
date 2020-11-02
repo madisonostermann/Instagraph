@@ -10,38 +10,106 @@ import SwiftUI
 
 //EEnum exists in GraphEngine.swift
 
-//enum GraphType {
-//    case bar
-//    case histogram
-//    case line
-//    case multiLine
-//    case scatter
-//    pie
-//    case none
-//}
-
-struct GBVButton: ViewModifier {
-    var bgColor:Color
-    @Binding var isPressed:Bool
-    func body(content: Content) -> some View {
-        content
-            .padding(30)
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(bgColor)
-                }
-            )
-            .scaleEffect(self.isPressed ? 0.8 : 1)
-            .animation(.spring())
+//Class models user going through table selection/graph creation process
+//Some changes are reflected in UI & when user is finished the graphModel property is used to present a graph view
+class GBViewModel: ObservableObject {
+    
+    private var stepIndex = 0 {
+        didSet {
+            currentStep = steps[stepIndex]
+        }
     }
     
-}
-
-extension View {
-    func gbvButton(isPressed: Binding<Bool>, bgColor: Color) -> some View {
-        self.modifier(GBVButton(bgColor: bgColor, isPressed: isPressed))
+    private var steps:[String]
+    @Published var currentStep:String
+    
+    var dict:[GraphType:Any] = [
+        .bar: [
+            "stepList": ["data", "x-label", "x-values", "y-label", "title"],
+            "components": [
+                "data": [],
+                "x-label": "",
+                "x-values": [],
+                "y-label": "",
+                "title": ""
+            ]
+        ]
+    ]
+    //dict
+    //bar
+    //   stepList
+    //   components
+    //   function
+    //line
+    
+    private var graphType:GraphType
+    //var graphModel:Graph!
+    
+    //private var building:(Bool) -> Void
+    
+    init(_ graphType: GraphType) {
+        //switch for steps
+        self.steps = (dict[graphType] as! [String:Any])["stepList"] as! [String] //for multi line rn
+        self.currentStep = steps[0]
+        self.graphType = graphType
+        //self.building = bar
     }
+    
+    func submit(submitOrBack: Bool) -> GraphType? {
+        if !submitOrBack && stepIndex == 0 { //can't go back
+            return nil
+        }
+        if submitOrBack && stepIndex == steps.count-1 {
+            return done()
+        }
+        stepIndex = submitOrBack ? stepIndex + 1 : stepIndex - 1
+        switch self.graphType {
+        case .bar:
+            bar(submitOrBack)
+        case .histogram:
+            histogram(submitOrBack)
+        case .line:
+            line(submitOrBack)
+        case .multiLine:
+            multiLine(submitOrBack)
+        case .scatter:
+            scatter(submitOrBack)
+        case .pie:
+            pie(submitOrBack)
+        case .none:
+            return nil
+        }
+        return nil
+    }
+    
+    private func done() -> GraphType {
+        return self.graphType
+    }
+    
+    private func bar(_ submitOrBack: Bool) {
+        
+    }
+    
+    private func histogram(_ submitOrBack: Bool) {
+        
+    }
+    
+    private func line(_ submitOrBack: Bool) {
+        
+    }
+    
+    private func multiLine(_ submitOrBack: Bool) {
+        
+    }
+    
+    private func scatter(_ submitOrBack: Bool) {
+        
+    }
+    
+    private func pie(_ submitOrBack: Bool) {
+        
+    }
+    
 }
 
 struct GBVButtonStyle: ButtonStyle {
@@ -58,8 +126,10 @@ struct GBVButtonStyle: ButtonStyle {
 
 struct GraphBuilderView: View {
     
-    var step:String = "Data"
-    @State private var isPressed:Bool = false
+    @ObservedObject var ocrProperties:OCRProperties
+    @ObservedObject var gbViewModel:GBViewModel
+    
+    var step:String = "data"
     
     @Environment(\.colorScheme) var colorScheme
     @State var selectOrAdjust = true //true is select mode, false is adjust mode
@@ -106,29 +176,57 @@ struct GraphBuilderView: View {
             }, label: {
                 HStack {
                     Spacer()
-                    Text("Confirm \(self.step)").foregroundColor(self.colorScheme == .dark ? Color.white : Color.black)
+                    Text("Confirm Select").foregroundColor(self.colorScheme == .dark ? Color.white : Color.black)
                     Spacer()
                 }
             }).buttonStyle(GBVButtonStyle(backColor: .green)).padding([.trailing])
-//            Button("Back") {
-//
-//            }.padding().background(Color.red).foregroundColor(self.colorScheme == .dark ? Color.white : Color.black).cornerRadius(10)
-//            Button("Confirm \(self.step)") {
-//
-//            }.padding().background(Color.green).foregroundColor(self.colorScheme == .dark ? Color.white : Color.black).cornerRadius(10)
         }
     }
     
     var body: some View {
-        VStack {
-            TableView(selectOrAdjust: $selectOrAdjust)
-            self.selectOrAdjustToggle()//.padding()
-            self.backConfirmButtons()//.padding()
+        ZStack {
+            Color(red: 44/255, green: 47/255, blue: 51/255, opacity: 1.0).edgesIgnoringSafeArea([.top, .bottom])
+            VStack {
+                TableView(selectOrAdjust: $selectOrAdjust)
+                self.selectOrAdjustToggle()//.padding()
+                self.backConfirmButtons()//.padding()
+            }
+            VStack {
+                HStack {
+                    Button(action: {
+                        haptic()
+                        self.ocrProperties.page = "Home"
+                    }, label: {
+                        Text("Home")
+                    }).buttonStyle(GBVButtonStyle(backColor: .blue)).padding([.leading])
+                    //Spacer()
+                    HStack {
+                        Spacer()
+                        Text("Select the table \(step)")//.padding()
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 0.0)
+                                .foregroundColor(.lightGrey).padding([.trailing, .leading])
+                            RoundedRectangle(cornerRadius: 0.0).stroke(Color.yellow, lineWidth: 5.0).padding([.trailing, .leading])
+                            //.foregroundColor(Color.blue).padding([.trailing, .leading])
+                        }
+                    )
+//                    Button("Home") {
+//                        self.ocrProperties.page = "Home"
+//                    }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10).padding()
+//                    Spacer()
+                }
+                Spacer()
+            }
         }
     }
 }
 
 extension Color {
     static let lightBlue = Color(red: 0.678, green: 0.847, blue: 0.902)
+    static let lightGrey = Color(red: 153/255, green: 170/255, blue: 181/255)
     //67.8% red, 84.7% green and 90.2% blue
 }

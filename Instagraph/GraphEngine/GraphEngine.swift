@@ -8,14 +8,14 @@
 
 import Foundation
 
-enum GraphType {
-    case bar
-    case histogram
-    case line
-    case multiLine
-    case scatter
-    case pie
-    case none
+enum GraphType: String {
+    case bar = "bar"
+    case histogram = "histogram"//using as multi-bar
+    case line = "line"
+    case multiLine = "multiLine"
+    case scatter = "scatter"
+    case pie = "pie"
+    case none = ""
 }
 
 enum TablePart {
@@ -512,3 +512,4 @@ y: i = 1, j = 2
 z: i = 3, j = 2
 
 */
+
