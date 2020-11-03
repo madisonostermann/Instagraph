@@ -106,7 +106,7 @@ vector<Mat> PrepareImage::splice_cells() {
 
 Mat PrepareImage::remove_lines(Mat image) {
     //get all horizontal lines
-    Mat horizontal_kernel = getStructuringElement(MORPH_RECT, Size(image.cols/20, 1));
+    Mat horizontal_kernel = getStructuringElement(MORPH_RECT, Size(image.cols/10, 1));
     Mat horizontal_image;
     erode(image, horizontal_image, horizontal_kernel, Point(-1, -1));
     dilate(horizontal_image, horizontal_image, horizontal_kernel, Point(-1, -1));
@@ -118,7 +118,7 @@ Mat PrepareImage::remove_lines(Mat image) {
         drawContours(image, horizontal_contours, i, black, 5);
     }
     //get all vertical lines
-    Mat vertical_kernel = getStructuringElement(MORPH_RECT, Size(1, image.rows/20));
+    Mat vertical_kernel = getStructuringElement(MORPH_RECT, Size(1, image.rows/10));
     Mat vertical_image;
     erode(image, vertical_image, vertical_kernel, Point(-1, -1));
     dilate(vertical_image, vertical_image, vertical_kernel, Point(-1, -1));
@@ -132,57 +132,6 @@ Mat PrepareImage::remove_lines(Mat image) {
     
     return image;
 }
-
-void thinningGuoHallIteration(cv::Mat& im, int iter)
-{
-    cv::Mat marker = cv::Mat::zeros(im.size(), CV_8UC1);
-
-    for (int i = 1; i < im.rows; i++)
-    {
-        for (int j = 1; j < im.cols; j++)
-        {
-            uchar p2 = im.at<uchar>(i-1, j);
-            uchar p3 = im.at<uchar>(i-1, j+1);
-            uchar p4 = im.at<uchar>(i, j+1);
-            uchar p5 = im.at<uchar>(i+1, j+1);
-            uchar p6 = im.at<uchar>(i+1, j);
-            uchar p7 = im.at<uchar>(i+1, j-1);
-            uchar p8 = im.at<uchar>(i, j-1);
-            uchar p9 = im.at<uchar>(i-1, j-1);
-
-            int C  = (!p2 & (p3 | p4)) + (!p4 & (p5 | p6)) +
-                     (!p6 & (p7 | p8)) + (!p8 & (p9 | p2));
-            int N1 = (p9 | p2) + (p3 | p4) + (p5 | p6) + (p7 | p8);
-            int N2 = (p2 | p3) + (p4 | p5) + (p6 | p7) + (p8 | p9);
-            int N  = N1 < N2 ? N1 : N2;
-            int m  = iter == 0 ? ((p6 | p7 | !p9) & p8) : ((p2 | p3 | !p5) & p4);
-
-            if (C == 1 && (N >= 2 && N <= 3) & m == 0)
-                marker.at<uchar>(i,j) = 1;
-        }
-    }
-
-    im &= ~marker;
-}
-
-void thinningGuoHall(cv::Mat& im)
-{
-    im /= 255;
-
-    cv::Mat prev = cv::Mat::zeros(im.size(), CV_8UC1);
-    cv::Mat diff;
-
-    do {
-        thinningGuoHallIteration(im, 0);
-        thinningGuoHallIteration(im, 1);
-        cv::absdiff(im, prev, diff);
-        im.copyTo(prev);
-    }
-    while (cv::countNonZero(diff) > 0);
-
-    im *= 255;
-}
-
 
 vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
     //dilate text
@@ -285,19 +234,11 @@ vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
     for(int i = 0; i<boundingRectIndex; i++) {
         contourCenters[i] = Point((boundRect[i].width/2)+boundRect[i].x, (boundRect[i].height/2)+boundRect[i].y);
         Rect roi(boundRect[i].x, boundRect[i].y, boundRect[i].width, boundRect[i].height);
-//        Mat src = image(roi);
-//        cv::Mat dest(src.rows*2, src.cols*2, CV_8UC1, black);
-//        src.copyTo(dest(cv::Rect(src.cols/2, src.rows/2, src.cols, src.rows)));
-
-//        thinningGuoHall(dest);
-//        Mat text_kernel = getStructuringElement(MORPH_RECT, Size(2, 2));
-//        Mat new_image;
-//        dilate(dest, new_image, text_kernel, Point(-1, -1));
-
-        croppedImages[i] = image(roi); //dest; //new_image;
+        Mat src = image(roi);
+        cv::Mat dest(src.rows*2, src.cols*2, CV_8UC1, black);
+        src.copyTo(dest(cv::Rect(src.cols/2, src.rows/2, src.cols, src.rows)));
+        croppedImages[i] = dest;
     }
-    
-    
     return croppedImages;
 }
 
