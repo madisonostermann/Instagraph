@@ -22,7 +22,9 @@ class GBViewModel: ObservableObject {
     
     private var stepIndex = 0 {
         didSet {
-            currentStep = steps[stepIndex]
+            if stepIndex < steps.count { //prevent ioob
+                currentStep = steps[stepIndex]
+            }
         }
     }
     
@@ -46,7 +48,7 @@ class GBViewModel: ObservableObject {
     var title:String = ""
     var keys:[String] = []
     
-    private var graphType:GraphType
+    var graphType:GraphType
     
     init(_ graphType: GraphType) {
         self.steps = (dict[graphType] as! [String:Any])["stepList"] as! [String]
@@ -87,7 +89,12 @@ class GBViewModel: ObservableObject {
         
         if submitOrBack && stepIndex == steps.count {
             SelectedSingleton.selected = [] //reset
-            return done()
+            var x = done()
+            print(x!)
+            if x == nil {
+                print("DONE IS NIL")
+            }
+            return x
         }
         return nil
     }
@@ -106,12 +113,24 @@ class GBViewModel: ObservableObject {
     }
     
     func done() -> Graph? {
+        print("WEDONE")
         switch self.graphType {
         case .bar:
             print("bar")
             var result = toDouble(self.data)
             if result.1 {
-                return BarGraph(title: self.title, xAxisLabel: self.xLabel, yAxisLabel: self.yLabel, data: result.0, xAxisValues: self.xValues)
+                print("BARMADE")
+                print(self.title)
+                print(self.xLabel)
+                print(self.yLabel)
+                print(self.xValues)
+                print(result.0)
+                var x = BarGraph(title: self.title, xAxisLabel: self.xLabel, yAxisLabel: self.yLabel, data: result.0, xAxisValues: self.xValues)
+                if x == nil {
+                    print("NO BAR GRAPH MADE")
+                }
+                self.finished = true
+                return x
             } else {
                 return nil
             }
@@ -151,7 +170,7 @@ struct GraphBuilderView: View {
     @ObservedObject var ocrProperties:OCRProperties
     @ObservedObject var gbViewModel:GBViewModel
     
-    var step:String = "data"
+    @State var step:String = "data"
     
     @Environment(\.colorScheme) var colorScheme
     @State var selectOrAdjust = true //true is select mode, false is adjust mode
@@ -159,7 +178,31 @@ struct GraphBuilderView: View {
     @State var graph:Graph!
     
     func makeGraph() -> some View {
-        return Text("some view")
+        Group {
+            switch gbViewModel.graphType {
+            case .bar:
+                //print("bar")
+                let barGraph = graph as! BarGraph
+                BarGraphView(ocrProperties: self.ocrProperties,
+                             bars: barGraph.data,
+                             barLabels: barGraph.xAxisValues,
+                             yAxisLabel: barGraph.yAxisLabel,
+                             xAxisLabel: barGraph.xAxisLabel)
+                
+            case .histogram:
+                Text("some view")
+            case .line:
+                Text("some view")
+            case .multiLine:
+                Text("some view")
+            case .scatter:
+                Text("some view")
+            case .pie:
+                Text("some view")
+            case .none:
+                Text("some view")
+            }
+        }
     }
     
     func selectOrAdjustToggle() -> some View {
@@ -193,6 +236,7 @@ struct GraphBuilderView: View {
             Button(action: {
                 gbViewModel.submit(submitOrBack: false, selection: [])
                 haptic()
+                self.step = gbViewModel.currentStep
             }, label: {
                 HStack {
                     Spacer()
@@ -202,10 +246,16 @@ struct GraphBuilderView: View {
             }).buttonStyle(GBVButtonStyle(backColor: .red)).padding([.leading])
             Button(action: {
                 var graph:Graph? = gbViewModel.submit(submitOrBack: true, selection: SelectedSingleton.selected)
+                if graph == nil {
+                    print("WTF IS GOING ON")
+                }
                 if graph != nil && gbViewModel.finished {
-                    
+                    print("🙃")
+                    self.graph = graph!
+                    self.graphFinished = true
                 }
                 haptic()
+                self.step = gbViewModel.currentStep
             }, label: {
                 HStack {
                     Spacer()
@@ -217,43 +267,47 @@ struct GraphBuilderView: View {
     }
     
     var body: some View {
-        ZStack {
-            Color(red: 44/255, green: 47/255, blue: 51/255, opacity: 1.0).edgesIgnoringSafeArea([.top, .bottom])
-            VStack {
-                TableView(selectOrAdjust: $selectOrAdjust)
-                self.selectOrAdjustToggle()//.padding()
-                self.backConfirmButtons()//.padding()
-            }
-            VStack {
-                HStack {
-                    Button(action: {
-                        haptic()
-                        self.ocrProperties.page = "Home"
-                    }, label: {
-                        Text("Home")
-                    }).buttonStyle(GBVButtonStyle(backColor: .blue)).padding([.leading])
-                    //Spacer()
-                    HStack {
-                        Spacer()
-                        Text("Select the table \(step)")//.padding()
-                        Spacer()
-                    }
-                    .padding()
-                    .background(
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 0.0)
-                                .foregroundColor(.lightGrey).padding([.trailing, .leading])
-                            RoundedRectangle(cornerRadius: 0.0).stroke(Color.yellow, lineWidth: 5.0).padding([.trailing, .leading])
-                            //.foregroundColor(Color.blue).padding([.trailing, .leading])
-                        }
-                    )
-//                    Button("Home") {
-//                        self.ocrProperties.page = "Home"
-//                    }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10).padding()
-//                    Spacer()
+        if !self.graphFinished {
+            ZStack {
+                Color(red: 44/255, green: 47/255, blue: 51/255, opacity: 1.0).edgesIgnoringSafeArea([.top, .bottom])
+                VStack {
+                    TableView(selectOrAdjust: $selectOrAdjust)
+                    self.selectOrAdjustToggle()//.padding()
+                    self.backConfirmButtons()//.padding()
                 }
-                Spacer()
+                VStack {
+                    HStack {
+                        Button(action: {
+                            haptic()
+                            self.ocrProperties.page = "Home"
+                        }, label: {
+                            Text("Home")
+                        }).buttonStyle(GBVButtonStyle(backColor: .blue)).padding([.leading])
+                        //Spacer()
+                        HStack {
+                            Spacer()
+                            Text("Select the table \(step)")//.padding()
+                            Spacer()
+                        }
+                        .padding()
+                        .background(
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 0.0)
+                                    .foregroundColor(.lightGrey).padding([.trailing, .leading])
+                                RoundedRectangle(cornerRadius: 0.0).stroke(Color.yellow, lineWidth: 5.0).padding([.trailing, .leading])
+                                //.foregroundColor(Color.blue).padding([.trailing, .leading])
+                            }
+                        )
+    //                    Button("Home") {
+    //                        self.ocrProperties.page = "Home"
+    //                    }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10).padding()
+    //                    Spacer()
+                    }
+                    Spacer()
+                }
             }
+        } else {
+            self.makeGraph()
         }
     }
 }
@@ -262,4 +316,10 @@ extension Color {
     static let lightBlue = Color(red: 0.678, green: 0.847, blue: 0.902)
     static let lightGrey = Color(red: 153/255, green: 170/255, blue: 181/255)
     //67.8% red, 84.7% green and 90.2% blue
+}
+
+func printTen<T>(arg: T) {
+    for _ in 1 ... 10 {
+        print(arg)
+    }
 }

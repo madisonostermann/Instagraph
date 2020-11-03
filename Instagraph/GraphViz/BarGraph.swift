@@ -24,7 +24,12 @@ struct BarGraphView: View {
     let yAxisLabel:String
     let xAxisLabel:String
     
-    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7, bars: [Double], barLabels: [String], yAxisLabel: String, xAxisLabel: String) {
+    init(ocrProperties: OCRProperties,
+         frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7,
+         frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7,
+         bars: [Double],
+         barLabels: [String],
+         yAxisLabel: String, xAxisLabel: String) {
         self.ocrProperties = ocrProperties
         self.frameHeight = frameHeight
         self.frameWidth = frameWidth

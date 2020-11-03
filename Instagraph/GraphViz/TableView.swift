@@ -25,13 +25,13 @@ struct TableView: View {
     
     @Binding var selectOrAdjust:Bool
     
-    //let table:[[String]] = [["Student Scores", "Student", "Maddie", "Dalton", "Aaron", "Rachel", "Kassie", "Cody"], ["Student Scores", "Score", "5", "1", "3", "9", "3", "7"]]
-    let table:[[String]] = [["Month", "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                            ["Temperature USA", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
-                            ["Temperature China", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
-                            ["Temperature Russia", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
-                            ["Temperature England", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
-                            ["Temperature Korea", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"]]
+    let table:[[String]] = [["Student Scores", "Student", "Maddie", "Dalton", "Aaron", "Rachel", "Kassie", "Cody"], ["Student Scores", "Score", "5", "1", "3", "9", "3", "7"]]
+//    let table:[[String]] = [["Month", "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+//                            ["Temperature USA", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
+//                            ["Temperature China", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
+//                            ["Temperature Russia", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
+//                            ["Temperature England", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
+//                            ["Temperature Korea", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"]]
     let tableModel:TableModel = TableModel()
     
     @Environment(\.colorScheme) var colorScheme
@@ -91,7 +91,7 @@ struct TableView: View {
                 selected.append(table[i][j])
             }
         }
-        
+        SelectedSingleton.selected = selected
     }
     
     //Function determines correct indices that give a bound to the cells selected by the user on the visible table view
