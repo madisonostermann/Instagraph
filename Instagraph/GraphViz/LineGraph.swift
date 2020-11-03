@@ -22,7 +22,12 @@ struct LineGraphView: View {
     @State var multi:Bool = false
     @State var key:[String] = []
     
-    init(ocrProperties: OCRProperties, frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7, frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7, vals: [Double], xLabels: [String], yAxisLabel: String, xAxisLabel: String) {
+    init(ocrProperties: OCRProperties,
+         frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7,
+         frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7,
+         vals: [Double], xLabels: [String],
+         yAxisLabel: String,
+         xAxisLabel: String) {
         self.ocrProperties = ocrProperties
         self.frameHeight = frameHeight
         self.frameWidth = frameWidth

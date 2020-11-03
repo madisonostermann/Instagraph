@@ -81,9 +81,22 @@ struct TableView: View {
         }
     }
     
+    //Fills selected data singleton
+    func fillSelectedData(start: ij, end: ij) {
+        var selected:[String] = []
+        let iS = start.i; let jS = start.j
+        let iE = end.i; let jE = end.j
+        for i in iS ... iE {
+            for j in jS ... jE {
+                selected.append(table[i][j])
+            }
+        }
+        
+    }
+    
     //Function determines correct indices that give a bound to the cells selected by the user on the visible table view
     //Fills variable highlightedAndSelectedSet which is used for render information
-    @discardableResult
+    //@discardableResult
     func fillSelectedSet(start: CGPoint, end: CGPoint) -> (ij, ij) {
         if self.tableModel.wasTableTransformed {
             self.generateCellPosArr()
@@ -274,7 +287,8 @@ struct TableView: View {
                             //if !self.tableModel.wasTableTransformed {
                             selectOrAdjust.toggle()
                             selectOrAdjust.toggle()
-                            self.fillSelectedSet(start: self.dragStartPoint, end: self.dragEndPoint)
+                            let ij = self.fillSelectedSet(start: self.dragStartPoint, end: self.dragEndPoint)
+                            fillSelectedData(start: ij.0, end: ij.1)
                             //} else {
                                 
                             //}

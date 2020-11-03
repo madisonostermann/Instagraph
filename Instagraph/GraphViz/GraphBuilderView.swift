@@ -10,9 +10,15 @@ import SwiftUI
 
 //EEnum exists in GraphEngine.swift
 
+class SelectedSingleton {
+    static var selected:[String] = []
+}
+
 //Class models user going through table selection/graph creation process
 //Some changes are reflected in UI & when user is finished the graphModel property is used to present a graph view
 class GBViewModel: ObservableObject {
+    
+    var finished = false
     
     private var stepIndex = 0 {
         didSet {
@@ -25,89 +31,105 @@ class GBViewModel: ObservableObject {
     
     var dict:[GraphType:Any] = [
         .bar: [
-            "stepList": ["data", "x-label", "x-values", "y-label", "title"],
-            "components": [
-                "data": [],
-                "x-label": "",
-                "x-values": [],
-                "y-label": "",
-                "title": ""
-            ]
+            "stepList": ["data", "x-label", "x-values", "y-label", "title"]
+        ],
+        .scatter: [
+            "stepList": ["data", "x-label", "y-label", "title"]
         ]
     ]
-    //dict
-    //bar
-    //   stepList
-    //   components
-    //   function
-    //line
+    
+    //Possible properties for a graph model - not all will be used for some types
+    var data:[String] = []
+    var xLabel:String = ""
+    var yLabel:String = ""
+    var xValues:[String] = []
+    var title:String = ""
+    var keys:[String] = []
     
     private var graphType:GraphType
-    //var graphModel:Graph!
-    
-    //private var building:(Bool) -> Void
     
     init(_ graphType: GraphType) {
-        //switch for steps
-        self.steps = (dict[graphType] as! [String:Any])["stepList"] as! [String] //for multi line rn
+        self.steps = (dict[graphType] as! [String:Any])["stepList"] as! [String]
         self.currentStep = steps[0]
         self.graphType = graphType
-        //self.building = bar
     }
     
-    func submit(submitOrBack: Bool) -> GraphType? {
+    func submit(submitOrBack: Bool, selection: [String]) -> Graph? {
         if !submitOrBack && stepIndex == 0 { //can't go back
             return nil
         }
-        if submitOrBack && stepIndex == steps.count-1 {
-            return done()
-        }
-        stepIndex = submitOrBack ? stepIndex + 1 : stepIndex - 1
-        switch self.graphType {
-        case .bar:
-            bar(submitOrBack)
-        case .histogram:
-            histogram(submitOrBack)
-        case .line:
-            line(submitOrBack)
-        case .multiLine:
-            multiLine(submitOrBack)
-        case .scatter:
-            scatter(submitOrBack)
-        case .pie:
-            pie(submitOrBack)
-        case .none:
+        
+        if !submitOrBack {
+            stepIndex -= 1
             return nil
+        }
+        
+        if submitOrBack {
+            switch self.currentStep {
+            case "data":
+                self.data = selection
+            case "x-label":
+                self.xLabel = selection[0]
+            case "y-label":
+                self.yLabel = selection[0]
+            case "title":
+                self.title = selection[0]
+            case "keys":
+                self.keys = selection
+            case "x-values":
+                self.xValues = selection
+            default:
+                print("default")
+            }
+        }
+        
+        stepIndex += 1
+        
+        if submitOrBack && stepIndex == steps.count {
+            SelectedSingleton.selected = [] //reset
+            return done()
         }
         return nil
     }
     
-    private func done() -> GraphType {
-        return self.graphType
+    func toDouble(_ arr: [String]) -> ([Double], Bool) {
+        var doubleArr:[Double] = []
+        for ele in arr {
+            let doub:Double? = Double(ele.strip(chars: Constants.NON_NUMBER_INFORMATION))
+            if doub != nil {
+                doubleArr.append(doub!)
+            } else {
+                return ([], false)
+            }
+        }
+        return (doubleArr, true)
     }
     
-    private func bar(_ submitOrBack: Bool) {
-        
-    }
-    
-    private func histogram(_ submitOrBack: Bool) {
-        
-    }
-    
-    private func line(_ submitOrBack: Bool) {
-        
-    }
-    
-    private func multiLine(_ submitOrBack: Bool) {
-        
-    }
-    
-    private func scatter(_ submitOrBack: Bool) {
-        
-    }
-    
-    private func pie(_ submitOrBack: Bool) {
-        
+    func done() -> Graph? {
+        switch self.graphType {
+        case .bar:
+            print("bar")
+            var result = toDouble(self.data)
+            if result.1 {
+                return BarGraph(title: self.title, xAxisLabel: self.xLabel, yAxisLabel: self.yLabel, data: result.0, xAxisValues: self.xValues)
+            } else {
+                return nil
+            }
+        case .histogram:
+            print("histogram")
+        case .line:
+            print("line")
+        case .multiLine:
+            print("multiLine")
+        case .scatter:
+            print("scatter")
+        case .pie:
+            print("pie")
+        case .none:
+            print("none")
+        }
+        self.finished = true
+        return nil
     }
     
 }
@@ -133,6 +155,12 @@ struct GraphBuilderView: View {
     
     @Environment(\.colorScheme) var colorScheme
     @State var selectOrAdjust = true //true is select mode, false is adjust mode
+    @State var graphFinished = false
+    @State var graph:Graph!
+    
+    func makeGraph() -> some View {
+        return Text("some view")
+    }
     
     func selectOrAdjustToggle() -> some View {
         HStack {
@@ -163,6 +191,7 @@ struct GraphBuilderView: View {
     func backConfirmButtons() -> some View {
         HStack {
             Button(action: {
+                gbViewModel.submit(submitOrBack: false, selection: [])
                 haptic()
             }, label: {
                 HStack {
@@ -172,6 +201,10 @@ struct GraphBuilderView: View {
                 }
             }).buttonStyle(GBVButtonStyle(backColor: .red)).padding([.leading])
             Button(action: {
+                var graph:Graph? = gbViewModel.submit(submitOrBack: true, selection: SelectedSingleton.selected)
+                if graph != nil && gbViewModel.finished {
+                    
+                }
                 haptic()
             }, label: {
                 HStack {
