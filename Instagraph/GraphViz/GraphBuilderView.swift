@@ -35,6 +35,9 @@ class GBViewModel: ObservableObject {
         .bar: [
             "stepList": ["data", "x-label", "x-values", "y-label", "title"]
         ],
+        .line: [
+            "stepList": ["data", "x-label", "x-values", "y-label", "title"]
+        ],
         .scatter: [
             "stepList": ["data", "x-label", "y-label", "title"]
         ]
@@ -117,7 +120,7 @@ class GBViewModel: ObservableObject {
         switch self.graphType {
         case .bar:
             print("bar")
-            var result = toDouble(self.data)
+            let result = toDouble(self.data)
             if result.1 {
                 print("BARMADE")
                 print(self.title)
@@ -125,7 +128,7 @@ class GBViewModel: ObservableObject {
                 print(self.yLabel)
                 print(self.xValues)
                 print(result.0)
-                var x = BarGraph(title: self.title, xAxisLabel: self.xLabel, yAxisLabel: self.yLabel, data: result.0, xAxisValues: self.xValues)
+                let x = BarGraph(title: self.title, xAxisLabel: self.xLabel, yAxisLabel: self.yLabel, data: result.0, xAxisValues: self.xValues)
                 if x == nil {
                     print("NO BAR GRAPH MADE")
                 }
@@ -138,6 +141,14 @@ class GBViewModel: ObservableObject {
             print("histogram")
         case .line:
             print("line")
+            let result = toDouble(self.data)
+            if result.1 {
+                let x = LineGraph(title: self.title, xAxisLabel: self.xLabel, yAxisLabel: self.yLabel, data: result.0, xAxisValues: self.xValues)
+                self.finished = true
+                return x
+            } else {
+                return nil
+            }
         case .multiLine:
             print("multiLine")
         case .scatter:
@@ -192,7 +203,13 @@ struct GraphBuilderView: View {
             case .histogram:
                 Text("some view")
             case .line:
-                Text("some view")
+                let lineGraph = graph as! LineGraph
+                LineGraphView(ocrProperties: self.ocrProperties,
+                              vals: lineGraph.data,
+                              xLabels: lineGraph.xAxisValues,
+                              yAxisLabel: lineGraph.yAxisLabel,
+                              xAxisLabel: lineGraph.xAxisLabel)
+                //Text("some view")
             case .multiLine:
                 Text("some view")
             case .scatter:
@@ -307,7 +324,10 @@ struct GraphBuilderView: View {
                 }
             }
         } else {
-            self.makeGraph()
+            ZStack {
+                Color(red: 44/255, green: 47/255, blue: 51/255, opacity: 1.0).edgesIgnoringSafeArea([.top, .bottom])
+                self.makeGraph()
+            }
         }
     }
 }
