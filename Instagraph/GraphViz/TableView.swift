@@ -10,6 +10,8 @@ import SwiftUI
 
 //Used to store data about where cells are rendered in screen space & whether the initial render has completed
 class TableModel {
+    var editingI:Int = 0
+    var editingJ:Int = 0
     var tableModelFinished:Bool = false
     var tableCellPositions:[[CGPoint]] = [] {
         didSet {
@@ -25,7 +27,7 @@ struct TableView: View {
     
     @Binding var selectOrAdjust:Bool
     
-    let table:[[String]] = [["Student Scores", "Student", "Maddie", "Dalton", "Aaron", "Rachel", "Kassie", "Cody"], ["Student Scores", "Score", "5", "1", "3", "9", "3", "7"]]
+    @State var table:[[String]] = [["Student Scores", "Student", "Maddie", "Dalton", "Aaron", "Rachel", "Kassie", "Cody"], ["Student Scores", "Score", "5", "1", "3", "9", "3", "7"]]
 //    let table:[[String]] = [["Month", "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
 //                            ["Temperature USA", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
 //                            ["Temperature China", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
@@ -212,8 +214,15 @@ struct TableView: View {
             .onTapGesture {
                 print(String(i) + String(j))
                 print(self.tableModel.tableCellPositions)
+                self.tableModel.editingI = i
+                self.tableModel.editingJ = j
+                self.editingCell = true
+                self.cellContent = self.table[i][j]
             }
     }
+    
+    @Binding var editingCell:Bool
+    @Binding var cellContent:String
     
     func generateCells() -> some View {
         print("Called")
@@ -370,7 +379,9 @@ struct TableView: View {
                             //self.sliderStartOffset = self.offset
                         }
                     }
-            )
+            ).onTapGesture {
+                print("tapped a thing")
+            }
             //Visualizes drag motion as a line on screen from where the drag started to where the user's finger currently is
             if isDragging {
                 Path { path in
@@ -383,6 +394,15 @@ struct TableView: View {
 //                Circle()
 //                    .foregroundColor(Color.blue)
 //                    .position(x: self.dragStartPoint.x, y: self.dragStartPoint.y)
+            }
+        }
+        if editingCell {
+            HStack {
+                Spacer()
+                CustomTextField(text: $cellContent, isFirstResponder: true)
+                    .frame(width: 300, height: 50)
+                    .background(Color.blue).opacity(0.5)
+                Spacer()
             }
         }
     } //var body end
@@ -398,6 +418,7 @@ struct TableView: View {
 
 
 
+//TextField("Enter username...", text: $username)
 
 
 
@@ -408,8 +429,44 @@ struct TableView: View {
 
 
 
+struct CustomTextField: UIViewRepresentable {
 
+    class Coordinator: NSObject, UITextFieldDelegate {
 
+        @Binding var text: String
+        var didBecomeFirstResponder = false
+
+        init(text: Binding<String>) {
+            _text = text
+        }
+
+        func textFieldDidChangeSelection(_ textField: UITextField) {
+            text = textField.text ?? ""
+        }
+
+    }
+
+    @Binding var text: String
+    var isFirstResponder: Bool = false
+
+    func makeUIView(context: UIViewRepresentableContext<CustomTextField>) -> UITextField {
+        let textField = UITextField(frame: .zero)
+        textField.delegate = context.coordinator
+        return textField
+    }
+
+    func makeCoordinator() -> CustomTextField.Coordinator {
+        return Coordinator(text: $text)
+    }
+
+    func updateUIView(_ uiView: UITextField, context: UIViewRepresentableContext<CustomTextField>) {
+        uiView.text = text
+        if isFirstResponder && !context.coordinator.didBecomeFirstResponder  {
+            uiView.becomeFirstResponder()
+            context.coordinator.didBecomeFirstResponder = true
+        }
+    }
+}
 
 
 

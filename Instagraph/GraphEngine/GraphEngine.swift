@@ -209,6 +209,7 @@ class GraphEngine {
                     if bar.0 == .success {
                         status = .success
                         graphs.append(bar.1)
+                        print("BUILD BAR GRAPH COMPLETE")
                     }
                     break check
                 }
