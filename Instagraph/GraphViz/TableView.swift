@@ -212,20 +212,33 @@ struct TableView: View {
                 y: yPos
             ).foregroundColor(self.highlightedAndSelectedSet.contains(ij(i: i, j: j)) ? Color.blue : self.colorScheme == .dark ? Color.white : Color.black)
             .onTapGesture {
+                print("MOD IJ")
                 print(String(i) + String(j))
                 print(self.tableModel.tableCellPositions)
                 self.tableModel.editingI = i
                 self.tableModel.editingJ = j
+                self.editingIJ = (i, j)
                 self.editingCell = true
-                self.cellContent = self.table[i][j]
+                self.cellContent = self.table[i][j] //need table[i][j] to be cellContent on edit finish
             }
     }
     
+    @State var editingIJ:(Int, Int) = (0, 0)
     @Binding var editingCell:Bool
-    @Binding var cellContent:String
+    @State var cellContent:String = ""
+//    {
+//        didSet {
+//            print("DOING A THING HERE")
+//            var temp = self.table
+//            temp[self.tableModel.editingI][self.tableModel.editingJ] = self.cellContent
+//            self.table = []
+//            self.table = temp
+//            //self.table[self.tableModel.editingI][self.tableModel.editingJ] = self.cellContent
+//        }
+//    }
     
     func generateCells() -> some View {
-        print("Called")
+        //print("Called")
         struct Dimensions { //Represented cell dimensions
             var h: CGFloat
             var w: CGFloat
@@ -395,59 +408,59 @@ struct TableView: View {
 //                    .foregroundColor(Color.blue)
 //                    .position(x: self.dragStartPoint.x, y: self.dragStartPoint.y)
             }
-        }
-        if editingCell {
-            HStack {
-                Spacer()
-                CustomTextField(text: $cellContent, isFirstResponder: true)
-                    .frame(width: 300, height: 50)
-                    .background(Color.blue).opacity(0.5)
-                Spacer()
+            if editingCell {
+                HStack {
+                    Spacer()
+                    if #available(iOS 14.0, *) {
+                        CustomTextField(text: $cellContent, isFirstResponder: true, editingCell: $editingCell)
+                            .frame(width: 300, height: 50)
+                            .background(Color.blue).opacity(0.75)
+                            .onChange(of: self.cellContent, perform: {_ in
+                                print(self.tableModel.editingI)
+                                print(self.tableModel.editingJ)
+                                //self.table[self.tableModel.editingI][self.tableModel.editingJ] = self.cellContent
+                                self.table[self.editingIJ.0][self.editingIJ.1] = self.cellContent
+                                print("DOIGN A THING ON CHANGE")
+                            })
+                    } else {
+                        // Fallback on earlier versions
+                    }
+                    Spacer()
+                }
             }
         }
     } //var body end
 }
 
-// ========== ========== ========== ========== ========== //
-
-
-
-
-
-
-
-
-
-//TextField("Enter username...", text: $username)
-
-
-
-
-
-
-
-
-
-
+//for editing cells
 struct CustomTextField: UIViewRepresentable {
 
     class Coordinator: NSObject, UITextFieldDelegate {
 
-        @Binding var text: String
+        @Binding var text:String
         var didBecomeFirstResponder = false
+        @Binding var editingCell:Bool
 
-        init(text: Binding<String>) {
+        init(text: Binding<String>, editingCell: Binding<Bool>) {
             _text = text
+            _editingCell = editingCell
         }
 
         func textFieldDidChangeSelection(_ textField: UITextField) {
             text = textField.text ?? ""
         }
+        
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            textField.resignFirstResponder()
+            editingCell = false
+            return true
+        }
 
     }
 
-    @Binding var text: String
-    var isFirstResponder: Bool = false
+    @Binding var text:String
+    var isFirstResponder:Bool = false
+    @Binding var editingCell:Bool
 
     func makeUIView(context: UIViewRepresentableContext<CustomTextField>) -> UITextField {
         let textField = UITextField(frame: .zero)
@@ -456,7 +469,7 @@ struct CustomTextField: UIViewRepresentable {
     }
 
     func makeCoordinator() -> CustomTextField.Coordinator {
-        return Coordinator(text: $text)
+        return Coordinator(text: $text, editingCell: $editingCell)
     }
 
     func updateUIView(_ uiView: UITextField, context: UIViewRepresentableContext<CustomTextField>) {
@@ -467,12 +480,6 @@ struct CustomTextField: UIViewRepresentable {
         }
     }
 }
-
-
-
-
-
-
 
 struct ChildSizeReader<Content: View>: View {
     @Binding var size: CGSize

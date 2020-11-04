@@ -284,16 +284,18 @@ struct GraphBuilderView: View {
     }
     
     @State var editingCell = false
-    @State var cellContent = ""
+    //@State var cellContent = ""
     
     var body: some View {
         if !self.graphFinished {
             ZStack {
                 Color(red: 44/255, green: 47/255, blue: 51/255, opacity: 1.0).edgesIgnoringSafeArea([.top, .bottom])
                 VStack {
-                    TableView(selectOrAdjust: $selectOrAdjust, editingCell: $editingCell, cellContent: $cellContent)
+                    TableView(selectOrAdjust: $selectOrAdjust, editingCell: $editingCell)//, cellContent: $cellContent)
+                    if !editingCell {
                     self.selectOrAdjustToggle()//.padding()
                     self.backConfirmButtons()//.padding()
+                    }
                 }
                 VStack {
                     HStack {
