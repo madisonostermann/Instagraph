@@ -97,4 +97,19 @@ var not2ColTables:[[[String]]] = [
         ["Frequency", "6", "3", "0", "3", "0", "2", "2"],
         ["Cumulative Frequency", "", "", "", "", "", "", ""]
     ], //11 - mbar
+    [
+        ["County", "September", "October", "November", "December"],
+        ["County 1", "107", "109", "135", "148"],
+        ["County 2", "182", "173", "156", "153"],
+        ["Total", "289", "282", "291", "301"]
+    ], //12 - mline
+    [
+        ["Month", "Number of toy cars sold (frequency)", "Total number of toy cars sold (Cumulative frequency)"],
+        ["January", "20", "20"],
+        ["February", "30", "50"],
+        ["March", "25", "75"],
+        ["April", "10", "85"],
+        ["May", "40", "125"],
+        ["June", "35", "160"]
+    ] //13 - mline
 ]

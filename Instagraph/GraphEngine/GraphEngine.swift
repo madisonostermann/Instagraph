@@ -153,7 +153,8 @@ class GraphEngine {
         var reachedDateString = false; var dates:[String] = []; var dateStartRow = 0
         outer: for i in 0 ..< table.count { //go across cols
             for j in 0 ..< table[0].count { //check col (go across rows)
-                if GraphEngine.representableAs(content: table[i][j]).0 == .number {
+                //Check for raw numbers because an arithmetic sequence of percents or money is not really what we're looking for in temporal data
+                if GraphEngine.representableAs(content: table[i][j]).0 == .number && GraphEngine.representableAs(content: table[i][j]).1 == .raw {
                     if !reachedNumbers {
                         reachedNumbers = true
                         numStartRow = j
@@ -186,8 +187,19 @@ class GraphEngine {
                         }
                     }
                 }
+                //check how much of prev col is data
+                var numData2 = 0.0
+                for k in 0 ..< table[0].count {
+                    if i-1 >= 0 { //stop ioob error
+                        if GraphEngine.representableAs(content: table[i-1][k]).0 == .number {
+                            numData2 += 1
+                        }
+                    }
+                }
                 
                 let percNextData = numIsPercent(theNumber: numData,
+                                                isPercentOf: Double(table[0].count))
+                let percPrevData = numIsPercent(theNumber: numData2,
                                                 isPercentOf: Double(table[0].count))
                 
                 if percNextData > 50.0 { //if most of next col is data
@@ -197,8 +209,11 @@ class GraphEngine {
                     }
                     if percNum > 75.0 { //or most of col in question is numbers
                         if detectArithmeticSequence(numbers: numbers) { //and those numbers are temporal
-                            print("COL IS AR SEQ")
-                            return true
+//                            print("COL IS AR SEQ")
+                            if !(percPrevData > 50.0) { //if previous row looks like data, arith sequence is just a coincidence and not indication of temporal data
+                                print("COL IS AR SEQ")
+                                return true
+                            }
                         }
                     }
                 }
@@ -213,7 +228,7 @@ class GraphEngine {
         
         outer: for i in 0 ..< table[0].count { //go across rows
             for j in 0 ..< table.count { //check row (go across cols)
-                if GraphEngine.representableAs(content: table[j][i]).0 == .number {
+                if GraphEngine.representableAs(content: table[j][i]).0 == .number && GraphEngine.representableAs(content: table[j][i]).1 == .raw {
                     if !reachedNumbers {
                         reachedNumbers = true
                         numStartCol = j
@@ -221,7 +236,7 @@ class GraphEngine {
                     numbers.append(Double(table[j][i].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
                 }
                 if representableAsDate(str: table[j][i]) {
-                    print("DATE IS: " + table[j][i])
+                    //print("DATE IS: " + table[j][i])
                     if !reachedDateString {
                         reachedDateString = true
                         dateStartCol = j
@@ -243,22 +258,30 @@ class GraphEngine {
                         }
                     }
                 }
+                var numData2 = 0.0
+                for k in 0 ..< table.count {
+                    if i-1 >= 0 { //prevent ioob error
+                        if GraphEngine.representableAs(content: table[k][i-1]).0 == .number {
+                            numData2 += 1
+                        }
+                    }
+                }
                 let percNextData = numIsPercent(theNumber: numData,
+                                                isPercentOf: Double(table.count))
+                let percPrevData = numIsPercent(theNumber: numData2,
                                                 isPercentOf: Double(table.count))
                 if percNextData > 50.0 { //if most of next row is data
                     if percDate > 75.0 { //and most of row in question is temporal dates
                         print("ROW IS DATE SEQ " + String(i))
-                        //print(table[i][dateStartCol])
-//                        print(dates)
-//                        print(dateStartCol)
-//                        print(percDate)
-//                        print(dates.count)
                         return true
                     }
                     if percNum > 75.0 { //or most of col in question is numbers
                         if detectArithmeticSequence(numbers: numbers) { //and those numbers are temporal
-                            print("ROW IS ARR SEQ" + String(i))
-                            return true
+//                            print("ROW IS AR SEQ" + String(i))
+                            if !(percPrevData > 50.0) {
+                                print("ROW IS AR SEQ" + String(i))
+                                return true
+                            }
                         }
                     }
                 }
