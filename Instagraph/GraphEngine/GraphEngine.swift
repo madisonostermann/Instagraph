@@ -567,6 +567,97 @@ class GraphEngine {
         return (representedAs, numberDataType)
     }
     
+    static func reformatEuropean(arr: inout [[String]]) {
+        //Check if numbers are European formatted... ex: 300.000,50 is 300,000.50
+        //Extract all data that can be formatted as a number to analyze
+        var shouldReformat = false
+        var checkFormat:[String] = []
+        for i in 0 ..< arr.count {
+            for j in 0 ..< arr[0].count {
+                if representableAs(content: arr[i][j]).0 == .number {
+                    checkFormat.append(arr[i][j])
+                }
+            }
+        }
+        var anyEuropeanNumbers = false
+        var numEuropeanNumbers = 0
+        outLoop: for check in checkFormat {
+            //Check if there are any commas with anything save three numbers or three numbers followed by a decimal
+            var reachedDecimal = false
+            inLoop: for i in check.count-1 ... 0 {
+
+                switch i {
+                case check.count-1:
+                    if check.at(check.count-1) == "," {
+                        anyEuropeanNumbers = true
+                        numEuropeanNumbers += 1
+                        continue outLoop
+                    }
+                case check.count-2:
+                    if check.at(check.count-2) == "," {
+                        anyEuropeanNumbers = true
+                        numEuropeanNumbers += 1
+                        continue outLoop
+                    }
+                case check.count-3:
+                    if check.at(check.count-3) == "," {
+                        anyEuropeanNumbers = true
+                        numEuropeanNumbers += 1
+                        continue outLoop
+                    }
+                default:
+                    if reachedDecimal && check.at(i) == "." {
+                        anyEuropeanNumbers = true
+                        numEuropeanNumbers += 1
+                    }
+                    if check.at(i) == "." {
+                        reachedDecimal = true
+                    }
+                    continue inLoop
+                } //switch end
+
+            } //inLoop end
+        } //outLoop end
+        
+        if numIsPercent(theNumber: Double(numEuropeanNumbers),
+                        isPercentOf: Double(checkFormat.count)) > 20.0 { //somewhat arbitrary % but otherwise it is likely an OCR issue of mistaking a . for a ,
+            shouldReformat = true
+        }
+        if shouldReformat {
+            //reformat
+            for i in 0 ..< arr.count {
+                for j in 0 ..< arr[0].count {
+                    if representableAs(content: arr[i][j]).0 == .number {
+                        var temp = arr[i][j]
+                        //collect indices where , exist
+                        var commaIndices:[Int] = []
+                        //collect indices where . exist
+                        var deciIndices:[Int] = []
+                        for k in 0 ..< temp.count {
+                            if temp.at(k) == "," {
+                                commaIndices.append(k)
+                            }
+                            if temp.at(k) == "." {
+                                deciIndices.append(k)
+                            }
+                        }
+                        for index in commaIndices {
+                            temp = temp.replaceAt(index, with: ".")
+                        }
+                        for index in deciIndices {
+                            temp = temp.replaceAt(index, with: ",")
+                        }
+                        arr[i][j] = temp
+                    }
+                }
+            }
+        }
+    }
+    
+    static func analyzeContent(arr: inout [[String]]) {
+        
+    }
+    
 }
 
 enum RepresentableAs {
@@ -583,6 +674,18 @@ enum NumberDataType {
 }
 
 extension String {
+    
+    func replaceAt(_ index: Int, with: Character) -> String {
+        var newStr = ""
+        for i in 0 ..< self.count {
+            if i != index {
+                newStr += String(self.at(i))
+            } else {
+                newStr += String(with)
+            }
+        }
+        return newStr
+    }
     
     func strip(char: Character) -> String {
         var newStr:String = ""
