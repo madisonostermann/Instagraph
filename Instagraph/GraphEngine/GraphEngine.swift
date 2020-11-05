@@ -584,8 +584,8 @@ class GraphEngine {
         outLoop: for check in checkFormat {
             //Check if there are any commas with anything save three numbers or three numbers followed by a decimal
             var reachedDecimal = false
-            inLoop: for i in check.count-1 ... 0 {
-
+            inLoop: for v in 0 ... check.count-1 {//check.count-1 ... 0 {
+                let i = check.count-1-v //go from back
                 switch i {
                 case check.count-1:
                     if check.at(check.count-1) == "," {

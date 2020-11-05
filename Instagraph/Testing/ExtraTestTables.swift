@@ -12,7 +12,10 @@ class TestTables {
     static func testTables() {
         var i = 0
         for table in not2ColTables {
-            let g = GraphEngine(table: table)
+            var t = table
+            GraphEngine.reformatEuropean(arr: &t)
+            print(t)
+            let g = GraphEngine(table: t)
             let result = g.checkTemporalComplex(table: g.rawTable)
             print(String(i) + ": " + String(result))
             i += 1
@@ -111,5 +114,14 @@ var not2ColTables:[[[String]]] = [
         ["April", "10", "85"],
         ["May", "40", "125"],
         ["June", "35", "160"]
-    ] //13 - mline
+    ], //13 - mline
+    [
+        ["Name/Technique", "SVM", "Naïve Bayes", "Associative Classifier", "ACO based classifier"],
+        ["", "", "", "", ""],
+        ["", "", "", "", ""],
+        ["", "", "", "", ""]
+    ], //14
+    [
+        
+    ] //15
 ]
