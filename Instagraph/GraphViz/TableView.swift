@@ -10,6 +10,8 @@ import SwiftUI
 
 //Used to store data about where cells are rendered in screen space & whether the initial render has completed
 class TableModel {
+    var editingI:Int = 0
+    var editingJ:Int = 0
     var tableModelFinished:Bool = false
     var tableCellPositions:[[CGPoint]] = [] {
         didSet {
@@ -25,13 +27,13 @@ struct TableView: View {
     
     @Binding var selectOrAdjust:Bool
     
-    //let table:[[String]] = [["Student Scores", "Student", "Maddie", "Dalton", "Aaron", "Rachel", "Kassie", "Cody"], ["Student Scores", "Score", "5", "1", "3", "9", "3", "7"]]
-    let table:[[String]] = [["Month", "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                            ["Temperature USA", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
-                            ["Temperature China", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
-                            ["Temperature Russia", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
-                            ["Temperature England", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
-                            ["Temperature Korea", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"]]
+    @State var table:[[String]] = [["Student Scores", "Student", "Maddie", "Dalton", "Aaron", "Rachel", "Kassie", "Cody"], ["Student Scores", "Score", "5", "1", "3", "9", "3", "7"]]
+//    let table:[[String]] = [["Month", "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+//                            ["Temperature USA", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
+//                            ["Temperature China", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
+//                            ["Temperature Russia", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
+//                            ["Temperature England", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"],
+//                            ["Temperature Korea", "86.0", "83.2", "74.9", "65", "42.3", "40.0", "90.0", "83.2", "69.9", "50.1", "40.0", "35.3"]]
     let tableModel:TableModel = TableModel()
     
     @Environment(\.colorScheme) var colorScheme
@@ -81,9 +83,22 @@ struct TableView: View {
         }
     }
     
+    //Fills selected data singleton
+    func fillSelectedData(start: ij, end: ij) {
+        var selected:[String] = []
+        let iS = start.i; let jS = start.j
+        let iE = end.i; let jE = end.j
+        for i in iS ... iE {
+            for j in jS ... jE {
+                selected.append(table[i][j])
+            }
+        }
+        SelectedSingleton.selected = selected
+    }
+    
     //Function determines correct indices that give a bound to the cells selected by the user on the visible table view
     //Fills variable highlightedAndSelectedSet which is used for render information
-    @discardableResult
+    //@discardableResult
     func fillSelectedSet(start: CGPoint, end: CGPoint) -> (ij, ij) {
         if self.tableModel.wasTableTransformed {
             self.generateCellPosArr()
@@ -197,13 +212,33 @@ struct TableView: View {
                 y: yPos
             ).foregroundColor(self.highlightedAndSelectedSet.contains(ij(i: i, j: j)) ? Color.blue : self.colorScheme == .dark ? Color.white : Color.black)
             .onTapGesture {
+                print("MOD IJ")
                 print(String(i) + String(j))
                 print(self.tableModel.tableCellPositions)
+                self.tableModel.editingI = i
+                self.tableModel.editingJ = j
+                self.editingIJ = (i, j)
+                self.editingCell = true
+                self.cellContent = self.table[i][j] //need table[i][j] to be cellContent on edit finish
             }
     }
     
+    @State var editingIJ:(Int, Int) = (0, 0)
+    @Binding var editingCell:Bool
+    @State var cellContent:String = ""
+//    {
+//        didSet {
+//            print("DOING A THING HERE")
+//            var temp = self.table
+//            temp[self.tableModel.editingI][self.tableModel.editingJ] = self.cellContent
+//            self.table = []
+//            self.table = temp
+//            //self.table[self.tableModel.editingI][self.tableModel.editingJ] = self.cellContent
+//        }
+//    }
+    
     func generateCells() -> some View {
-        print("Called")
+        //print("Called")
         struct Dimensions { //Represented cell dimensions
             var h: CGFloat
             var w: CGFloat
@@ -274,7 +309,8 @@ struct TableView: View {
                             //if !self.tableModel.wasTableTransformed {
                             selectOrAdjust.toggle()
                             selectOrAdjust.toggle()
-                            self.fillSelectedSet(start: self.dragStartPoint, end: self.dragEndPoint)
+                            let ij = self.fillSelectedSet(start: self.dragStartPoint, end: self.dragEndPoint)
+                            fillSelectedData(start: ij.0, end: ij.1)
                             //} else {
                                 
                             //}
@@ -356,7 +392,9 @@ struct TableView: View {
                             //self.sliderStartOffset = self.offset
                         }
                     }
-            )
+            ).onTapGesture {
+                print("tapped a thing")
+            }
             //Visualizes drag motion as a line on screen from where the drag started to where the user's finger currently is
             if isDragging {
                 Path { path in
@@ -370,38 +408,78 @@ struct TableView: View {
 //                    .foregroundColor(Color.blue)
 //                    .position(x: self.dragStartPoint.x, y: self.dragStartPoint.y)
             }
+            if editingCell {
+                HStack {
+                    Spacer()
+                    if #available(iOS 14.0, *) {
+                        CustomTextField(text: $cellContent, isFirstResponder: true, editingCell: $editingCell)
+                            .frame(width: 300, height: 50)
+                            .background(Color.blue).opacity(0.75)
+                            .onChange(of: self.cellContent, perform: {_ in
+                                print(self.tableModel.editingI)
+                                print(self.tableModel.editingJ)
+                                //self.table[self.tableModel.editingI][self.tableModel.editingJ] = self.cellContent
+                                self.table[self.editingIJ.0][self.editingIJ.1] = self.cellContent
+                                print("DOIGN A THING ON CHANGE")
+                            })
+                    } else {
+                        // Fallback on earlier versions
+                    }
+                    Spacer()
+                }
+            }
         }
     } //var body end
 }
 
-// ========== ========== ========== ========== ========== //
+//for editing cells
+struct CustomTextField: UIViewRepresentable {
 
+    class Coordinator: NSObject, UITextFieldDelegate {
 
+        @Binding var text:String
+        var didBecomeFirstResponder = false
+        @Binding var editingCell:Bool
 
+        init(text: Binding<String>, editingCell: Binding<Bool>) {
+            _text = text
+            _editingCell = editingCell
+        }
 
+        func textFieldDidChangeSelection(_ textField: UITextField) {
+            text = textField.text ?? ""
+        }
+        
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            textField.resignFirstResponder()
+            editingCell = false
+            return true
+        }
 
+    }
 
+    @Binding var text:String
+    var isFirstResponder:Bool = false
+    @Binding var editingCell:Bool
 
+    func makeUIView(context: UIViewRepresentableContext<CustomTextField>) -> UITextField {
+        let textField = UITextField(frame: .zero)
+        textField.delegate = context.coordinator
+        return textField
+    }
 
+    func makeCoordinator() -> CustomTextField.Coordinator {
+        return Coordinator(text: $text, editingCell: $editingCell)
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    func updateUIView(_ uiView: UITextField, context: UIViewRepresentableContext<CustomTextField>) {
+        uiView.text = text
+        if isFirstResponder && !context.coordinator.didBecomeFirstResponder  {
+            uiView.becomeFirstResponder()
+            context.coordinator.didBecomeFirstResponder = true
+        }
+    }
+}
 
 struct ChildSizeReader<Content: View>: View {
     @Binding var size: CGSize
