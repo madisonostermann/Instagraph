@@ -26,15 +26,18 @@ Mat PrepareImage::deskew(Mat image) {
     cvtColor(image, image, COLOR_BGR2GRAY);
     //Threshold and invert image
     threshold(image, image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
+    // add padding/border around it
+    cv::Mat padded(image.rows*1.5, image.cols*1.5, CV_8UC1, CV_RGB(0, 0, 0));
+    image.copyTo(padded(cv::Rect(image.cols/3, image.rows/3, image.cols, image.rows)));
     
     //DESKEW
     vector<vector<Point> > table_outline_contours;
     vector<Vec4i> hierarchy;
-    Mat first_pass(image.rows,image.cols,CV_8UC1,Scalar::all(0));
-    Mat second_pass(image.rows,image.cols,CV_8UC1,Scalar::all(0));
+    Mat first_pass(padded.rows,padded.cols,CV_8UC1,Scalar::all(0));
+    Mat second_pass(padded.rows,padded.cols,CV_8UC1,Scalar::all(0));
 
     //detect & draw external lines- may pick up lines inside the table this time
-    findContours(image, table_outline_contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    findContours(padded, table_outline_contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
     for(int i = 0; i< table_outline_contours.size(); i++) {
         drawContours(first_pass, table_outline_contours, i, white, 5);
     }
@@ -52,7 +55,7 @@ Mat PrepareImage::deskew(Mat image) {
         //TODO: HAVE THIS DO SOMETHING ON THE APP END
         cout<<"DID NOT DETECT 4 CORNERS OF TABLE, ABORTING PERSPECTIVE CORRECTION"<<endl;
         //back to black on white
-        threshold(image, deskewed_image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
+        threshold(padded, deskewed_image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
         return deskewed_image;
     }
 
@@ -74,17 +77,17 @@ Mat PrepareImage::deskew(Mat image) {
         (boundedRect.y > appx_table_contours[0][0].y+(appx_table_contours[0][0].y/2)) || (boundedRect.y < appx_table_contours[0][0].y/2)) {
         cout<<"PERSPECTIVE CORRECTION TOO DRAMATIC, PROCEDING WITH ORIGINAL IMAGE"<<endl;
         //back to black on white
-        threshold(image, deskewed_image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
+        threshold(padded, deskewed_image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
         return deskewed_image;
     }
     
     //calculate perspective transform from four pairs of corresponding points
     Mat transform_matrix = getPerspectiveTransform(table_corners, dest_corners);
     //tranforms image to transformed_image by mapping points in transform_matrix
-    warpPerspective(image, image, transform_matrix, image.size());
+    warpPerspective(padded, padded, transform_matrix, padded.size());
     
     //back to black on white
-    threshold(image, deskewed_image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
+    threshold(padded, deskewed_image, 0, 255, THRESH_BINARY_INV+THRESH_OTSU);
     
     return deskewed_image;
 }
@@ -228,16 +231,19 @@ vector<Mat> PrepareImage::detect_divide_contours(Mat image) {
     }
     
     //compute centers of merged contours and crop images around the rectangles
-    contourCenters.resize(boundingRectIndex);
-    vector<Mat> croppedImages(boundingRectIndex);
-    vector<Rect> existingROI(boundingRectIndex);
+    vector<Mat> croppedImages;
+    contourCenters.clear();
     for(int i = 0; i<boundingRectIndex; i++) {
-        contourCenters[i] = Point((boundRect[i].width/2)+boundRect[i].x, (boundRect[i].height/2)+boundRect[i].y);
-        Rect roi(boundRect[i].x, boundRect[i].y, boundRect[i].width, boundRect[i].height);
-        Mat src = image(roi);
-        cv::Mat dest(src.rows*2, src.cols*2, CV_8UC1, black);
-        src.copyTo(dest(cv::Rect(src.cols/2, src.rows/2, src.cols, src.rows)));
-        croppedImages[i] = dest;
+        if(boundRect[i].width > image.cols/60 && boundRect[i].height > image.cols/60){
+            contourCenters.push_back(Point((boundRect[i].width/2)+boundRect[i].x, (boundRect[i].height/2)+boundRect[i].y));
+            Rect roi(boundRect[i].x, boundRect[i].y, boundRect[i].width, boundRect[i].height);
+            Mat src = image(roi);
+            cv::Mat dest(src.rows*2, src.cols*2, CV_8UC1, black);
+            src.copyTo(dest(cv::Rect(src.cols/2, src.rows/2, src.cols, src.rows)));
+            croppedImages.push_back(dest);
+        }
+//        cout<<contourCenters.size()<<endl;
+//        cout<<croppedImages.size()<<endl;
     }
     return croppedImages;
 }

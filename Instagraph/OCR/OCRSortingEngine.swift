@@ -27,30 +27,33 @@ class OCRSortingEngine: NSObject {
     }
     
     func pipeline() {
-//        print("textLocations count: ", self.ocrProperties.textLocations!.count)
-//        print("textLocations: ", self.ocrProperties.textLocations!)
-//        print("cropped images count: ", self.ocrProperties.croppedImages!.count)
         //recognize text- get cellContents array
+        let ocr_start = DispatchTime.now()
         ocr()
-//        print("textLocations count: ", self.ocrProperties.textLocations!.count)
-//        print("textLocations: ", self.ocrProperties.textLocations!)
-//        print("cellContents count: ", cellContents.count)
-//        print("cellContents: ", cellContents)
+        let ocr_end = DispatchTime.now()
+        let ocr_nanoTime = ocr_end.uptimeNanoseconds - ocr_start.uptimeNanoseconds
         print("OCR OUTPUT: ", cellContents)
+        print("TIME TAKEN FOR OCR: ",String(ocr_nanoTime/1000000),"ms")
+        
+//        print("NUMBER OF CELL CONTENTS: ",String(cellContents.count))
+//        print("NUMBER OF TEXT LOCATIONS: ",String(self.ocrProperties.textLocations!.count))
+        
+        let sorting_start = DispatchTime.now()
         //sort cellContents array by x value
         quickSort(sort: "x", low: 0, high: self.ocrProperties.textLocations!.count-1, row: 0)
-//        print("x sorted: ", cellContents)
         //splice cellContents array into separate columns (locationColumns & self.ocrProperties.contentColumns)
         divideColumns()
-//        print("columns divided: ", self.ocrProperties.contentColumns)
         //sort locationColumns & self.ocrProperties.contentColumns arrays by y value
         if locationColumns.count-1 >= 0 {
             for row in 0...locationColumns.count-1 {
                 quickSort(sort: "y", low: 0, high: locationColumns[row].count-1, row: row)
             }
         }
-//        print("y sorted: ", self.ocrProperties.contentColumns)
+        let sorting_end = DispatchTime.now()
+        let sorting_nanoTime = sorting_end.uptimeNanoseconds - sorting_start.uptimeNanoseconds
         print("SORTED 2D ARRAY: ", self.ocrProperties.contentColumns)
+        print("TIME TAKEN FOR SORTING: ",String(sorting_nanoTime/1000000),"ms")
+        
         //present graph view, uses self.ocrProperties.contentColumns array for values
         self.ocrProperties.page = "Graph"
     }
@@ -78,7 +81,7 @@ class OCRSortingEngine: NSObject {
         var imageCount = 0
         var textLocationsCount = 0
         //loop through individual cell images and get OCR
-        print("NUMBER OF CROPPED IMAGES: ", self.ocrProperties.croppedImages!.count)
+//        print("NUMBER OF CROPPED IMAGES: ", self.ocrProperties.croppedImages!.count)
         for image in self.ocrProperties.croppedImages! {
             if let tesseract = G8Tesseract(language: "eng") {
                 tesseract.engineMode = .tesseractCubeCombined
@@ -108,47 +111,47 @@ class OCRSortingEngine: NSObject {
                     }
                 }
                 
-                if noContent{
-                    if let tesseract = G8Tesseract(language: "eng") {
-                        tesseract.engineMode = .tesseractCubeCombined
-                        tesseract.pageSegmentationMode = .singleBlock
-                        tesseract.image = image
-                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
-                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
-
-                        result = checkForContent(text: text)
-                        noContent = result.0
-                        thisCell = result.1
-                    }
-                }
+//                if noContent{
+//                    if let tesseract = G8Tesseract(language: "eng") {
+//                        tesseract.engineMode = .tesseractCubeCombined
+//                        tesseract.pageSegmentationMode = .singleBlock
+//                        tesseract.image = image
+//                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
+//                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
+//
+//                        result = checkForContent(text: text)
+//                        noContent = result.0
+//                        thisCell = result.1
+//                    }
+//                }
                 
-                if noContent{
-                    if let tesseract = G8Tesseract(language: "eng") {
-                        tesseract.engineMode = .tesseractCubeCombined
-                        tesseract.pageSegmentationMode = .singleChar
-                        tesseract.image = image
-                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
-                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
-
-                        result = checkForContent(text: text)
-                        noContent = result.0
-                        thisCell = result.1
-                    }
-                }
-                
-                if noContent{
-                    if let tesseract = G8Tesseract(language: "eng") {
-                        tesseract.engineMode = .tesseractCubeCombined
-                        tesseract.pageSegmentationMode = .singleWord
-                        tesseract.image = image
-                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
-                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
-
-                        result = checkForContent(text: text)
-                        noContent = result.0
-                        thisCell = result.1
-                    }
-                }
+//                if noContent{
+//                    if let tesseract = G8Tesseract(language: "eng") {
+//                        tesseract.engineMode = .tesseractCubeCombined
+//                        tesseract.pageSegmentationMode = .singleChar
+//                        tesseract.image = image
+//                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
+//                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
+//
+//                        result = checkForContent(text: text)
+//                        noContent = result.0
+//                        thisCell = result.1
+//                    }
+//                }
+//
+//                if noContent{
+//                    if let tesseract = G8Tesseract(language: "eng") {
+//                        tesseract.engineMode = .tesseractCubeCombined
+//                        tesseract.pageSegmentationMode = .singleWord
+//                        tesseract.image = image
+//                        let hOCR = tesseract.recognizedHOCR(forPageNumber: 1)
+//                        let text = matches(for: "(?<='eng'>)[a-zA-Z0-9!@#$&()\\-`.+,/\"]*|([^<>]+(?=</))", in: hOCR!)
+//
+//                        result = checkForContent(text: text)
+//                        noContent = result.0
+//                        thisCell = result.1
+//                    }
+//                }
                 
 //                print(hOCR!)
 //                print(text)

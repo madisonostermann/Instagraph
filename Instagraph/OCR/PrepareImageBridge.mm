@@ -45,14 +45,10 @@
     // convert uiimage to mat
      cv::Mat opencvImage;
      UIImageToMat(image, opencvImage, false);
-    
-    // add padding/border around it
-    cv::Mat padded(opencvImage.rows*1.5, opencvImage.cols*1.5, CV_8UC4, CV_RGB(255, 255, 255));
-    opencvImage.copyTo(padded(cv::Rect(opencvImage.cols/3, opencvImage.rows/3, opencvImage.cols, opencvImage.rows)));
 
      // Sends it to PrepareImage.cpp
      PrepareImage prepareImage;
-     Mat deskewed_image = prepareImage.deskew(padded);
+     Mat deskewed_image = prepareImage.deskew(opencvImage);
 
      return MatToUIImage(deskewed_image);
 }

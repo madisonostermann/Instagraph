@@ -43,7 +43,8 @@ class Testing {
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         print(documentsDirectory)
         
-        for i in 0 ..< 18 {
+        for i in 0 ..< 15 {
+            let total_start = DispatchTime.now()
             print("-----------------------------------")
             print("IMAGE ", i+1, " IN TESTING PIPELINE")
             let ocrPInUse = Testing.imagesOcrProperties[i]
@@ -59,8 +60,11 @@ class Testing {
                     }
                 }
                 
+                let deskew_start = DispatchTime.now()
                 ocrPInUse.image = PrepareImageBridge().deskew(ocrPInUse.image)
-                print("deskewed")
+                let deskew_end = DispatchTime.now()
+                let deskew_nanoTime = deskew_end.uptimeNanoseconds - deskew_start.uptimeNanoseconds
+                print("TIME TAKEN FOR DESKEWING: ",String(deskew_nanoTime/1000000),"ms")
                 
                 let fileURL = documentsDirectory.appendingPathComponent(String(i+1)+"processed.jpg")
                 if let data = ocrPInUse.image?.jpegData(compressionQuality:  1.0),
@@ -72,9 +76,16 @@ class Testing {
                     }
                 }
                 
+                let splice_and_locate_start = DispatchTime.now()
                 ocrPInUse.croppedImages = PrepareImageBridge().splice_cells() as NSArray as? [UIImage]
                 ocrPInUse.textLocations = PrepareImageBridge().locate_cells() as? [NSValue]
-                print("generated croppedImages and textLocations")
+                let splice_and_locate_end = DispatchTime.now()
+                let splice_and_locate_nanoTime = splice_and_locate_end.uptimeNanoseconds - splice_and_locate_start.uptimeNanoseconds
+                print("NUMBER OF CROPPED IMAGES: ", ocrPInUse.croppedImages!.count)
+                print("TIME TAKEN FOR SPLICING AND LOCATING CELLS: ",String(splice_and_locate_nanoTime/1000000),"ms")
+                
+                print("NUMBER OF CELL CONTENTS: ",String(ocrPInUse.croppedImages!.count))
+                print("NUMBER OF TEXT LOCATIONS: ",String(ocrPInUse.textLocations!.count))
                 
                 if ocrPInUse.croppedImages!.count > 0 {
                     for j in 0 ... ocrPInUse.croppedImages!.count-1 {
@@ -97,6 +108,10 @@ class Testing {
                     }
                     
                     OCRSortingEngine(ocrProperties: ocrPInUse).pipeline()
+
+                    let total_end = DispatchTime.now()
+                    let total_nanoTime = total_end.uptimeNanoseconds - total_start.uptimeNanoseconds
+                    print("TOTAL TIME TAKEN: ",String(total_nanoTime/1000000),"ms")
                 } else {
                     print("NO CROPPED IMAGES RETURNED")
                 }
