@@ -48,9 +48,24 @@ func twoDIterator<T>(_ arr: inout [[T]], _ colOrRow: TablePart, _ pos: Int = 0, 
     }
 }
 
+func numIsPercent(theNumber: Double, isPercentOf: Double) -> Double {
+    return 100.0 * (theNumber / isPercentOf)
+}
+
 ///Detects an arithmetic sequence - maybe account for jumps in sequence with recursion
 func detectArithmeticSequence<T: Numeric>(numbers: [T]) -> Bool {
-    for i in 1 ..< numbers.count-1 {
+    if numbers.count < 3 { //any two numbers is technically a sequence but irrelevant for this
+        return false
+    }
+    //check if any same - not real seq: ex: 0, 0, 0, 0
+    var temp:T? = nil
+    for i in 0 ..< numbers.count {
+        if temp == numbers[i] {
+            return false
+        }
+        temp = numbers[i]
+    }
+    for i in 1 ..< numbers.count-1 { //[4, 5]
         if numbers[i+1] - numbers[i] != numbers[i] - numbers[i-1] {
             return false
         }
@@ -59,27 +74,29 @@ func detectArithmeticSequence<T: Numeric>(numbers: [T]) -> Bool {
 }
 
 func representableAsDate(str: String) -> Bool {
-    print(Constants.ALL_MONTHS)
+//    print(str)
+    //print(Constants.ALL_MONTHS)
     //Attempt to match month names or month shorthand; Jan, January
     for month in Constants.ALL_MONTHS {
         if str.matchInsensitive(month) {
+            //print(str)
             return true
         }
     }
     //Attempt to match dates; 12/02/2000, 02 / 12 / 2000, 5/5/05, 12-02-2000, 1/5
-    let splitSlashes = str.split("/")
-    if !(splitSlashes.count == 2 || splitSlashes.count == 3) {
-        var allNumeric = true
-        for item in splitSlashes {
-//            if GraphEngine.representableAs(content: item).0 == RepresentableAs.number {
+//    let splitSlashes = str.split("/")
+//    if !(splitSlashes.count == 2 || splitSlashes.count == 3) {
+//        var allNumeric = true
+//        for item in splitSlashes {
+////            if GraphEngine.representableAs(content: item).0 == RepresentableAs.number {
+////
+////            }
+//        }
+//    }
+//    let splitDashes = str.split("-")
+//    if !(splitDashes.count == 2 || splitDashes.count == 3) {
 //
-//            }
-        }
-    }
-    let splitDashes = str.split("-")
-    if !(splitDashes.count == 2 || splitDashes.count == 3) {
-        
-    }
+//    }
     
     return false
 }
@@ -126,6 +143,137 @@ class GraphEngine {
     ///Called on larger more complex tables with greater than two variables
     func buildComplexGraphs(table: [[String]]) -> (Status, [Graph]) {
         return (.failure, [])
+    }
+    
+    //Search for temporal indicator row/cols that have data (numbers) after (below/right) of them
+    //Check for at least 75% data in adjacent row/col - not 100% because there could be OCR artefacts
+    //return true indicates data is temporal - indicates line graph or not (indicates bar)
+    func checkTemporalComplex(table: [[String]]) -> Bool {
+        var reachedNumbers = false; var numbers:[Double] = []; var numStartRow = 0
+        var reachedDateString = false; var dates:[String] = []; var dateStartRow = 0
+        outer: for i in 0 ..< table.count { //go across cols
+            for j in 0 ..< table[0].count { //check col (go across rows)
+                if GraphEngine.representableAs(content: table[i][j]).0 == .number {
+                    if !reachedNumbers {
+                        reachedNumbers = true
+                        numStartRow = j
+                    }
+                    numbers.append(Double(table[i][j].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
+                }
+                if representableAsDate(str: table[i][j]) {
+                    if !reachedDateString {
+                        reachedDateString = true
+                        dateStartRow = j
+                    }
+                    dates.append(table[i][j])
+                }
+            }
+            
+            if reachedNumbers || reachedDateString {
+                let percNum = numIsPercent(theNumber: Double(numbers.count),
+                                           isPercentOf: Double(table[0].count - numStartRow))
+                
+                let percDate = numIsPercent(theNumber: Double(dates.count),
+                                            isPercentOf: Double(table[0].count - dateStartRow))
+                
+                
+                //check how much of the next col (next i) is data (numbers)
+                var numData = 0.0
+                for k in 0 ..< table[0].count {
+                    if !(i+1 >= table.count) { //stop ioob error
+                        if GraphEngine.representableAs(content: table[i+1][k]).0 == .number {
+                            numData += 1
+                        }
+                    }
+                }
+                
+                let percNextData = numIsPercent(theNumber: numData,
+                                                isPercentOf: Double(table[0].count))
+                
+                if percNextData > 50.0 { //if most of next col is data
+                    if percDate > 75.0 { //and most of col in question is temporal dates
+                        print("COL IS DATE SEQ")
+                        return true
+                    }
+                    if percNum > 75.0 { //or most of col in question is numbers
+                        if detectArithmeticSequence(numbers: numbers) { //and those numbers are temporal
+                            print("COL IS AR SEQ")
+                            return true
+                        }
+                    }
+                }
+                
+            } //end -- if reachedNumbers || reachedDateString
+            reachedNumbers = false; numbers = []; numStartRow = 0 //RESET
+            reachedDateString = false; dates = []; dateStartRow = 0 //RESET
+        } //out for loop end
+        
+        reachedNumbers = false; numbers = []; var numStartCol = 0 //reuse other vars but now going across cols (through a row)
+        reachedDateString = false; dates = []; var dateStartCol = 0
+        
+        outer: for i in 0 ..< table[0].count { //go across rows
+            for j in 0 ..< table.count { //check row (go across cols)
+                if GraphEngine.representableAs(content: table[j][i]).0 == .number {
+                    if !reachedNumbers {
+                        reachedNumbers = true
+                        numStartCol = j
+                    }
+                    numbers.append(Double(table[j][i].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
+                }
+                if representableAsDate(str: table[j][i]) {
+                    print("DATE IS: " + table[j][i])
+                    if !reachedDateString {
+                        reachedDateString = true
+                        dateStartCol = j
+                    }
+                    dates.append(table[j][i])
+                }
+            }
+            if reachedNumbers || reachedDateString {
+                let percNum = numIsPercent(theNumber: Double(numbers.count),
+                                           isPercentOf: Double(table.count - numStartCol))
+                let percDate = numIsPercent(theNumber: Double(dates.count),
+                                            isPercentOf: Double(table.count - dateStartCol))
+                //check how much of the next col (next i) is data (numbers)
+                var numData = 0.0
+                for k in 0 ..< table.count {
+                    if (i+1 < table[0].count) { //prevent ioob error
+                        if GraphEngine.representableAs(content: table[k][i+1]).0 == .number {
+                            numData += 1
+                        }
+                    }
+                }
+                let percNextData = numIsPercent(theNumber: numData,
+                                                isPercentOf: Double(table.count))
+                if percNextData > 50.0 { //if most of next row is data
+                    if percDate > 75.0 { //and most of row in question is temporal dates
+                        print("ROW IS DATE SEQ " + String(i))
+                        //print(table[i][dateStartCol])
+//                        print(dates)
+//                        print(dateStartCol)
+//                        print(percDate)
+//                        print(dates.count)
+                        return true
+                    }
+                    if percNum > 75.0 { //or most of col in question is numbers
+                        if detectArithmeticSequence(numbers: numbers) { //and those numbers are temporal
+                            print("ROW IS ARR SEQ" + String(i))
+                            return true
+                        }
+                    }
+                }
+            } //end -- if reachedNumbers || reachedDateString {
+            reachedNumbers = false; numbers = []; numStartCol = 0 //RESET
+            reachedDateString = false; dates = []; dateStartCol = 0
+        } //outer for loop end
+        
+        print("NO SEQ")
+        return false
+    }
+    
+    func recommendGraphs(table: [[String]]) -> GraphType {
+        
+        return .bar
     }
     
     ///Called on size 2xn tables to build appropriate graphs based mostly on the content of the first column

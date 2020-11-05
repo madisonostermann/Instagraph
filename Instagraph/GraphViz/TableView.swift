@@ -414,7 +414,7 @@ struct TableView: View {
                     if #available(iOS 14.0, *) {
                         CustomTextField(text: $cellContent, isFirstResponder: true, editingCell: $editingCell)
                             .frame(width: 300, height: 50)
-                            .background(Color.blue).opacity(0.75)
+                            .background(Color.blue).opacity(0.0000075)
                             .onChange(of: self.cellContent, perform: {_ in
                                 print(self.tableModel.editingI)
                                 print(self.tableModel.editingJ)

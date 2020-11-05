@@ -18,13 +18,6 @@ struct Constants {
     //App Colors
     static let turquoise = Color(red:30, green:187, blue:215) //https://www.color-hex.com/color-palette/30415
     static let MONTHS:[String] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    static let MONTHS_SHORT:[String] = {
-        var mS:[String] = []
-        for month in MONTHS {
-            let short:String = month.split(3).0
-            mS.append(short)
-        }
-        return mS
-    }()
+    static let MONTHS_SHORT:[String] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     static let ALL_MONTHS = MONTHS + MONTHS_SHORT
 }
