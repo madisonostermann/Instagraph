@@ -117,11 +117,17 @@ var not2ColTables:[[[String]]] = [
     ], //13 - mline
     [
         ["Name/Technique", "SVM", "Naïve Bayes", "Associative Classifier", "ACO based classifier"],
-        ["", "", "", "", ""],
-        ["", "", "", "", ""],
-        ["", "", "", "", ""]
+        ["Leukemia", "95", "93", "96", "100"],
+        ["Lung", "81", "91", "93", "34"],
+        ["Prostate", "90", "76", "89", "100"]
     ], //14
     [
         
-    ] //15
+    ], //15
+    [
+    
+    ], //16 - will fail
+    [
+    
+    ] //17 - will fail
 ]
