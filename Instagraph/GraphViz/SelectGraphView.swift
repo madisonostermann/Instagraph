@@ -61,9 +61,21 @@ struct SelectGraphView: View {
                     }).buttonStyle(GBVButtonStyle(backColor: self.graphType == .line ? .blue : .lightBlue))
                     Button(action: {
                         haptic()
+                        self.graphType = .scatter
+                    }, label: {
+                        Text("Scatter Plot")
+                    }).buttonStyle(GBVButtonStyle(backColor: self.graphType == .scatter ? .blue : .lightBlue))
+                    Button(action: {
+                        haptic()
+                        self.graphType = .histogram
+                    }, label: {
+                        Text("Multi Bar Graph")
+                    }).buttonStyle(GBVButtonStyle(backColor: self.graphType == .histogram ? .blue : .lightBlue))
+                    Button(action: {
+                        haptic()
                         self.graphType = .multiLine
                     }, label: {
-                        Text("Bar Graph")
+                        Text("Multi Line Graph")
                     }).buttonStyle(GBVButtonStyle(backColor: self.graphType == .multiLine ? .blue : .lightBlue))
                     Spacer()
                     Button(action: {

@@ -13,11 +13,14 @@ class TestTables {
         var i = 0
         for table in not2ColTables {
             var t = table
+            let recommendStart = DispatchTime.now()
             GraphEngine.reformatEuropean(arr: &t)
-            print(t)
+            //print(t)
             let g = GraphEngine(table: t)
             let result = g.checkTemporalComplex(table: g.rawTable)
-            print(String(i) + ": " + String(result))
+            let recommendEnd = DispatchTime.now()
+            let time = recommendEnd.uptimeNanoseconds - recommendStart.uptimeNanoseconds
+            print(String(i) + ": " + String(result) + " // time: " + String(Double(time)/1000000))
             i += 1
         }
         print(Constants.ALL_MONTHS)
@@ -99,7 +102,7 @@ var not2ColTables:[[[String]]] = [
         ["Interval", "91-100", "101-110", "111-120", "121-130", "131-140", "141-150", "151-160"],
         ["Frequency", "6", "3", "0", "3", "0", "2", "2"],
         ["Cumulative Frequency", "", "", "", "", "", "", ""]
-    ], //11 - mbar
+    ], //11 - mline
     [
         ["County", "September", "October", "November", "December"],
         ["County 1", "107", "109", "135", "148"],
@@ -122,12 +125,26 @@ var not2ColTables:[[[String]]] = [
         ["Prostate", "90", "76", "89", "100"]
     ], //14
     [
-        
+        ["", "A", "B", "C", "D"],
+        ["1", "", "2008", "2009", "2010"],
+        ["2", "Jan", "230", "442", "710"],
+        ["3", "Feb", "255", "527", "750"],
+        ["4", "Mar", "319", "573", "810"],
+        ["5", "Apr", "335", "575", "766"],
+        ["6", "May", "277", "579", "850"],
+        ["7", "Jun", "372", "620", "897"],
+        ["8", "Jul", "396", "583", "897"],
+        ["9", "Aug", "359", "637", "892"],
+        ["10", "Sep", "428", "707", "958"],
+        ["11", "Oct", "402", "697", ""],
+        ["12", "Nov", "485", "696", ""],
+        ["13", "Dec", "467", "798", ""],
+        ["14", "", "", "", ""],
     ], //15
     [
-    
-    ], //16 - will fail
-    [
-    
-    ] //17 - will fail
+        ["Name/Technique", "SVM", "Naïve Bayes", "Associative Classifier", "ACO based classifier"],
+        ["Leukemia", "95", "96", "97", "98"],
+        ["Lung", "81", "91", "93", "34"],
+        ["Prostate", "90", "76", "89", "100"]
+    ], //16 - 14 modified to have internal arithmetic sequence
 ]
