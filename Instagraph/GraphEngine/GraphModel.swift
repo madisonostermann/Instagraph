@@ -70,10 +70,14 @@ class LineGraph: Graph, Equatable {
     
     let xAxisValues:[String]
     let data:[Double]
+    var keys:[String] = []
     //yAxisValues are produced dynamically when graphing from data
-    init(title: String, xAxisLabel: String, yAxisLabel: String, data: [Double], xAxisValues: [String]) {
+    init(title: String, xAxisLabel: String, yAxisLabel: String, data: [Double], xAxisValues: [String], keys: [String]? = nil) {
         self.xAxisValues = xAxisValues
         self.data = data
+        if let key = keys {
+            self.keys = key
+        }
         super.init(title: title, xAxisLabel: xAxisLabel, yAxisLabel: yAxisLabel)
     }
 }

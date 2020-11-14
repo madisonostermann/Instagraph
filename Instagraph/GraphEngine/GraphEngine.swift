@@ -133,7 +133,7 @@ class GraphEngine {
     
     func determineGraphType() -> (Status, [Graph]) {
         if self.rawTable.count == 2 {
-            print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *")
+            //print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *")
             return buildSimpleGraphs(table: self.rawTable)
         } else {
             return buildComplexGraphs(table: self.rawTable)
@@ -302,7 +302,7 @@ class GraphEngine {
     ///Called on size 2xn tables to build appropriate graphs based mostly on the content of the first column
     ///Param: table - The table
     func buildSimpleGraphs(table: [[String]]) -> (Status, [Graph]) {
-        print("BUILDING SIMPLE GRAPH")
+        //print("BUILDING SIMPLE GRAPH")
         var status:Status = .failure //At least one valid graph representation should be produced for this to be a success
         var graphs:[Graph] = []
         
@@ -314,7 +314,7 @@ class GraphEngine {
         var tempArr:[Double] = [] //Use to hold numbers in first column to test if they represent a sequence
         var dateTempArr:[String] = []
         for i in 0 ..< table[0].count {
-            print(table[0][i])
+            //print(table[0][i])
             if GraphEngine.representableAs(content: table[0][i]).0 == .number {
                 if !reachedNumbers {
                     numberStartRow = i
@@ -326,7 +326,7 @@ class GraphEngine {
 //                tempArr.append(Double(table[0][i].strip(chars: Constants.NON_NUMBER_INFORMATION))!)
 //            }
             if representableAsDate(str: table[0][i]) {
-                print("REP AS DATE")
+                //print("REP AS DATE")
                 if !reachedDateString {
                     dateStartRow = i
                     reachedDateString = true
@@ -338,7 +338,7 @@ class GraphEngine {
         //If the first column has numbers, the data could be either temporal (with the numbers representing x-axis values) and therefore representable as a simple line graph or bar graph, or the numbers could represent data points in which case a scatter plot makes the most sense (comparing two variables, one in each column).  If it does not have numbers, the table is possibly categorical and could be represented as a bar graph or pie chart (?)
         if reachedNumbers {
             if detectArithmeticSequence(numbers: tempArr) { //Try to build line and bar graphs
-                print("=== Attempting to build line and bar graphs ===")
+                //print("=== Attempting to build line and bar graphs ===")
                 let line:(Status, LineGraph) = buildSimpleLine(table: table, temporalStartRow: numberStartRow)
                 if line.0 == .success {
                     status = .success
@@ -350,7 +350,7 @@ class GraphEngine {
                     graphs.append(bar.1)
                 }
             } else { //Try to build scatter plot
-                print("=== Attempting to build scatter plot ===")
+                //print("=== Attempting to build scatter plot ===")
                 let scatter:(Status, ScatterPlot) = buildSimpleScatter(table: table, dataStartRow: numberStartRow)
                 if scatter.0 == .success {
                     status = .success
@@ -358,7 +358,7 @@ class GraphEngine {
                 }
             }
         } else if reachedDateString {
-            print("REACHED DATE STRING")
+            //print("REACHED DATE STRING")
             if detectDateSequence(strings: dateTempArr) {
                 let line:(Status, LineGraph) = buildSimpleLine(table: table, temporalStartRow: dateStartRow)
                 if line.0 == .success {
@@ -373,14 +373,14 @@ class GraphEngine {
             }
         } else { //Only a bar graph can still make sense for the table if no numbers are in the first column
             //Find first row with data in 2nd column and assume it is where the categories start
-            print("=== Attempting to build bar graph ===")
+            //print("=== Attempting to build bar graph ===")
             check: for i in 0 ..< table[0].count {
                 if GraphEngine.representableAs(content: table[1][i]).0 == .number {
                     let bar:(Status, BarGraph) = buildSimpleBar(table: table, categoryStartRow: i) //Use numbers as categories
                     if bar.0 == .success {
                         status = .success
                         graphs.append(bar.1)
-                        print("BUILD BAR GRAPH COMPLETE")
+                        //print("BUILD BAR GRAPH COMPLETE")
                     }
                     break check
                 }

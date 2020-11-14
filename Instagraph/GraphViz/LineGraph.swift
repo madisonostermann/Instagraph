@@ -27,7 +27,8 @@ struct LineGraphView: View {
          frameWidth:CGFloat = Constants.SCREEN_WIDTH*0.7,
          vals: [Double], xLabels: [String],
          yAxisLabel: String,
-         xAxisLabel: String) {
+         xAxisLabel: String,
+         keys: [String]? = nil) {
         self.ocrProperties = ocrProperties
         self.frameHeight = frameHeight
         self.frameWidth = frameWidth
@@ -35,6 +36,9 @@ struct LineGraphView: View {
         self.vals = vals; self.xLabels = xLabels
         self.xAxisLabel = xAxisLabel
         self.yAxisLabel = yAxisLabel
+        if let key = keys {
+            self.key = key
+        }
     }
     
     let colors:[Color] = Constants.GRAPH_COLORS
@@ -204,15 +208,19 @@ struct LineGraphView: View {
         let labelVals = makeLabelValues(largest: vals.max()!, smallest: vals.min()!)
         let spacerNumber:CGFloat = self.frameHeight/CGFloat(labelVals.count-1)
         return ForEach(0 ..< labelVals.count) { i in
-            Text(String(labelVals[i])).position(x: self.start-40, y: (self.base-(CGFloat(i)*spacerNumber))) // -40 arbitrary
+            Text(String(labelVals[i])).position(x: self.start-40, y: (self.base-(CGFloat(i)*spacerNumber))).offset(x: -15.0, y: 0.0)//.scaleEffect(0.5) // -40 arbitrary
         }
     }
     
     func makeAxisLabels() -> some View {
         return Group {
-            Text(self.yAxisLabel).rotationEffect(Angle(degrees: 270)).position(CGPoint(x: self.start-90, y: self.base-(self.frameHeight/2)))
+            Text(self.yAxisLabel).rotationEffect(Angle(degrees: 270)).position(CGPoint(x: self.start-90, y: self.base-(self.frameHeight/2))).offset(x: -15.0, y: 0.0)
             Text(self.xAxisLabel).position(CGPoint(x: (self.start+(self.frameWidth/2)), y: self.base+70))
         }
+    }
+    
+    func makeKeys() -> some View {
+        Text("hi")
     }
     
     var body: some View {

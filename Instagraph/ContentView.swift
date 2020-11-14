@@ -61,7 +61,8 @@ struct ContentView: View {
                     Testing.runTestingPipeline()
                 }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
                 Button("Test 2") {
-                    TestTables.testTables()
+                    //TestTables.testTables()
+                    TestTables.test2Tables()
                 }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
             } else if self.ocrProperties.page == "Photo" {
                 ImagePicker(ocrProperties: self.ocrProperties) // 2. Image Picker or Camera (or later, Document)

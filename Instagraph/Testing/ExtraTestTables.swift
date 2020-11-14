@@ -25,6 +25,23 @@ class TestTables {
         }
         print(Constants.ALL_MONTHS)
     }
+    
+    static func test2Tables() {
+        var i = 0
+        twoColTables = reformatArr(arr: twoColTables)
+        for table in twoColTables {
+            var t = table
+            let g = GraphEngine(table: t)
+            let recommendStart = DispatchTime.now()
+            let result = g.determineGraphType()
+            let recommendEnd = DispatchTime.now()
+            let time = recommendEnd.uptimeNanoseconds - recommendStart.uptimeNanoseconds
+            for x in result.1 {
+                print(String(i) + ": ", x, " // time: " + String(Double(time)/1000000))
+            }
+            i += 1
+        }
+    }
 
 }
 
@@ -148,3 +165,148 @@ var not2ColTables:[[[String]]] = [
         ["Prostate", "90", "76", "89", "100"]
     ], //16 - 14 modified to have internal arithmetic sequence
 ]
+
+func reformatArr(arr: [[[String]]]) -> [[[String]]] { //because i wrote arrs in wrong format for 2d
+    var new:[[[String]]] = []
+    for table in arr {
+        var newTable:[[String]] = []
+        var colOne:[String] = []
+        var colTwo:[String] = []
+        for row in table {
+            colOne.append(row[0])
+            colTwo.append(row[1])
+        }
+        newTable.append(colOne)
+        newTable.append(colTwo)
+        new.append(newTable)
+    }
+    return new
+}
+
+var twoColTables:[[[String]]] = [
+    [
+        ["Month", "Number of toy cars sold (frequency)"],
+        ["January", "20"],
+        ["February", "30"],
+        ["March", "25"],
+        ["April", "10"],
+        ["May", "40"],
+        ["June", "35"]
+    ], //0 - line, bar - good
+    [
+        ["Time, t (sec)", "Height, H (meters)"],
+        ["0.0", "7.3"],
+        ["0.5", "9.5"],
+        ["1.0", "12.8"],
+        ["1.5", "14.3"],
+        ["2.0", "16.5"],
+        ["2.5", "19.0"],
+        ["3.0", "21.2"]
+    ], //1 - line, bar - good
+    [
+        ["Month", "Average Temp."],
+        ["Jan", "30"],
+        ["Feb", "26"],
+        ["Mar", "42"],
+        ["Apr", "58"]
+    ], //2 - line, bar - good
+    [
+        ["HEIGHT (CM)", "FREQUENCY"],
+        ["65 < h ≤ 75", "2"],
+        ["75 < h ≤ 80", "7"],
+        ["80 < h ≤ 90", "21"],
+        ["90 < h ≤ 105", "15"],
+        ["105 < h ≤ 110", "12"]
+    ], //3 - line/bar - does bar
+    [
+        ["Water Depth (meters)", "Temperature (C)"],
+        ["50", "18"],
+        ["75", "15"],
+        ["100", "12"],
+        ["150", "5"],
+        ["200", "4"]
+    ], //4 - bar (does scatter)
+    [
+        ["x", "y"],
+        ["-3", "-6"],
+        ["-1", "-4"],
+        ["2", "-1"],
+        ["4", "1"],
+        ["5", "2"]
+    ], //5 - scatter (good)
+    [
+        ["x", "f(x)"],
+        ["-2", "-8"],
+        ["-1", "0"],
+        ["0", "0"],
+        ["1", "-2"],
+        ["2", "0"],
+        ["3", "12"]
+    ], //6 - line (good)
+    [
+        ["Month", "Revenue"],
+        ["JAN", "$28,361"],
+        ["FEB", "$14,744"],
+        ["MAR", "$19,407"],
+        ["APR", "$15,891"],
+        ["MAY", "$21,277"],
+        ["JUN", "$21,530"],
+        ["JUL", "$17,990"],
+        ["AUG", "$21,838"],
+        ["SEP", "$20,174"],
+        ["OCT", "$20,025"],
+        ["NOV", "$48,055"],
+        ["DEC", "$24,318"]
+    ], //7 - line
+    [
+        ["x", "y"],
+        ["11", "27"],
+        ["12", "29"],
+        ["13", "31"],
+        ["14", "33"],
+        ["15", "35"]
+    ], //8 - line, bar
+    [
+        ["Weight (Kg)", "Frequency"],
+        ["60 up to 70", "13"],
+        ["70 up to 75", "2"],
+        ["75 up to 95", "45"],
+        ["95 up to 100", "7"]
+    ], //9 - bar, should be line
+    [
+        ["Method of Traveling", "Number of children"],
+        ["Walking", "8"],
+        ["Car", "9"],
+        ["Bus", "4"],
+        ["Cycle", "5"],
+        ["Train", "1"],
+        ["Taxi", "3"]
+    ], //10 - bar, good
+    [
+        ["Baseball Team Runs Per Inning", "Baseball Team Runs Per Inning"],
+        ["Number of Runs", "Frequency"],
+        ["0", "4"],
+        ["1", "3"],
+        ["2", "1"],
+        ["3", "1"]
+    ], //11 - line, bar, good
+    [
+        ["The Graph", "The Graph"],
+        ["Salt Concentration", "Transmittance"],
+        ["3", "85.43"],
+        ["6", "50"],
+        ["9", "33.45"]
+    ], //12 - line, good
+    [
+        ["Size", "Size"],
+        ["Height", "Width"],
+        ["5", "2.2"],
+        ["4", "3.3"],
+        ["1", "5"]
+    ] //13 - scatter, good
+]
+
+//  ["", ""]
+
+//≥
+//≤

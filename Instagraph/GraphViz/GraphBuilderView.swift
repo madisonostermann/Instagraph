@@ -40,6 +40,9 @@ class GBViewModel: ObservableObject {
         ],
         .scatter: [
             "stepList": ["data", "x-label", "y-label", "title"]
+        ],
+        .multiLine: [
+            "stepList": ["data", "x-label", "x-values", "y-label", "keys", "title"]
         ]
     ]
     
@@ -151,6 +154,14 @@ class GBViewModel: ObservableObject {
             }
         case .multiLine:
             print("multiLine")
+            let result = toDouble(self.data)
+            if result.1 {
+                let x = LineGraph(title: self.title, xAxisLabel: self.xLabel, yAxisLabel: self.yLabel, data: result.0, xAxisValues: self.xValues, keys: self.keys)
+                self.finished = true
+                return x
+            } else {
+                return nil
+            }
         case .scatter:
             print("scatter")
         case .pie:
@@ -211,7 +222,14 @@ struct GraphBuilderView: View {
                               xAxisLabel: lineGraph.xAxisLabel)
                 //Text("some view")
             case .multiLine:
-                Text("some view")
+                //Text("some view")
+                let lineGraph = graph as! LineGraph
+                LineGraphView(ocrProperties: self.ocrProperties,
+                              vals: lineGraph.data,
+                              xLabels: lineGraph.xAxisValues,
+                              yAxisLabel: lineGraph.yAxisLabel,
+                              xAxisLabel: lineGraph.xAxisLabel,
+                              keys: lineGraph.keys)
             case .scatter:
                 Text("some view")
             case .pie:
