@@ -200,7 +200,11 @@ struct GraphBuilderView: View {
     @State var graph:Graph!
     
     func makeGraph() -> some View {
-        Group {
+        if gbViewModel.graphType == .multiLine {
+            print("MAKE GRAPH")
+            print((graph as! LineGraph).keys)
+        }
+        return Group {
             switch gbViewModel.graphType {
             case .bar:
                 //print("bar")
@@ -224,6 +228,7 @@ struct GraphBuilderView: View {
             case .multiLine:
                 //Text("some view")
                 let lineGraph = graph as! LineGraph
+                //print(lineGraph.keys!)
                 LineGraphView(ocrProperties: self.ocrProperties,
                               vals: lineGraph.data,
                               xLabels: lineGraph.xAxisValues,

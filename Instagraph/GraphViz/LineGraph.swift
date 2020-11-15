@@ -20,7 +20,7 @@ struct LineGraphView: View {
     let xAxisLabel:String
     
     @State var multi:Bool = false
-    @State var key:[String] = []
+    let key:[String]?
     
     init(ocrProperties: OCRProperties,
          frameHeight:CGFloat = Constants.SCREEN_WIDTH*0.7,
@@ -38,6 +38,10 @@ struct LineGraphView: View {
         self.yAxisLabel = yAxisLabel
         if let key = keys {
             self.key = key
+            print("KEY")
+            print(self.key)
+        } else {
+            self.key = []
         }
     }
     
@@ -220,7 +224,14 @@ struct LineGraphView: View {
     }
     
     func makeKeys() -> some View {
-        Text("hi")
+        print("MAKING KEYS")
+        print("Count: \(String(self.key!.count))")
+        return VStack {
+            ForEach(0 ..< self.key!.count) { i in
+                Text(self.key![i]).foregroundColor(self.getColor(i))
+            }
+        }.position(CGPoint(x: self.start+(self.frameWidth), y: self.base-(self.frameHeight*2.5)))
+        //Text("hi")
     }
     
     var body: some View {
@@ -237,6 +248,10 @@ struct LineGraphView: View {
                     self.makeValueLabels()
                     self.makeAxisLabels()
                 }.offset(x: 70, y: 0)
+                if !(self.vals.count == self.xLabels.count) {
+                    //print("MADE KEYS")
+                    self.makeKeys()
+                }
                 /*Button("Home") {
                  self.ocrProperties.page = "Home"
                  self.ocrProperties.source = ""
