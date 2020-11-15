@@ -60,10 +60,19 @@ struct ContentView: View {
 //                Button("Test") {
 //                    Testing.runTestingPipeline()
 //                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
-//                Button("Test 2") {
-//                    //TestTables.testTables()
-//                    TestTables.test2Tables()
-//                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
+                Button("Test 2 & 3") {
+                    //TestTables.testTables()
+                    //TestTables.test2Tables()
+                    var table:[[String]] = [["Global Temperatures", "Month", "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                                            ["Temperature", "USA Temp", "40.0", "42.2", "40.9", "50.1", "60.0", "75.3", "90.0", "83.2", "69.9", "39.1", "35.0", "32.3"],
+                                            ["Temperature", "China Temp", "42.0", "45.2", "S0.9", "65", "70.3", "79.0", "87.2", "85.3", "70.9", "65.1", "50.0", "40.3"],
+                                            ["Temperature", "Russia Temp", "10.0", "24.2", "25.9", "34", "42.3", "50.0", "52.0", "49.2", "41.9", "30.1", "25.0", "15.3"]
+                                            ]
+                    var chars:Set<Character> = []
+                    chars.insert("S")
+                    GraphEngine.reformatOCRArtefacts(arr: &table, checkIf: chars, shouldBe: "5")
+                    print(table)
+                }.padding().background(Color.blue).foregroundColor(Color.white).cornerRadius(10)
 //            } else if self.ocrProperties.page == "Photo" {
 //                ImagePicker(ocrProperties: self.ocrProperties) // 2. Image Picker or Camera (or later, Document)
 //            } else if self.ocrProperties.page == "Camera" {

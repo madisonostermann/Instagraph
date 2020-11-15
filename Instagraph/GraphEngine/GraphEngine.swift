@@ -567,6 +567,72 @@ class GraphEngine {
         return (representedAs, numberDataType)
     }
     
+    
+    static func reformatOCRArtefacts(arr: inout [[String]], checkIf: Set<Character>, shouldBe: Character) {
+        //associate the row that data starts at with each column (if data is present, "data" identified by looking like number
+        var dataStarts:Dictionary<Int, Int> = [:]
+        for i in 0 ..< arr.count { //across cols
+            downCol: for j in 0 ..< arr[0].count { //down cols
+                if GraphEngine.representableAs(content: arr[i][j]).0 == .number {
+                    let keyExists = dataStarts[i] != nil
+                    if !keyExists {
+                        dataStarts[i] = j
+                        break downCol
+                    }
+                }
+            }
+        }
+        //purge dictionary entries where most of the column isn't numbers - meaning probably isn't data
+        for i in 0 ..< arr.count { //across cols
+            var numNums = 0
+            for j in 0 ..< arr[0].count { //down cols
+                if GraphEngine.representableAs(content: arr[i][j]).0 == .number {
+                    numNums += 1
+                }
+            }
+            let mostOfColIsNums = numNums > arr[0].count / 2
+            if !mostOfColIsNums {
+                dataStarts.removeValue(forKey: i)
+            }
+        }
+        
+        //Find row position that data starts at most frequently (to see where data likely starts and ignore other kinds of numbers like identifiers)
+        var rowStarts:Dictionary<Int, Int> = [:] //<row where data starts, number of times data starts on that row
+        var firstColWithData = 999
+        for (k, v) in dataStarts {
+            let keyExists = rowStarts[v] != nil
+            if keyExists {
+                rowStarts[v]! += 1
+            } else {
+                rowStarts[v] = 1
+            }
+            if k < firstColWithData {
+                firstColWithData = k
+            }
+        }
+        
+        var mostCommonStart = 0
+        var mostCommonCount = 0
+        for (k, v) in rowStarts {
+            if v > mostCommonCount {
+                mostCommonStart = k
+                mostCommonCount = v
+            }
+        }
+        //loop through data columns from start row to end, replace occurences of checkIf with ocurences of shouldBe
+        for i in firstColWithData ..< arr.count {
+            for j in mostCommonStart ..< arr[0].count {
+                var k = 0
+                for char in arr[i][j] {
+                    if checkIf.contains(char) {
+                        arr[i][j] = arr[i][j].replaceAt(k, with: shouldBe)
+                    }
+                    k += 1
+                }
+            }
+        }
+    }
+    
     static func reformatEuropean(arr: inout [[String]]) {
         //Check if numbers are European formatted... ex: 300.000,50 is 300,000.50
         //Extract all data that can be formatted as a number to analyze
